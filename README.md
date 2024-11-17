@@ -1,1 +1,1 @@
-# HowTo!
+# HowTo
