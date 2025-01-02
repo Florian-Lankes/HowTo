@@ -62,6 +62,7 @@
 					<th> Username</th>
 					<th> Email </th>
 					<th> Birthdate </th>
+					<th> Password </th>
 					<th> Actions </th>
 				</tr>
 			</thead>
@@ -72,6 +73,7 @@
 					<td th:text = "${user.username}"></td>
 					<td th:text = "${user.email}"></td>
 					<td th:text = "${user.birthDate}"></td>
+					<td th:text = "${user.password}"></td>
 					<td>
 						<a th:href = "@{/user/update/{id}(id=${user.id})}"
 						 class = "btn btn-primary"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pen" viewBox="0 0 16 16">

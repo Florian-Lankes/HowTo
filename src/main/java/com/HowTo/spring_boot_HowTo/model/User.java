@@ -25,16 +25,19 @@ public class User implements Serializable{
 	private Long id;
 	
 	@NotBlank(message = "Name is mandatory")
-	@Size(min = 5, max = 50, message = "{jakarta.validation.constraints.Size}")
+	@Size(min = 5, max = 50, message = "test")
 	private String username;
 	
-	@NotBlank(message = "{user.email.not.blank}")
+	@NotBlank(message = "email is mandatory")
 	private String email;
 	
 	
 	@DateTimeFormat(pattern="yyyy-MM-dd")
 	private LocalDate birthDate;
 	
+	@NotBlank(message = "password is mandatory")
+	@Size(min = 5, max = 50, message = "test")
+	private String password;
 	
 	//private boolean isAdmin;
 	
@@ -77,5 +80,11 @@ public class User implements Serializable{
 	}
 	public void setBirthDate(LocalDate birthDate) {
 		this.birthDate = birthDate;
+	}
+	public String getPassword() {
+		return password;
+	}
+	public void setPassword(String password) {
+		this.password = password;
 	}
 }
