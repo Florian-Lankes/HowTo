@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html layout:decorate="~{layout}">
+<head><meta charset="UTF-8" /></head>
+
+<body>
+	<section class="layout-content" layout:fragment="mybody">
+			
+		<p>You can create a Post here</p>
+		<form>
+			<div class="form-group">
+				<label>Title</label>
+				<input type="text" class="form-control" placeholder="Mein Titel">
+			</div>
+			<div class="form-group">
+				<label>Beschreibung</label>
+				<textarea class="form-control" id="beschreibung" rows="3"></textarea>
+			</div>
+			<a class="btn btn-info" href="/tutorial/upload">Upload</a>
+		</form>		
+	</section>		
+</body>
+</html>
