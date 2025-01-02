@@ -69,7 +69,7 @@ public class UserController {
     	userService.saveUser(user);
         redirectAttributes.addFlashAttribute("added", "User added!");
         
-        return "redirect:/home";
+        return "redirect:/";
     }
 	
 	
