@@ -3,3 +3,6 @@ INSERT INTO USER (id, username, email, birth_date) VALUES (2, 'user2', 'mail2@gm
 INSERT INTO USER (id, username, email, birth_date) VALUES (3, 'user3', 'mail3@gmail.com', '2003-03-23');
 INSERT INTO USER (id, username, email, birth_date) VALUES (4, 'user4', 'mail4@gmail.com', '2004-04-24');
 INSERT INTO USER (id, username, email, birth_date) VALUES (5, 'user5', 'mail5@gmail.com', '2005-05-25');
+
+
+INSERT INTO CHANNEL (userid, channelname, description, creation_date) VALUES (1, 'HowTo', 'Description1', '2025-01-21');
