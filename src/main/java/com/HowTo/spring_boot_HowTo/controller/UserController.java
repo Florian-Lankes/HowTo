@@ -51,7 +51,7 @@ public class UserController {
 		request.getSession().setAttribute("userSession", userForm);
 		model.addAttribute("user", userForm);
 				
-		return "users/user-add";
+		return "/users/user-add";
 	}
 	
     @PostMapping("/user/add")
@@ -89,46 +89,5 @@ public class UserController {
 		System.out.println(password);
 		return "/home";
 	}
-	
-	
-	@RequestMapping(value = "/registerUser")
-	public String showUserForm(Model model) {
-		
-		User user = new User();
-		user.setId((long) -1);
-		
-		LocalDate date= LocalDate.now();
-		
-		
-		user.setBirthDate(date);
-		System.out.println(date+"********");
-		model.addAttribute("user", user);
-		
-	return "/users/register-user";
-		
-	}
-	
-	
-	@RequestMapping(value = "/registerUser/process")
-	public String addStudent(@ModelAttribute @Valid User userRequest, 
-			BindingResult result, 
-			RedirectAttributes attr){
-					
-		System.out.println(userRequest.getUsername());
-		System.out.println(userRequest.getBirthDate());
-		
-		if (result.hasErrors()) {
-			System.out.println(result.getErrorCount());
-			System.out.println(result.getAllErrors());
-			return "/users/register-user";
-		
-		}
-		
-		//userService.save(user);
-		attr.addFlashAttribute("success", "User added!");
-		return "redirect:/login";
-	}
-	
-	
 		
 }
