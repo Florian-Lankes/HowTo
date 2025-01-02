@@ -1,28 +1,46 @@
 package com.HowTo.spring_boot_HowTo.model;
 
+
 import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
+
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import jakarta.persistence.JoinColumn;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
-public class User {
+@Entity
+//@Table(name = "`user`")
+public class User implements Serializable{
 
+	//evtl. Gender add
+	private static final long serialVersionUID = 1L;
+	
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	
-	@Size(min = 5, max = 50, message = "{jakarta.validation.constraints.Size}")
+	@NotBlank(message = "Name is mandatory")
+	@Size(min = 5, max = 50, message = "test")
 	private String username;
 	
-	@NotBlank(message = "{student.email.not.blank}")
+	@NotBlank(message = "email is mandatory")
 	private String email;
 	
+	private boolean active = true;
 	
 	@DateTimeFormat(pattern="yyyy-MM-dd")
 	private LocalDate birthDate;
@@ -35,6 +53,18 @@ public class User {
 			)	
 	private List<Role> roles = new ArrayList<Role>();
 
+
+
+	@NotBlank(message = "password is mandatory")
+	@Size(min = 5, max = 50, message = "test")
+	private String password;
+	
+	//private boolean isAdmin;
+	
+	
+	//private boolean isCreator;
+	
+	
 
 	public Long getId() {
 		return id;
@@ -54,12 +84,34 @@ public class User {
 	public void setEmail(String email) {
 		this.email = email;
 	}
+	public boolean isActive() {
+		return active;
+	}
+
+	public void setActive(boolean active) {
+		this.active = active;
+	}
+
+//	public boolean isAdmin() {
+//		return isAdmin;
+//	}
+//	public void setAdmin(boolean isAdmin) {
+//		this.isAdmin = isAdmin;
+//	}
+//	public boolean isCreator() {
+//		return isCreator;
+//	}
+//	public void setCreator(boolean isCreator) {
+//		this.isCreator = isCreator;
+//	}
+
 	public LocalDate getBirthDate() {
 		return birthDate;
 	}
 	public void setBirthDate(LocalDate birthDate) {
 		this.birthDate = birthDate;
 	}
+
 	public List<Role> getRoles() {
 		return roles;
 	}
@@ -68,4 +120,12 @@ public class User {
 		this.roles = roles;
 	}
 	
+
+	public String getPassword() {
+		return password;
+	}
+	public void setPassword(String password) {
+		this.password = password;
+	}
+
 }
