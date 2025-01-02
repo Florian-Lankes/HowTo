@@ -9,6 +9,7 @@ import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -22,6 +23,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 
 @Controller
+@RequestMapping("/user")
 public class UserController {
 	
 	
@@ -40,7 +42,55 @@ public class UserController {
 	
 	//TEST
 	
-	@GetMapping("/user/add")
+	@GetMapping("/all")
+    public String showUserList(Model model) {
+        
+    	model.addAttribute("users", userService.getAllUsers());
+    	System.out.println(userService.getAllUsers().size() +"*************");
+    	
+        return "/users/user-all";
+    }
+	
+	 @GetMapping("/delete/{id}")
+	    public String deleteUser(@PathVariable("id") long id, Model model, RedirectAttributes redirectAttributes) {
+	        User user = userService.getUserById(id);               
+	        userService.delete(user);
+	        redirectAttributes.addFlashAttribute("deleted", "User deleted!");
+	        return "redirect:/user/all";
+	    }
+	 
+	 @GetMapping("/update/{id}")
+		public String showUpdateUserForm(@PathVariable Long id, 
+				Model model,
+				HttpServletRequest request) {
+		 	User user = userService.getUserById(id); 
+	    	model.addAttribute("user", user);
+			request.getSession().setAttribute("userSession", user);
+			
+			System.out.println("updating user id="+ id);
+			return "/users/user-update";
+		}
+	    
+	    
+	    @PostMapping("/update")
+		public String updateUser(@Valid @ModelAttribute("user") User user,
+				BindingResult results,
+				Model model, 
+				RedirectAttributes redirectAttributes) {
+			
+					
+			if (results.hasErrors()){
+				
+				return "/users/user-update";
+			}
+	       
+			userService.updateUser(user);
+	        redirectAttributes.addFlashAttribute("updated", "user updated!");
+			return "redirect:/user/all";
+			
+		}
+	
+	@GetMapping("/add")
 	public String showUserAdForm(Model model, HttpServletRequest request) {
 		
 		User userForm = new User();
@@ -54,7 +104,7 @@ public class UserController {
 		return "/users/user-add";
 	}
 	
-    @PostMapping("/user/add")
+    @PostMapping("/add")
     public String addUser(@Valid @ModelAttribute User user, 
     		BindingResult result, 
     		Model model,
@@ -69,7 +119,7 @@ public class UserController {
     	userService.saveUser(user);
         redirectAttributes.addFlashAttribute("added", "User added!");
         
-        return "redirect:/";
+        return "redirect:/user/all";
     }
 	
 	
