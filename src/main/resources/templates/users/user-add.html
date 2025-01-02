@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html layout:decorate="~{layout}">
+<html layout:decorate="~{layout}"> <!--change layout later-->
 <head><meta charset="UTF-8" /></head>
 
 <body>
@@ -15,6 +15,10 @@
 	                        </li>
 	                    </ul>
 	                </div>
+					<a class="btn btn-primary btn-md" th:href="@{/user/all}" role="button">
+						                    <span class="oi oi-spreadsheet" title="User Registration" aria-hidden="true"></span>
+						                    <span>List Users</span>
+						                </a>
 	            </nav>
 	        </div>
 	
@@ -47,6 +51,18 @@
 	                       </div>
 	                   </div>
 	               </div>
+				   
+				   <div class="form-row">
+				       <div class="form-group col-md-6">
+				           <label for="password">Password</label>
+				           <input type="password" class="form-control" id="password" placeholder="Password"
+				                  th:field="*{password}" 
+				                  th:classappend="${#fields.hasErrors('password')} ? 'is-invalid'" />
+				           <div class="invalid-feedback">
+				               <span th:errors="*{password}"></span>
+				           </div>
+				       </div>
+				   </div>
 
 	               <div class="form-row">
 	                   <div class="form-group col-md-6">
