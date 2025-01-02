@@ -12,16 +12,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 @Controller
 public class HomeController {
 
-//	@GetMapping("/home")
-//	public String HowToHomeView() {
-//		
-//		return "home";
-//	}
 	
-	
-	//@RequestMapping(method = RequestMethod.GET, value = "/")
-	@GetMapping("/home")
-	public String HowToHomeView(Model model) {
+	@GetMapping("/")
+	public String HowToView(Model model) {
 		
 		ArrayList<String> tutorial = new ArrayList<>();
 		
@@ -35,14 +28,6 @@ public class HomeController {
 		model.addAttribute("tutorial", tutorial);
 		
 		return "home";
-	}
-	
-	@GetMapping("/tutorial/{tutorialid}")
-	public String getTutorialId(@PathVariable String tutorialid, Model model) {
-		
-		System.out.println(tutorialid);
-		model.addAttribute("tutorialid", tutorialid );
-		return "tutorial";
 	}
 	
 	@RequestMapping(method = RequestMethod.GET, value = "/content")
