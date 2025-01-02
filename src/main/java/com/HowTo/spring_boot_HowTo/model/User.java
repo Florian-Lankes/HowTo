@@ -1,9 +1,15 @@
 package com.HowTo.spring_boot_HowTo.model;
 
+import jakarta.persistence.FetchType;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
+import jakarta.persistence.JoinColumn;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
@@ -21,13 +27,15 @@ public class User {
 	@DateTimeFormat(pattern="yyyy-MM-dd")
 	private LocalDate birthDate;
 	
-	
-	private boolean isAdmin;
-	
-	
-	private boolean isCreator;
-	
-	
+	@ManyToMany(fetch = FetchType.EAGER)
+	@JoinTable(
+			name="userrole",
+			joinColumns = @JoinColumn(name="iduser"),
+			inverseJoinColumns = @JoinColumn(name="idrole")
+			)	
+	private List<Role> roles = new ArrayList<Role>();
+
+
 	public Long getId() {
 		return id;
 	}
@@ -46,22 +54,18 @@ public class User {
 	public void setEmail(String email) {
 		this.email = email;
 	}
-	public boolean isAdmin() {
-		return isAdmin;
-	}
-	public void setAdmin(boolean isAdmin) {
-		this.isAdmin = isAdmin;
-	}
-	public boolean isCreator() {
-		return isCreator;
-	}
-	public void setCreator(boolean isCreator) {
-		this.isCreator = isCreator;
-	}
 	public LocalDate getBirthDate() {
 		return birthDate;
 	}
 	public void setBirthDate(LocalDate birthDate) {
 		this.birthDate = birthDate;
 	}
+	public List<Role> getRoles() {
+		return roles;
+	}
+
+	public void setRoles(List<Role> roles) {
+		this.roles = roles;
+	}
+	
 }
