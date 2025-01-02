@@ -6,7 +6,7 @@ import jakarta.validation.constraints.Size;
 public class Channel {
 
 	@NotNull
-	private User user;
+	private Long userid;
 	
 	@Size(min = 5, max = 50, message = "{jakarta.validation.constraints.Size}")
 	private String channelname;
