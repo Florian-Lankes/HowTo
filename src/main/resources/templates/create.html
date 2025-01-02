@@ -6,16 +6,16 @@
 	<section class="layout-content" layout:fragment="mybody">
 			
 		<p>You can create a Post here</p>
-		<form>
+		<form action="/tutorial/upload" method="post">
 			<div class="form-group">
 				<label>Title</label>
-				<input type="text" class="form-control" placeholder="Mein Titel">
+				<input type="text" name="title" class="form-control" placeholder="Mein Titel">
 			</div>
 			<div class="form-group">
 				<label>Beschreibung</label>
 				<textarea class="form-control" id="beschreibung" rows="3"></textarea>
 			</div>
-			<a class="btn btn-info" href="/tutorial/upload">Upload</a>
+			<button class="btn btn-info" type="submit">Upload</button>
 		</form>		
 	</section>		
 </body>

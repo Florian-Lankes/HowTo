@@ -38,7 +38,7 @@ public class UserController {
 		//TODO: process POST request
 		System.out.println(user);
 		System.out.println(password);
-		return "home";
+		return "/home";
 	}
 	
 	
