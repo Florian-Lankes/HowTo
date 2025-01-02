@@ -37,12 +37,21 @@ public class HomeController {
 		return "home";
 	}
 	
-	@GetMapping("/tutorial/{tutorialid}")
-	public String getTutorialId(@PathVariable String tutorialid, Model model) {
+	@GetMapping("/")
+	public String HowToView(Model model) {
 		
-		System.out.println(tutorialid);
-		model.addAttribute("tutorialid", tutorialid );
-		return "tutorial";
+		ArrayList<String> tutorial = new ArrayList<>();
+		
+		tutorial.add("1");
+		tutorial.add("2");
+		tutorial.add("3");
+		tutorial.add("4");
+		tutorial.add("5");
+		tutorial.add("6");
+		
+		model.addAttribute("tutorial", tutorial);
+		
+		return "home";
 	}
 	
 	@RequestMapping(method = RequestMethod.GET, value = "/content")
