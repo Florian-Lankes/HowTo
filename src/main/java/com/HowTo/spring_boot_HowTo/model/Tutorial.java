@@ -1,21 +1,34 @@
 package com.HowTo.spring_boot_HowTo.model;
 
+import java.io.Serializable;
+
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
-public class Tutorial {
+@Entity
+public class Tutorial implements Serializable{
 	
+	private static final long serialVersionUID = 1L;
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	
 	@Size(min = 5, max = 50, message = "{jakarta.validation.constraints.Size}")
 	private String title;
 	
-	@NotBlank(message = "{student.email.not.blank}")
 	private String content_text;
 	
 	private byte[] content_video;
 	
 	private Long channel_id;
+	
+	private Long likes;
+	private Long dislikes;
+	
 	public Long getId() {
 		return id;
 	}
@@ -45,5 +58,17 @@ public class Tutorial {
 	}
 	public void setChannel_id(Long channel_id) {
 		this.channel_id = channel_id;
+	}
+	public Long getLikes() {
+		return likes;
+	}
+	public void setLikes(Long likes) {
+		this.likes = likes;
+	}
+	public Long getDislikes() {
+		return dislikes;
+	}
+	public void setDislikes(Long dislikes) {
+		this.dislikes = dislikes;
 	}
 }

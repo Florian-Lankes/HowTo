@@ -4,16 +4,31 @@ import java.util.ArrayList;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import com.HowTo.spring_boot_HowTo.model.Tutorial;
+import com.HowTo.spring_boot_HowTo.service.TutorialServiceI;
+
+import jakarta.servlet.http.HttpServletRequest;
 
 @Controller
+@RequestMapping("/tutorial")
 public class TutorialController {
 	
+	private TutorialServiceI tutorialService;
 	
-	@GetMapping("/tutorial/{tutorialid}")
+	public TutorialController(TutorialServiceI tutorialService) {
+		super();
+		this.tutorialService = tutorialService;
+	}
+	
+	@GetMapping("/{tutorialid}")
 	public String getTutorialId(@PathVariable String tutorialid, Model model) {
 		
 		System.out.println(tutorialid);
@@ -21,14 +36,14 @@ public class TutorialController {
 		return "tutorial";
 	}
 	
-	@GetMapping("/tutorial/like")
+	@GetMapping("/like")
 	public String likeTutorial() {
 		
 		//+1 bei like
 		return "tutorial";
 	}
 	
-	@GetMapping("/tutorial/dislike")
+	@GetMapping("/dislike")
 	public String dislikeTutorial() {
 		
 		//-1 bei like
@@ -36,19 +51,26 @@ public class TutorialController {
 	}
 	
 	@GetMapping("/create")
-	public String createTutorial() {
+	public String createTutorialView(Model model, HttpServletRequest request) {
 		
-		return "create";
+		Tutorial tutorial = new Tutorial();
+		tutorial.setId((long) -1); //TODO change dynamically after user authorization is implemented
+		tutorial.setLikes((long) 0);
+		tutorial.setDislikes((long) 0);
+		
+		model.addAttribute("tutorial", tutorial);
+		
+		return "tutorials/create";
 	}
 	
-	@PostMapping("/tutorial/upload")
-	public String uploadTutorial(@RequestParam String title, Model model) {
-		System.out.println(title);
-		ArrayList<String> tutorial = new ArrayList<>();
+	@PostMapping("/upload")
+	public String uploadTutorial(@ModelAttribute Tutorial tutorial, 
+			BindingResult result, Model model, 
+			RedirectAttributes redirectAttributes ) {
+		tutorialService.saveTutorial(tutorial);
+		redirectAttributes.addFlashAttribute("created", "Tutorial created!");
 		
-		tutorial.add(title);
-		model.addAttribute("tutorial",tutorial );
-		return "channel";
+		return "redirect:channel";
 	}
 	
 }
