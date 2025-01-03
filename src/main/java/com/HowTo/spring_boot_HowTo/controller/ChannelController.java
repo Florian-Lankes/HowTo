@@ -7,6 +7,8 @@ import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -20,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.HowTo.spring_boot_HowTo.config.MyUserDetails;
 import com.HowTo.spring_boot_HowTo.model.Channel;
 import com.HowTo.spring_boot_HowTo.service.ChannelServiceI;
 import com.HowTo.spring_boot_HowTo.validator.ChannelValidator;
@@ -44,12 +47,22 @@ public class ChannelController {
 		binder.addValidators(new ChannelValidator());
 	}
 	
+	private Long getCurrentUserId() {
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		if (authentication == null || !authentication.isAuthenticated()
+				|| authentication.getPrincipal() instanceof String) {
+			throw new IllegalStateException("User is not authenticated");
+		}
+		MyUserDetails userDetails = (MyUserDetails) authentication.getPrincipal();
+		return userDetails.getId();
+	}
+	
 	//CREATE
 	@GetMapping("/create")
 	public String showChannelAdForm(Model model, HttpServletRequest request) {
 		
 		Channel channelForm = new Channel();
-		channelForm.setUserid((long) -1); //TODO change dynamically after channel authorization is implemented
+		channelForm.setUserid(getCurrentUserId()); //TODO change dynamically after channel authorization is implemented
 		LocalDate date= LocalDate.now();
 		channelForm.setCreationDate(date);
 		
