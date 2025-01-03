@@ -1,16 +1,24 @@
 package com.HowTo.spring_boot_HowTo.config;
 
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.access.hierarchicalroles.RoleHierarchy;
+import org.springframework.security.access.hierarchicalroles.RoleHierarchyImpl;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
+import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
+import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer.FrameOptionsConfig;
+import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import org.springframework.security.config.Customizer;
 
 import com.HowTo.spring_boot_HowTo.service.MyUserDetailService;
 
@@ -18,34 +26,82 @@ import com.HowTo.spring_boot_HowTo.service.MyUserDetailService;
 @Configuration
 @EnableWebSecurity
 public class SecurityConfiguration {
+	
 		
 		@Autowired
 	    MyUserDetailService userDetailsService;
+		
+		private static final String[] AUTH_WHITE_LIST = {
+	            "/v3/api-docs/**",
+	            "/swagger-ui/**",
+	            "/logout",
+	            "/h2-console/**",
+	            "/console/**"
+	            
+	    };
+		
 			    
 	    @Bean
 	    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 	    	
 	    	http.csrf().disable();
+	        http.csrf()
+	        .ignoringRequestMatchers(new AntPathRequestMatcher("/api/**"))
+	        .ignoringRequestMatchers(new AntPathRequestMatcher("/h2-console/**"));
+	        
+	        http.headers(headersConfigurer ->
+	        headersConfigurer.frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin));
+
+	        
+	      //sites that don't need Authority
+	    	http.authorizeHttpRequests(auth ->
+            auth
+            		.requestMatchers(new AntPathRequestMatcher("/resources/**")).permitAll()	
+            		.requestMatchers(new AntPathRequestMatcher("/api/**")).permitAll()
+            		.requestMatchers(new AntPathRequestMatcher("/api/workshops/**")).permitAll()
+            		
+            		.requestMatchers(new AntPathRequestMatcher("/webjars/**")).permitAll()
+            		.requestMatchers(new AntPathRequestMatcher("/h2-console/**")).permitAll()
+            		.requestMatchers(new AntPathRequestMatcher("/login")).permitAll()
+            		.requestMatchers(new AntPathRequestMatcher("/register")).permitAll()
+            		.requestMatchers(new AntPathRequestMatcher("/logout")).permitAll()
+            		.requestMatchers(new AntPathRequestMatcher("/")).permitAll());
 	    	
-	    	http.authorizeRequests().requestMatchers("/login").permitAll() //all users can access this page
-	    			.requestMatchers("/login").permitAll()
-	    			.requestMatchers("/register").permitAll()
-	    			.requestMatchers("/h2-console/**").permitAll()
-	    			.requestMatchers("/console/**").permitAll()
-	        		.requestMatchers("/admin/**", "/settings/**").hasAuthority("ADMIN_DASHBOARD") // only admins can access this page
-	        		//more permissions here....
-	        		
-	                .anyRequest().authenticated()
-	                .and().formLogin()
-	          //      .loginPage("/login")
-	                .and()
-	                .logout()                                            
-	                .logoutSuccessUrl("/login")
-	                .invalidateHttpSession(true)
-	                
-	                .permitAll();
+	    	http.formLogin().defaultSuccessUrl("/home",true);
+    
 	    	
-	    	 http.headers().frameOptions().disable();
+	    	//sites that need User Authority
+	    	http.authorizeHttpRequests()
+		     
+	        .requestMatchers(new AntPathRequestMatcher("/home")).hasAuthority("VIEW")
+	        .requestMatchers(new AntPathRequestMatcher("/user/all")).hasAuthority("VIEW")
+    		.requestMatchers(new AntPathRequestMatcher("/tutorial/**")).hasAuthority("VIEW")
+    		.requestMatchers(new AntPathRequestMatcher("/channel/all")).hasAuthority("VIEW")
+    		.requestMatchers(new AntPathRequestMatcher("/channel/create")).hasAuthority("VIEW");
+	    	
+	    	//sites that need Creator Authority
+	    	http.authorizeHttpRequests()
+	     
+	        .requestMatchers(new AntPathRequestMatcher("/channel/delete/**")).hasAuthority("CREATOR_RIGHTS")
+	        .requestMatchers(new AntPathRequestMatcher("/channel/update/")).hasAuthority("CREATOR_RIGHTS")
+	        .requestMatchers(new AntPathRequestMatcher("/tutorial/create")).hasAuthority("CREATOR_RIGHTS")
+	        .requestMatchers(new AntPathRequestMatcher("/tutorial/upload")).hasAuthority("CREATOR_RIGHTS");
+	    
+	    	//sites that need Authority
+	    	http.authorizeHttpRequests()
+	     
+	        .requestMatchers(new AntPathRequestMatcher("/admin/**")).hasAuthority("ADMIN_RIGHTS")
+	        .requestMatchers(new AntPathRequestMatcher("/channel/update/**")).hasAuthority("CREATOR_RIGHTS")
+	        .requestMatchers(new AntPathRequestMatcher("/user/delete/**")).hasAuthority("ADMIN_RIGHTS")
+	        .requestMatchers(new AntPathRequestMatcher("/user/update/**")).hasAuthority("ADMIN_RIGHTS")
+	        .requestMatchers(new AntPathRequestMatcher("/user/add")).hasAuthority("ADMIN_RIGHTS");
+
+	    	
+	    	http.headers(headers -> headers.frameOptions(FrameOptionsConfig::disable));   
+	    	
+	    	http.formLogin(Customizer.withDefaults());
+	        http.httpBasic(Customizer.withDefaults());
+	        
 	    	
 	        return http.build();
 	    }
@@ -61,11 +117,11 @@ public class SecurityConfiguration {
             return authenticationConfiguration.getAuthenticationManager();
         }
 	    
+	
 	    @Bean
 		public PasswordEncoder getPasswordEncoder() {
 			//return new BCryptPasswordEncoder();
 			return NoOpPasswordEncoder.getInstance();
 		}
-	
 
 }
