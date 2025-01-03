@@ -1,7 +1,12 @@
 package com.HowTo.spring_boot_HowTo.controller;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -38,10 +43,34 @@ public class UserController {
 		binder.addValidators(new UserValidator());
 	}
 
-	@GetMapping("/all")
-	public String showUserList(Model model) {
+	@GetMapping(value = {"", "/all"})
+	public String showUserList(Model model, @RequestParam(required = false) String keyword,
+			@RequestParam(required = false, defaultValue = "1") int page, @RequestParam(required = false,
+			defaultValue = "5") int size) {
+		try {
+			
+			List<User> users = new ArrayList<User>();
 
-		model.addAttribute("users", userService.getAllUsers());
+			 //the first page is 1 for the user, 0 for the database.
+			 Pageable paging = PageRequest.of(page - 1, size);
+			 Page<User> pageUsers;
+			 //getting the page from the database….
+			 pageUsers = userService.getAllUsers(keyword, paging);
+
+			 model.addAttribute("keyword", keyword);
+
+			 users = pageUsers.getContent();
+			 model.addAttribute("users", users);
+			 //here are the variables for the paginator in the user-all view
+			 model.addAttribute("entitytype", "user");
+			 model.addAttribute("currentPage", pageUsers.getNumber() + 1);
+			 model.addAttribute("totalItems", pageUsers.getTotalElements());
+			 model.addAttribute("totalPages", pageUsers.getTotalPages());
+			 model.addAttribute("pageSize", size);
+			 
+		} catch (Exception e){
+			model.addAttribute("message", e.getMessage());
+		}
 		return "/users/user-all";
 	}
 
