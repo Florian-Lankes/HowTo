@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.HowTo.spring_boot_HowTo.model.Channel;
@@ -17,9 +19,16 @@ public class ChannelService implements ChannelServiceI{
 	ChannelRepositoryI channelRepository;
 	
 	@Override
-	public List<Channel> getAllChannels() {
-		// TODO Auto-generated method stub
-		return channelRepository.findAll();
+	public Page<Channel> getAllChannels(String channelname, Pageable pageable) {
+	// TODO Auto-generated method stub
+	Page <Channel> pageChannel;
+	if (channelname == null) {
+		pageChannel = channelRepository.findAll(pageable);
+	 } else {
+		 pageChannel = channelRepository.findByChannelnameContainingIgnoreCase(channelname, pageable);
+
+	 }
+	return pageChannel;
 	}
 
 	@Override
@@ -47,6 +56,5 @@ public class ChannelService implements ChannelServiceI{
 		// TODO Auto-generated method stub
 		channelRepository.delete(channel);
 	}
-
 
 }

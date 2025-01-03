@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  
+	   
+   </style>
+  </head>
+<body>
+
+	<div th:fragment="alert">
+	
+	<div class="alert alert-success" role="alert" th:text="${added}" th:if="${added}"></div>
+	<div class="alert alert-danger" role="alert" th:text="${deleted}" th:if="${deleted}"></div>
+	<div class="alert alert-primary" role="alert" th:text="${updated}" th:if="${updated}"></div>
+	
+	</div>
+	
+</body>
+
+</html>	
