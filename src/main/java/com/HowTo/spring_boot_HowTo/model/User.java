@@ -34,7 +34,7 @@ public class User implements Serializable{
 	private Long id;
 	
 	@NotBlank(message = "Name is mandatory")
-	@Size(min = 5, max = 50, message = "test")
+	@Size(min = 5, max = 50, message = "{jakarta.validation.constraints.Size}")
 	private String username;
 	
 	@NotBlank(message = "email is mandatory")
@@ -56,7 +56,7 @@ public class User implements Serializable{
 
 
 	@NotBlank(message = "password is mandatory")
-	@Size(min = 5, max = 50, message = "test")
+	@Size(min = 5, max = 50, message = "{jakarta.validation.constraints.Size}")
 	private String password;
 	
 	//private boolean isAdmin;

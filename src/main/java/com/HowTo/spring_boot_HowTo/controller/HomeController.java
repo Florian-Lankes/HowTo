@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 public class HomeController {
 
 	
-	@GetMapping("/")
+	@GetMapping("/home")
 	public String HowToView(Model model) {
 		
 		ArrayList<String> tutorial = new ArrayList<>();

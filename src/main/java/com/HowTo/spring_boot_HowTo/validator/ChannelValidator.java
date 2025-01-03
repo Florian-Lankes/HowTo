@@ -23,13 +23,13 @@ public class ChannelValidator implements Validator{
 		Channel channel = (Channel) target;
 		
 
-		if (channel.getChannelname().isEmpty() || channel.getChannelname().length() < 5 || channel.getChannelname().length() > 25) {
-			errors.rejectValue("channelname", "channelname.length");
-		}
-		
-		if (channel.getDescription().isEmpty() || channel.getDescription().length() < 5 || channel.getDescription().length() > 150) {
-			errors.rejectValue("description", "description.length");
-		}
+//		if (channel.getChannelname().isEmpty() || channel.getChannelname().length() < 5 || channel.getChannelname().length() > 25) {
+//			errors.rejectValue("channelname", "channelname.length");
+//		}
+//		
+//		if (channel.getDescription().isEmpty() || channel.getDescription().length() < 5 || channel.getDescription().length() > 150) {
+//			errors.rejectValue("description", "description.length");
+//		}
 
 	}
 }
