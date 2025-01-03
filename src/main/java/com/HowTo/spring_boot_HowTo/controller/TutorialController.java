@@ -37,26 +37,34 @@ public class TutorialController {
 		binder.addValidators(new TutorialValidator());
 	}
 	
-	@GetMapping("/{tutorialid}")
-	public String getTutorialId(@PathVariable String tutorialid, Model model) {
+	@GetMapping("/{id}")
+	public String getTutorialId(@PathVariable("id") Long id, Model model) {
 		
-		System.out.println(tutorialid);
-		model.addAttribute("tutorialid", tutorialid );
+		System.out.println(id);
+		model.addAttribute("tutorialid", id );
 		return "tutorial";
 	}
 	
-	@GetMapping("/like")
-	public String likeTutorial() {
-		
-		//+1 bei like
-		return "tutorial";
+	@GetMapping("/like/{id}")
+	public String likeTutorial(@PathVariable("id") Long id, 
+			Model model,
+			HttpServletRequest request) {
+	 	Tutorial tutorial = tutorialService.getTutorialById(id); 
+	 	tutorial.setLikes(tutorial.getLikes()+1);
+		tutorialService.updateTutorial(tutorial);
+
+		return "redirect:/tutorial/all";
 	}
 	
-	@GetMapping("/dislike")
-	public String dislikeTutorial() {
+	@GetMapping("/dislike/{id}")
+	public String dislikeTutorial(@PathVariable("id") Long id, 
+			Model model,
+			HttpServletRequest request) {
+	 	Tutorial tutorial = tutorialService.getTutorialById(id); 
+	 	tutorial.setDislikes(tutorial.getDislikes()+1);
+		tutorialService.updateTutorial(tutorial);
 		
-		//-1 bei like
-		return "tutorial";
+		return "redirect:/tutorial/all";
 	}
 	
 	@GetMapping("/all")
