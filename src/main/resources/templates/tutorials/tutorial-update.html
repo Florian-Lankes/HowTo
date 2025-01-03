@@ -24,7 +24,17 @@
 	                         </div>
 	                     </div>
 					  </div>   
-					  
+					  <div class="form-row">
+  	                     <div class="form-group col-md-6">
+  	                         <label >Title</label>
+  	                         <textarea type="text" class="form-control" 
+  	                                autofocus="autofocus" th:field="*{content_text}" 
+  	                                th:classappend="${#fields.hasErrors('content_text')} ? 'is-invalid'"></textarea>
+  	                         <div class="invalid-feedback">
+  	                             <span th:errors="*{content_text}"></span>
+  	                         </div>
+  	                     </div>
+  					  </div>   
 	                    
 	                  
 					  <input type="hidden"  th:field="*{likes}"/>

@@ -40,8 +40,8 @@ public class TutorialController {
 	@GetMapping("/{id}")
 	public String getTutorialId(@PathVariable("id") Long id, Model model) {
 		
-		System.out.println(id);
-		model.addAttribute("tutorialid", id );
+		Tutorial tutorial = tutorialService.getTutorialById(id); 
+		model.addAttribute("tutorial", tutorial );
 		return "tutorial";
 	}
 	
@@ -83,7 +83,6 @@ public class TutorialController {
 		tutorial.setId((long) -1); //TODO change dynamically after user authorization is implemented
 		tutorial.setLikes((long) 0);
 		tutorial.setDislikes((long) 0);
-		
 		model.addAttribute("tutorial", tutorial);
 		
 		return "tutorials/tutorial-create";

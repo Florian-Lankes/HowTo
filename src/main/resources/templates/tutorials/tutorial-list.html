@@ -38,7 +38,8 @@
 			<thead class = "table-dark">
 				<tr>
 					<th> Id </th>
-					<th> ChannelId</th>
+					<th> Title</th>
+					<th> Content_text</th>
 					<th> Likes</th>
 					<th> Dislikes</th>
 					<th> Actions </th>
@@ -50,6 +51,7 @@
 				<tr th:each = "element: ${tutorials}">
 					<td th:text = "${element.id}"></td>
 					<td th:text = "${element.title}"></td>
+					<td th:text = "${element.content_text}"></td>
 					<td th:text = "${element.likes}"></td>
 					<td th:text = "${element.dislikes}"></td>
 					<td>
