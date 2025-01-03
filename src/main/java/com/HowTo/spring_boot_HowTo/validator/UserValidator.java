@@ -41,7 +41,6 @@ public class UserValidator implements Validator{
 		
 		if (age<16) {
 			errors.rejectValue("birthDate", "user.birthDate.less16");
-			
 		}
 
 	}
