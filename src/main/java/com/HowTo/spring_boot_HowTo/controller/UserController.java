@@ -25,119 +25,99 @@ import jakarta.validation.Valid;
 @Controller
 @RequestMapping("/user")
 public class UserController {
-	
-	
+
 	private UserServiceI userService;
-	
-	
+
 	public UserController(UserServiceI userService) {
 		super();
 		this.userService = userService;
 	}
-	
+
 	@InitBinder
 	public void initBinder(WebDataBinder binder) {
 		binder.addValidators(new UserValidator());
 	}
-	
-	//TEST
-	
+
 	@GetMapping("/all")
-    public String showUserList(Model model) {
-        
-    	model.addAttribute("users", userService.getAllUsers());
-    	System.out.println(userService.getAllUsers().size() +"*************");
-    	
-        return "/users/user-all";
-    }
-	
-	 @GetMapping("/delete/{id}")
-	    public String deleteUser(@PathVariable("id") long id, Model model, RedirectAttributes redirectAttributes) {
-	        User user = userService.getUserById(id);               
-	        userService.delete(user);
-	        redirectAttributes.addFlashAttribute("deleted", "User deleted!");
-	        return "redirect:/user/all";
-	    }
-	 
-	 @GetMapping("/update/{id}")
-		public String showUpdateUserForm(@PathVariable Long id, 
-				Model model,
-				HttpServletRequest request) {
-		 	User user = userService.getUserById(id); 
-	    	model.addAttribute("user", user);
-			request.getSession().setAttribute("userSession", user);
-			
-			System.out.println("updating user id="+ id);
+	public String showUserList(Model model) {
+
+		model.addAttribute("users", userService.getAllUsers());
+		return "/users/user-all";
+	}
+
+	@GetMapping("/delete/{id}")
+	public String deleteUser(@PathVariable("id") long id, Model model, RedirectAttributes redirectAttributes) {
+		User user = userService.getUserById(id);
+		userService.delete(user);
+		redirectAttributes.addFlashAttribute("deleted", "User deleted!");
+		return "redirect:/user/all";
+	}
+
+	@GetMapping("/update/{id}")
+	public String showUpdateUserForm(@PathVariable Long id, Model model, HttpServletRequest request) {
+		User user = userService.getUserById(id);
+		model.addAttribute("user", user);
+		request.getSession().setAttribute("userSession", user);
+
+		System.out.println("updating user id=" + id);
+		return "/users/user-update";
+	}
+
+	@PostMapping("/update")
+	public String updateUser(@Valid @ModelAttribute("user") User user, BindingResult results, Model model,
+			RedirectAttributes redirectAttributes) {
+
+		if (results.hasErrors()) {
+
 			return "/users/user-update";
 		}
-	    
-	    
-	    @PostMapping("/update")
-		public String updateUser(@Valid @ModelAttribute("user") User user,
-				BindingResult results,
-				Model model, 
-				RedirectAttributes redirectAttributes) {
-			
-					
-			if (results.hasErrors()){
-				
-				return "/users/user-update";
-			}
-	       
-			userService.updateUser(user);
-	        redirectAttributes.addFlashAttribute("updated", "user updated!");
-			return "redirect:/user/all";
-			
-		}
-	
+
+		userService.updateUser(user);
+		redirectAttributes.addFlashAttribute("updated", "user updated!");
+		return "redirect:/user/all";
+
+	}
+
 	@GetMapping("/add")
 	public String showUserAdForm(Model model, HttpServletRequest request) {
-		
+
 		User userForm = new User();
 		userForm.setId((long) -1);
-		LocalDate date= LocalDate.now();
+		LocalDate date = LocalDate.now();
 		userForm.setBirthDate(date);
-		
+
 		request.getSession().setAttribute("userSession", userForm);
 		model.addAttribute("user", userForm);
-				
+
 		return "/users/user-add";
 	}
-	
-    @PostMapping("/add")
-    public String addUser(@Valid @ModelAttribute User user, 
-    		BindingResult result, 
-    		Model model,
-    		RedirectAttributes redirectAttributes) {
-    	System.out.println("In Function");
-    	if (result.hasErrors()) {
-    		System.out.println(result.getAllErrors().toString());
-            return "/users/user-add";
-        }
 
-    	
-    	userService.saveUser(user);
-        redirectAttributes.addFlashAttribute("added", "User added!");
-        
-        return "redirect:/user/all";
-    }
-	
-	
-	
-	
-	//TEST
-	
+	@PostMapping("/add")
+	public String addUser(@Valid @ModelAttribute User user, BindingResult result, Model model,
+			RedirectAttributes redirectAttributes) {
+		System.out.println("In Function");
+		if (result.hasErrors()) {
+			System.out.println(result.getAllErrors().toString());
+			return "/users/user-add";
+		}
+
+		userService.saveUser(user);
+		redirectAttributes.addFlashAttribute("added", "User added!");
+
+		return "redirect:/user/all";
+	}
+
 	@GetMapping("/login")
 	public String showLoginForm() {
 		return "login";
 	}
-	
+
 	@PostMapping("/login/process")
 	public String processLogin(@RequestParam String user, @RequestParam String password) {
-		//TODO: process POST request
+		// TODO: process POST request
 		System.out.println(user);
 		System.out.println(password);
 		return "/home";
 	}
-		
+
 }
