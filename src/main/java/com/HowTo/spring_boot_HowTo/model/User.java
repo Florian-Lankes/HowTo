@@ -1,15 +1,24 @@
 package com.HowTo.spring_boot_HowTo.model;
 
+
+import jakarta.persistence.FetchType;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
+import jakarta.persistence.JoinColumn;
 
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
@@ -31,10 +40,21 @@ public class User implements Serializable{
 	@NotBlank(message = "email is mandatory")
 	private String email;
 	
+	private boolean active = true;
 	
 	@DateTimeFormat(pattern="yyyy-MM-dd")
 	private LocalDate birthDate;
 	
+	@ManyToMany(fetch = FetchType.EAGER)
+	@JoinTable(
+			name="userrole",
+			joinColumns = @JoinColumn(name="iduser"),
+			inverseJoinColumns = @JoinColumn(name="idrole")
+			)	
+	private List<Role> roles = new ArrayList<Role>();
+
+
+
 	@NotBlank(message = "password is mandatory")
 	@Size(min = 5, max = 50, message = "test")
 	private String password;
@@ -45,6 +65,7 @@ public class User implements Serializable{
 	//private boolean isCreator;
 	
 	
+
 	public Long getId() {
 		return id;
 	}
@@ -63,6 +84,14 @@ public class User implements Serializable{
 	public void setEmail(String email) {
 		this.email = email;
 	}
+	public boolean isActive() {
+		return active;
+	}
+
+	public void setActive(boolean active) {
+		this.active = active;
+	}
+
 //	public boolean isAdmin() {
 //		return isAdmin;
 //	}
@@ -75,16 +104,28 @@ public class User implements Serializable{
 //	public void setCreator(boolean isCreator) {
 //		this.isCreator = isCreator;
 //	}
+
 	public LocalDate getBirthDate() {
 		return birthDate;
 	}
 	public void setBirthDate(LocalDate birthDate) {
 		this.birthDate = birthDate;
 	}
+
+	public List<Role> getRoles() {
+		return roles;
+	}
+
+	public void setRoles(List<Role> roles) {
+		this.roles = roles;
+	}
+	
+
 	public String getPassword() {
 		return password;
 	}
 	public void setPassword(String password) {
 		this.password = password;
 	}
+
 }

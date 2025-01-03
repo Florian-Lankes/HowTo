@@ -16,7 +16,7 @@ public class AdminController {
 		return "/admin/admin";
 	}
 	
-	@GetMapping("/reports")
+	@GetMapping("/admin/reports")
 	public String HowToReportsView(Model model) {
 		
 		
