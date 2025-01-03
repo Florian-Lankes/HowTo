@@ -28,7 +28,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 
 @Controller
-@RequestMapping("/user")
 public class UserController {
 
 	private UserServiceI userService;
@@ -43,7 +42,7 @@ public class UserController {
 		binder.addValidators(new UserValidator());
 	}
 
-	@GetMapping(value = {"", "/all"})
+	@GetMapping(value = {"/user", "/user/all"})
 	public String showUserList(Model model, @RequestParam(required = false) String keyword,
 			@RequestParam(required = false, defaultValue = "1") int page, @RequestParam(required = false,
 			defaultValue = "5") int size) {
@@ -74,7 +73,7 @@ public class UserController {
 		return "/users/user-all";
 	}
 
-	@GetMapping("/delete/{id}")
+	@GetMapping("/user/delete/{id}")
 	public String deleteUser(@PathVariable("id") long id, Model model, RedirectAttributes redirectAttributes) {
 		User user = userService.getUserById(id);
 		userService.delete(user);
@@ -82,7 +81,7 @@ public class UserController {
 		return "redirect:/user/all";
 	}
 
-	@GetMapping("/update/{id}")
+	@GetMapping("/user/update/{id}")
 	public String showUpdateUserForm(@PathVariable Long id, Model model, HttpServletRequest request) {
 		User user = userService.getUserById(id);
 		model.addAttribute("user", user);
@@ -92,7 +91,7 @@ public class UserController {
 		return "/users/user-update";
 	}
 
-	@PostMapping("/update")
+	@PostMapping("/user/update")
 	public String updateUser(@Valid @ModelAttribute("user") User user, BindingResult results, Model model,
 			RedirectAttributes redirectAttributes) {
 
@@ -107,7 +106,7 @@ public class UserController {
 
 	}
 
-	@GetMapping("/add")
+	@GetMapping("/user/add")
 	public String showUserAdForm(Model model, HttpServletRequest request) {
 
 		User userForm = new User();
@@ -121,7 +120,7 @@ public class UserController {
 		return "/users/user-add";
 	}
 
-	@PostMapping("/add")
+	@PostMapping("/user/add")
 	public String addUser(@Valid @ModelAttribute User user, BindingResult result, Model model,
 			RedirectAttributes redirectAttributes) {
 		System.out.println("In Function");
@@ -135,18 +134,47 @@ public class UserController {
 
 		return "redirect:/user/all";
 	}
+	
+	@GetMapping("/")
+	public String showUserRegisterForm(Model model, HttpServletRequest request) {
 
-	@GetMapping("/login")
-	public String showLoginForm() {
-		return "login";
+		User userForm = new User();
+		userForm.setId((long) -1);
+		LocalDate date = LocalDate.now();
+		userForm.setBirthDate(date);
+
+		request.getSession().setAttribute("userSession", userForm);
+		model.addAttribute("user", userForm);
+
+		return "/register";
 	}
 
-	@PostMapping("/login/process")
-	public String processLogin(@RequestParam String user, @RequestParam String password) {
-		// TODO: process POST request
-		System.out.println(user);
-		System.out.println(password);
-		return "/home";
+	@PostMapping("/register")
+	public String registerUser(@Valid @ModelAttribute User user, BindingResult result, Model model,
+			RedirectAttributes redirectAttributes) {
+		System.out.println("In Function");
+		if (result.hasErrors()) {
+			System.out.println(result.getAllErrors().toString());
+			return "/register";
+		}
+
+		userService.saveUser(user);
+		redirectAttributes.addFlashAttribute("added", "User added!");
+
+		return "redirect:/home";
 	}
+
+//	@GetMapping("/login")
+//	public String showLoginForm() {
+//		return "login";
+//	}
+//
+//	@PostMapping("/login/process")
+//	public String processLogin(@RequestParam String user, @RequestParam String password) {
+//		// TODO: process POST request
+//		System.out.println(user);
+//		System.out.println(password);
+//		return "/home";
+//	}
 
 }

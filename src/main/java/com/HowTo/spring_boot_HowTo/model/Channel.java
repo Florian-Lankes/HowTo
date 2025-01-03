@@ -28,7 +28,7 @@ public class Channel implements Serializable{
 	private String channelname;
 	
 	@NotBlank(message = "Description is mandatory")
-	@Size(min = 0, max = 500, message = "{jakarta.validation.constraints.Size}")
+	@Size(min = 5, max = 500, message = "{jakarta.validation.constraints.Size}")
 	private String description;
 	
 	@DateTimeFormat(pattern="yyyy-MM-dd")

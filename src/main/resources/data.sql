@@ -12,17 +12,22 @@ INSERT INTO CHANNEL (userid, channelname, description, creation_date) VALUES (5,
 
 INSERT INTO role (description) VALUES ('ADMIN');
 INSERT INTO role (description) VALUES ('CREATOR');
+INSERT INTO role (description) VALUES ('USER');
 
-INSERT INTO authority (description) VALUES ('ADMIN_DASHBOARD');
-INSERT INTO authority (description) VALUES ('LIST_STUDENT');
-INSERT INTO authority (description) VALUES ('REGISTRATION');
+INSERT INTO authority (description) VALUES ('ADMIN_RIGHTS');
+INSERT INTO authority (description) VALUES ('CREATOR_RIGHTS');
+INSERT INTO authority (description) VALUES ('VIEW');
 
 
 INSERT INTO userrole(iduser, idrole) VALUES (1,1);
 INSERT INTO userrole(iduser, idrole) VALUES (1,2);
 INSERT INTO userrole(iduser, idrole) VALUES (2,2);
+INSERT INTO userrole(iduser, idrole) VALUES (3,3);
  
 
 INSERT INTO roleauthority(idrole, idauthority) VALUES (1,1);
+INSERT INTO roleauthority(idrole, idauthority) VALUES (1,2);
 INSERT INTO roleauthority(idrole, idauthority) VALUES (1,3);
 INSERT INTO roleauthority(idrole, idauthority) VALUES (2,2);
+INSERT INTO roleauthority(idrole, idauthority) VALUES (2,3);
+INSERT INTO roleauthority(idrole, idauthority) VALUES (3,3);

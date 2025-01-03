@@ -17,7 +17,7 @@
 		    <div class="collapse navbar-collapse" id="navbarColor01">
 		      <ul class="navbar-nav me-auto">
 		        <li class="nav-item">
-		          <a class="nav-link active" href="/">Home
+		          <a class="nav-link active" href="/home">Home
 		            <span class="visually-hidden">(current)</span>
 		          </a>
 		        </li>
@@ -41,6 +41,10 @@
 		          </div>
 		        </li>
 		      </ul>
+			  <a class="btn btn-primary btn-md" th:href="@{/logout}" role="button">
+			  	                    <span class="oi oi-spreadsheet" title="User Registration" aria-hidden="true"></span>
+			  	                    <span>Logout</span>
+			  	                </a>
 		      <form class="d-flex">
 		        <input class="form-control me-sm-2" type="search" placeholder="Search">
 		        <button class="btn btn-secondary my-2 my-sm-0" type="submit">Search</button>
