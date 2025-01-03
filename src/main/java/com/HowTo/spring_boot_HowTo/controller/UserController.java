@@ -7,6 +7,7 @@ import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -20,12 +21,16 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.HowTo.spring_boot_HowTo.config.MyUserDetails;
 import com.HowTo.spring_boot_HowTo.model.User;
 import com.HowTo.spring_boot_HowTo.service.UserServiceI;
 import com.HowTo.spring_boot_HowTo.validator.UserValidator;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
+
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 @Controller
 public class UserController {
@@ -42,32 +47,40 @@ public class UserController {
 		binder.addValidators(new UserValidator());
 	}
 
-	@GetMapping(value = {"/user", "/user/all"})
+	private Long getCurrentUserId() {
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		if (authentication == null || !authentication.isAuthenticated()
+				|| authentication.getPrincipal() instanceof String) {
+			throw new IllegalStateException("User is not authenticated");
+		}
+		MyUserDetails userDetails = (MyUserDetails) authentication.getPrincipal();
+		return userDetails.getId();
+	}
+
+	@GetMapping(value = { "/user", "/user/all" })
 	public String showUserList(Model model, @RequestParam(required = false) String keyword,
-			@RequestParam(required = false, defaultValue = "1") int page, @RequestParam(required = false,
-			defaultValue = "5") int size) {
+			@RequestParam(required = false, defaultValue = "1") int page,
+			@RequestParam(required = false, defaultValue = "5") int size) {
 		try {
-			
 			List<User> users = new ArrayList<User>();
 
-			 //the first page is 1 for the user, 0 for the database.
-			 Pageable paging = PageRequest.of(page - 1, size);
-			 Page<User> pageUsers;
-			 //getting the page from the database….
-			 pageUsers = userService.getAllUsers(keyword, paging);
+			// the first page is 1 for the user, 0 for the database.
+			Pageable paging = PageRequest.of(page - 1, size);
+			Page<User> pageUsers;
+			// getting the page from the database….
+			pageUsers = userService.getAllUsers(keyword, paging);
 
-			 model.addAttribute("keyword", keyword);
+			model.addAttribute("keyword", keyword);
 
-			 users = pageUsers.getContent();
-			 model.addAttribute("users", users);
-			 //here are the variables for the paginator in the user-all view
-			 model.addAttribute("entitytype", "user");
-			 model.addAttribute("currentPage", pageUsers.getNumber() + 1);
-			 model.addAttribute("totalItems", pageUsers.getTotalElements());
-			 model.addAttribute("totalPages", pageUsers.getTotalPages());
-			 model.addAttribute("pageSize", size);
-			 
-		} catch (Exception e){
+			users = pageUsers.getContent();
+			model.addAttribute("users", users);
+			// here are the variables for the paginator in the user-all view
+			model.addAttribute("entitytype", "user");
+			model.addAttribute("currentPage", pageUsers.getNumber() + 1);
+			model.addAttribute("totalItems", pageUsers.getTotalElements());
+			model.addAttribute("totalPages", pageUsers.getTotalPages());
+			model.addAttribute("pageSize", size);
+		} catch (Exception e) {
 			model.addAttribute("message", e.getMessage());
 		}
 		return "/users/user-all";
@@ -94,7 +107,6 @@ public class UserController {
 	@PostMapping("/user/update")
 	public String updateUser(@Valid @ModelAttribute("user") User user, BindingResult results, Model model,
 			RedirectAttributes redirectAttributes) {
-
 		if (results.hasErrors()) {
 
 			return "/users/user-update";
@@ -108,12 +120,10 @@ public class UserController {
 
 	@GetMapping("/user/add")
 	public String showUserAdForm(Model model, HttpServletRequest request) {
-
 		User userForm = new User();
 		userForm.setId((long) -1);
 		LocalDate date = LocalDate.now();
 		userForm.setBirthDate(date);
-
 		request.getSession().setAttribute("userSession", userForm);
 		model.addAttribute("user", userForm);
 
@@ -124,6 +134,7 @@ public class UserController {
 	public String addUser(@Valid @ModelAttribute User user, BindingResult result, Model model,
 			RedirectAttributes redirectAttributes) {
 		System.out.println("In Function");
+
 		if (result.hasErrors()) {
 			System.out.println(result.getAllErrors().toString());
 			return "/users/user-add";
@@ -134,7 +145,7 @@ public class UserController {
 
 		return "redirect:/user/all";
 	}
-	
+
 	@GetMapping("/")
 	public String showUserRegisterForm(Model model, HttpServletRequest request) {
 
