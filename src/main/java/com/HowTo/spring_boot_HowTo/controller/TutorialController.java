@@ -37,7 +37,7 @@ public class TutorialController {
 		binder.addValidators(new TutorialValidator());
 	}
 	
-	@GetMapping("/{id}")
+	@GetMapping("/view/{id}")
 	public String getTutorialId(@PathVariable("id") Long id, Model model) {
 		
 		Tutorial tutorial = tutorialService.getTutorialById(id); 

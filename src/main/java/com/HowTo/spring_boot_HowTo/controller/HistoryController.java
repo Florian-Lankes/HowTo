@@ -56,7 +56,7 @@ public class HistoryController {
 		Timestamp currentTimestamp = new Timestamp(System.currentTimeMillis());
 		history.setTime(currentTimestamp);
 		historyService.saveHistory(history);
-		return "redirect:/tutorial/{tutorialid}";
+		return "redirect:/tutorial/view/{tutorialid}";
 	}
 	
 	@GetMapping("/delete/{id}")
