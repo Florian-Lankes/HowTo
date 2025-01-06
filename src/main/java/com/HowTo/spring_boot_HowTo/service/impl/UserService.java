@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.HowTo.spring_boot_HowTo.model.User;
@@ -17,10 +19,23 @@ public class UserService implements UserServiceI{
 	UserRepositoryI userRepository;
 	
 	
+//	@Override
+//	public List<User> getAllUsers() {
+//		// TODO Auto-generated method stub
+//		return userRepository.findAll();
+//	}
+		
 	@Override
-	public List<User> getAllUsers() {
+	public Page<User> getAllUsers(String username, Pageable pageable) {
 		// TODO Auto-generated method stub
-		return userRepository.findAll();
+		Page <User> pageUsers;
+		if (username == null) {
+			pageUsers = userRepository.findAll(pageable);
+		 } else {
+			 pageUsers = userRepository.findByUsernameContainingIgnoreCase(username, pageable);
+	
+		 }
+		return pageUsers;
 	}
 
 	@Override
@@ -48,6 +63,12 @@ public class UserService implements UserServiceI{
 		// TODO Auto-generated method stub
 		userRepository.delete(user);
 		
+	}
+
+	@Override
+	public List<User> findUserByName(String name) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

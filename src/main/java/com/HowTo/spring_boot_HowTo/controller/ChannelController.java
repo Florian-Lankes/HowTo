@@ -1,8 +1,14 @@
  package com.HowTo.spring_boot_HowTo.controller;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -13,8 +19,10 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.HowTo.spring_boot_HowTo.config.MyUserDetails;
 import com.HowTo.spring_boot_HowTo.model.Channel;
 import com.HowTo.spring_boot_HowTo.service.ChannelServiceI;
 import com.HowTo.spring_boot_HowTo.validator.ChannelValidator;
@@ -39,12 +47,22 @@ public class ChannelController {
 		binder.addValidators(new ChannelValidator());
 	}
 	
+	private Long getCurrentUserId() {
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		if (authentication == null || !authentication.isAuthenticated()
+				|| authentication.getPrincipal() instanceof String) {
+			throw new IllegalStateException("User is not authenticated");
+		}
+		MyUserDetails userDetails = (MyUserDetails) authentication.getPrincipal();
+		return userDetails.getId();
+	}
+	
 	//CREATE
 	@GetMapping("/create")
 	public String showChannelAdForm(Model model, HttpServletRequest request) {
 		
 		Channel channelForm = new Channel();
-		channelForm.setUserid((long) -1); //TODO change dynamically after user authorization is implemented
+		channelForm.setUserid(getCurrentUserId()); //TODO change dynamically after channel authorization is implemented
 		LocalDate date= LocalDate.now();
 		channelForm.setCreationDate(date);
 		
@@ -72,13 +90,34 @@ public class ChannelController {
         return "redirect:/channel/all";
     }
     
-    //GETALL
-    @GetMapping("/all")
-	public String showChannelList(Model model) {
-		
-    	List<Channel> AllChannels = channelService.getAllChannels();
-		model.addAttribute("channels", AllChannels);
-				
+	@GetMapping(value = {"", "/all"})
+	public String showChannelList(Model model, @RequestParam(required = false) String keyword,
+			@RequestParam(required = false, defaultValue = "1") int page, @RequestParam(required = false,
+			defaultValue = "5") int size) {
+		try {
+			
+			List<Channel> channels = new ArrayList<Channel>();
+
+			 //the first page is 1 for the channel, 0 for the database.
+			 Pageable paging = PageRequest.of(page - 1, size);
+			 Page<Channel> pageChannel;
+			 //getting the page from the database….
+			 pageChannel = channelService.getAllChannels(keyword, paging);
+
+			 model.addAttribute("keyword", keyword);
+
+			 channels = pageChannel.getContent();
+			 model.addAttribute("channels", channels);
+			 //here are the variables for the paginator in the channel-all view
+			 model.addAttribute("entitytype", "channel");
+			 model.addAttribute("currentPage", pageChannel.getNumber() + 1);
+			 model.addAttribute("totalItems", pageChannel.getTotalElements());
+			 model.addAttribute("totalPages", pageChannel.getTotalPages());
+			 model.addAttribute("pageSize", size);
+			 
+		} catch (Exception e){
+			model.addAttribute("message", e.getMessage());
+		}
 		return "/channels/channel-list";
 	}
     
