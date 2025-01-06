@@ -1,6 +1,5 @@
 package com.HowTo.spring_boot_HowTo.service.impl;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -49,8 +48,7 @@ public class HistoryService implements HistoryServiceI{
 
 	@Override
 	public List<History> getAllHistoryFromUser(Long userid) {
-		List<Long> ids = Collections.singletonList(userid);
-		return historyRepository.findAllById(ids);
+		return historyRepository.findByUserId(userid);
 	}
 
 }
