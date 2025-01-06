@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/springsecurity6">
   <head>
   
 	   
@@ -17,22 +17,22 @@
 		    <div class="collapse navbar-collapse" id="navbarColor01">
 		      <ul class="navbar-nav me-auto">
 		        <li class="nav-item">
-		          <a class="nav-link active" href="/">Home
+		          <a class="nav-link active" href="/home">Home
 		            <span class="visually-hidden">(current)</span>
 		          </a>
 		        </li>
-		        <li class="nav-item">
+		        <li sec:authorize="hasAuthority('ADMIN_RIGHTS')" class="nav-item">
 		          <a class="nav-link" href="/user/all">User</a>
 		        </li>
 		        <li class="nav-item">
 		          <a class="nav-link" href="/channel/all">Channel</a>
 		        </li>
 		        <li class="nav-item">
-		          <a class="nav-link" href="#">point4</a>
+		          <a class="nav-link" href="/tutorial/all">Tutorial</a>
 		        </li>
-		        <li class="nav-item dropdown">
+		        <li  sec:authorize="hasAuthority('ADMIN_RIGHTS')"  class="nav-item dropdown">
 		          <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Dropdown</a>
-		          <div class="dropdown-menu">
+		          <div  class="dropdown-menu">
 		            <a class="dropdown-item" href="#">Action</a>
 		            <a class="dropdown-item" href="#">Another action</a>
 		            <a class="dropdown-item" href="#">Something else here</a>

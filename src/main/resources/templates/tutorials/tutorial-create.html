@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html layout:decorate="~{layout}">
+<head><meta charset="UTF-8" /></head>
+
+<body>
+	<section class="layout-content" layout:fragment="mybody">
+			
+
+	        <div class="container">
+	        
+	        	        
+	            <form th:action="@{/tutorial/upload}" 
+	                  th:object="${tutorial}" method="POST">
+	                  
+	                
+					  <div class="form-row">
+	                     <div class="form-group col-md-6">
+	                         <label >Title</label>
+	                         <input type="text" class="form-control" 
+	                                autofocus="autofocus" th:field="*{title}" placeholder="Mein RTL"
+	                                th:classappend="${#fields.hasErrors('title')} ? 'is-invalid'" />
+	                         <div class="invalid-feedback">
+	                             <span th:errors="*{title}"></span>
+	                         </div>
+	                     </div>
+						 	<div class="form-group">
+ 			  					<label>Beschreibung</label>
+ 			  					<textarea class="form-control" th:field="*{content_text}" th:classappend="${#fields.hasErrors('content_text')} ? 'is-invalid'" rows="3"></textarea>
+ 			  				</div>
+ 							<div class="invalid-feedback">
+                             	<span th:errors="*{content_text}"></span>
+                         	</div>		
+					  	</div>   
+					  	
+	                  
+					  <input type="hidden"  th:field="*{likes}"/>
+					  <input type="hidden"  th:field="*{dislikes}"/>
+
+					<button type="submit" class="btn btn-primary btn-sm">Upload</button>
+	            </form>
+	        </div>
+
+		
+	</section>		
+</body>
+</html>

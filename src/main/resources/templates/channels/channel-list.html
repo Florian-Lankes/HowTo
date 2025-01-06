@@ -1,100 +1,160 @@
 <!DOCTYPE html>
 <html layout:decorate="~{layout}">
+
 <head>
-<meta charset="ISO-8859-1">
-<title>Management System - Add User</title> <!--maybe change later-->
+	<meta charset="ISO-8859-1">
+	<title>Management System - Add Channel</title> <!--maybe change later-->
 
-<script type="text/javascript">
+	<script type="text/javascript">
 
-	$(document).ready(function () {
-	 
-	window.setTimeout(function() {
-	    $(".alert").fadeTo(1000, 0).slideUp(1000, function(){
-	        $(this).remove(); 
-	    });
-	}, 5000);
-	 
-	});
- </script>
+		$(document).ready(function () {
+
+			window.setTimeout(function () {
+				$(".alert").fadeTo(1000, 0).slideUp(1000, function () {
+					$(this).remove();
+				});
+			}, 5000);
+
+		});
+	</script>
 
 
 </head>
+
 <body>
 
-<section class="layout-content" layout:fragment="mybody">
-	
-	        <div class="page-header">
-	            <nav class="navbar navbar-expand-md navbar-top bg-light">
-	                <div class="collapse navbar-collapse" id="navbarsExampleDefault">
-	                    <ul class="navbar-nav">
-	                        <li class="nav-item active">
-	                            <i class="oi oi-caret-right"></i>
-	                            <span>List Channels</span>
-	                        </li>
-	                    </ul>
-	                </div>
-	                
-	            </nav>
-	        </div>
-	
-	
-		<div class="container" id="registration">
-	
-		<!--<div th:replace="~{fragments/alert::alert}">
-		</div>	
-		-->
-  	
-		<div class = "row">
-			<div class = "col-lg-3">
-				<a th:href = "@{/channel/create}" class = "btn btn-primary btn-sm mb-3">Create Channel</a>
+	<section class="layout-content" layout:fragment="mybody">
+		<div class="page-header">
+			<nav class="navbar navbar-expand-md navbar-top bg-light">
+				<div class="collapse navbar-collapse" id="navbarsExampleDefault">
+					<ul class="navbar-nav">
+						<li class="nav-item active">
+							<i class="oi oi-caret-right"></i>
+							<span>List Channels</span>
+						</li>
+					</ul>
+				</div>
+
+			</nav>
+		</div>
+		<div class="container" id="channelmessages">
+			<div th:replace="~{fragments/alert::alert}">
 			</div>
-		</div>
-		
-		<div th:unless="${channels.size() > 0}" style="width: 80%">
-  			<span>No channels found!</span>
-		</div>
-		
-		
-		<table class = "table table-striped table-bordered" th:unless="${channels.size()<1}" style="width: 80%">
-			<thead class = "table-dark">
-				<tr>
-					<th> Userid </th>
-					<th> Channelname</th>
-					<th> Description </th>
-					<th> Creation Date </th>
-					<th> Actions </th>
-				</tr>
-			</thead>
-			
-			<tbody>
-				<tr th:each = "channel: ${channels}">
-					<td th:text = "${channel.userid}"></td>
-					<td th:text = "${channel.channelname}"></td>
-					<td th:text = "${channel.description}"></td>
-					<td th:text = "${channel.creationDate}"></td>
-					<td>
-						<a th:href = "@{/channel/update/{id}(id=${channel.userid})}"
-						 class = "btn btn-primary"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pen" viewBox="0 0 16 16">
-  							<path d="m13.498.795.149-.149a1.207 1.207 0 1 1 1.707 1.708l-.149.148a1.5 1.5 0 0 1-.059 2.059L4.854 14.854a.5.5 0 0 1-.233.131l-4 1a.5.5 0 0 1-.606-.606l1-4a.5.5 0 0 1 .131-.232l9.642-9.642a.5.5 0 0 0-.642.056L6.854 4.854a.5.5 0 1 1-.708-.708L9.44.854A1.5 1.5 0 0 1 11.5.796a1.5 1.5 0 0 1 1.998-.001zm-.644.766a.5.5 0 0 0-.707 0L1.95 11.756l-.764 3.057 3.057-.764L14.44 3.854a.5.5 0 0 0 0-.708l-1.585-1.585z"/>
-							</svg></a>
-						
-						
-						<a th:href = "@{/channel/delete/{id}(id=${channel.userid})}"
-						 class = "btn btn-danger"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
-						  <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/>
-						  <path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"/>
-						</svg></a>
-						
-					</td>
-					
-					
-					
-				</tr>
-			</tbody>
-		
-		</table>
-		
+			<div class="row">
+				<div class="col-lg-3">
+					<a th:href="@{/channel/create}" class="btn btn-primary btn-sm mb-3"> Add Channel</a>
+				</div>
+			</div>
+			<div th:unless="${channels.size() > 0}" style="width: 90%">
+				<span>No Channels found!</span>
+			</div>
+			<!-- 2o part: search form -->
+			<div>
+				<form th:action="@{/channel/all}" id="searchForm" method="get">
+					<div class="row d-flex">
+						<div class="col-md-6 mt-2">
+							<div class="search">
+								<i class="fa fa-search"></i>
+								Channelname: <input id="keyword" type="search" name="keyword" th:value="${keyword}"
+									class="form-control" placeholder="Enter keyword">
+
+							</div>
+						</div>
+						<div class="col-md-3 input-group mt-2">
+							<div class="input-group-prepend">
+								<label class="input-group-text" for="pageSize">Items per page:</label>
+							</div>
+							<select form="searchForm" name="size" th:value="${pageSize}" onchange="changePageSize()"
+								class="size-select" id="pageSize">
+								<option th:each="s : ${ {3, 6, 9} }" th:value="${s}" th:text="${s}"
+									th:selected="${s == pageSize}"></option>
+							</select>
+						</div>
+
+						<div><button type="submit" class="btn btn-secondary">Search</button></div>
+
+					</div>
+				</form>
+			</div>
+
+			<!-- 3o part: the table with the list of students, by default, it has the first 5 students -->
+			<br><br>
+			<table class="table table-striped table-bordered" th:unless="${channels.size()<1}" style="width: 90%">
+				<thead class="table-dark">
+					<tr>
+						<th> Userid</th>
+						<th> Channelname</th>
+						<th> Description </th>
+						<th> Creation Date </th>
+						<th> Actions </th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr th:each="channel: ${channels}">
+						<td th:text="${channel.userid}"></td>
+						<td th:text="${channel.channelname}"></td>
+						<td th:text="${channel.description}"></td>
+						<td th:text="${channel.creationDate}"></td>
+						<td>
+							<a th:href="@{/channel/update/{id}(id=${channel.userid})}" class="btn btn-primary"><svg
+									xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+									class="bi bi-pen" viewBox="0 0 16 16">
+									<path
+										d="m13.498.795.149-.149a1.207 1.207 0 1 1 1.707 1.708l-.149.148a1.5 1.5 0 0 1-.059 2.059L4.854 14.854a.5.5 0 0 1-.233.131l-4 1a.5.5 0 0 1-.606-.606l1-4a.5.5 0 0 1 .131-.232l9.642-9.642a.5.5 0 0 0-.642.056L6.854 4.854a.5.5 0 1 1-.708-.708L9.44.854A1.5 1.5 0 0 1 11.5.796a1.5 1.5 0 0 1 1.998-.001zm-.644.766a.5.5 0 0 0-.707 0L1.95 11.756l-.764 3.057 3.057-.764L14.44 3.854a.5.5 0 0 0 0-.708l-1.585-1.585z" />
+								</svg></a>
+
+
+							<a th:href="@{/channel/delete/{id}(id=${channel.userid})}" class="btn btn-danger"><svg
+									xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+									class="bi bi-trash" viewBox="0 0 16 16">
+									<path
+										d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z" />
+									<path fill-rule="evenodd"
+										d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z" />
+								</svg></a>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+
+			<!-- 4th part : the paginator component -->
+			<nav aria-label="Pagination" th:if="${totalPages > 0}">
+				<ul class="pagination justify-content-center">
+					<li class="page-item" th:classappend="${currentPage == 1} ? 'disabled'">
+						<a th:replace="~{fragments/paging :: paging(1, '<<', 'First Page', 'channel/all')}"></a>
+
+					</li>
+					<li class="page-item font-weight-bold" th:classappend="${currentPage == 1} ? 'disabled'">
+						<a th:replace="~{fragments/paging :: paging(${currentPage - 1}, 'Prev', 'Previous Page', 'channel/all')}"></a>
+					</li>
+					<li class="page-item disabled" th:if="${currentPage - 2 > 1}">
+						<a class="page-link" href="#">...</a>
+					</li>
+					<li class="page-item" th:classappend="${page == currentPage} ? 'active'" th:each="page : ${#numbers.sequence(currentPage > 2 ? currentPage - 2 : 1, currentPage + 2 < totalPages ?
+		 				currentPage + 2 : totalPages)}">
+						<a th:replace="~{fragments/paging :: paging(${page}, ${page}, 'Page ' + ${page}, 'channel/all')}"></a>
+					</li>
+					<li class="page-item disabled" th:if="${currentPage + 2 < totalPages}">
+						<a class="page-link" href="#">...</a>
+					</li>
+					<li class="page-item font-weight-bold" th:classappend="${currentPage == totalPages} ? 'disabled'">
+						<a th:replace="~{fragments/paging :: paging(${currentPage + 1},'Next', 'Next Page', 'channel/all')}"></a>
+					</li>
+					<li class="page-item" th:classappend="${currentPage == totalPages} ? 'disabled'">
+						<a th:replace="~{fragments/paging :: paging(${totalPages}, '>>', 'Last Page', 'channel/all')}"></a>
+					</li>
+				</ul>
+			</nav>
+			<br><br>
 		</div> <!--container-->
-</section>	
+	</section>
+
+	<!—End of Table and Pagination Bar -->
+		<script type="text/javascript">
+			function changePageSize() {
+				$("#searchForm").submit();
+			}
+		</script>
 </body>
+
 </html>

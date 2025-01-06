@@ -17,6 +17,7 @@ public class Tutorial implements Serializable{
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	
+	@NotBlank(message = "Title is mandatory")
 	@Size(min = 5, max = 50, message = "{jakarta.validation.constraints.Size}")
 	private String title;
 	

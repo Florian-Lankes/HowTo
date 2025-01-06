@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html layout:decorate="~{layout}">
+<head><meta charset="UTF-8" /></head>
+
+<body>
+	<section class="layout-content" layout:fragment="mybody">
+			
+
+	        <div class="container">
+	        
+	        	        
+	            <form th:action="@{/tutorial/update}" 
+	                  th:object="${tutorial}" method="POST">
+	                  
+	                
+					  <div class="form-row">
+	                     <div class="form-group col-md-6">
+	                         <label >Title</label>
+	                         <input type="text" class="form-control" 
+	                                autofocus="autofocus" th:field="*{title}" 
+	                                th:classappend="${#fields.hasErrors('title')} ? 'is-invalid'" />
+	                         <div class="invalid-feedback">
+	                             <span th:errors="*{title}"></span>
+	                         </div>
+	                     </div>
+					  </div>   
+					  <div class="form-row">
+  	                     <div class="form-group col-md-6">
+  	                         <label >Title</label>
+  	                         <textarea type="text" class="form-control" 
+  	                                autofocus="autofocus" th:field="*{content_text}" 
+  	                                th:classappend="${#fields.hasErrors('content_text')} ? 'is-invalid'"></textarea>
+  	                         <div class="invalid-feedback">
+  	                             <span th:errors="*{content_text}"></span>
+  	                         </div>
+  	                     </div>
+  					  </div>   
+	                    
+	                  
+					  <input type="hidden"  th:field="*{likes}"/>
+					  <input type="hidden"  th:field="*{dislikes}"/>
+					  <input type="hidden"  th:field="*{id}"/>
+
+					<button type="submit" class="btn btn-primary btn-sm">Update</button>
+	            </form>
+	        </div>
+
+		
+	</section>		
+</body>
+</html>

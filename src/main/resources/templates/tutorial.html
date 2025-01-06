@@ -5,11 +5,13 @@
 <body>
 	<section class="layout-content" layout:fragment="mybody">
 			
-		This is Tutorial!
-		<p>TutorialID : <span th:text="${tutorialid}"></span></p>
-		<br>
-		<br>
-		<br>		
+		<div class="container">
+			<p th:text = ${tutorial.title}></p>
+			<div class="content">
+				<p th:text = ${tutorial.content_text}></p>
+			</div>
+		</div>
+		
 	</section>		
 </body>
 </html>
