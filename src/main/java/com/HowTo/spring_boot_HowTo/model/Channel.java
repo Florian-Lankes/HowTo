@@ -21,7 +21,7 @@ public class Channel implements Serializable{
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long userid;
+	private Long channelId;
 	
 	@NotBlank(message = "Name is mandatory")
 	@Size(min = 5, max = 50, message = "{jakarta.validation.constraints.Size}")
@@ -34,12 +34,12 @@ public class Channel implements Serializable{
 	@DateTimeFormat(pattern="yyyy-MM-dd")
 	private LocalDate creationDate;
 
-	public Long getUserid() {
-		return userid;
+	public Long getChannelId() {
+		return channelId;
 	}
 
-	public void setUserid(Long userid) {
-		this.userid = userid;
+	public void setChannelId(Long channelId) {
+		this.channelId = channelId;
 	}
 
 	public String getChannelname() {
