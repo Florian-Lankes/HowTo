@@ -19,8 +19,10 @@ private static final long serialVersionUID = 1L;
 	
 	private Long TutorialId;
 	
+	private Long UserId;
+	
 	private Timestamp time;
-
+	
 	public Long getTutorialId() {
 		return TutorialId;
 	}
@@ -36,4 +38,21 @@ private static final long serialVersionUID = 1L;
 	public void setTime(Timestamp time) {
 		this.time = time;
 	}
+
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
+
+	public Long getUserId() {
+		return UserId;
+	}
+
+	public void setUserId(Long userId) {
+		UserId = userId;
+	}
+
 }
