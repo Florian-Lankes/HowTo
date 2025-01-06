@@ -1,5 +1,7 @@
 package com.HowTo.spring_boot_HowTo.service.impl;
 
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -10,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import com.HowTo.spring_boot_HowTo.model.User;
 import com.HowTo.spring_boot_HowTo.repository.UserRepositoryI;
+import com.HowTo.spring_boot_HowTo.repository.RoleRepositoryI;
 import com.HowTo.spring_boot_HowTo.service.UserServiceI;
 
 @Service
@@ -17,7 +20,8 @@ public class UserService implements UserServiceI{
 
 	@Autowired
 	UserRepositoryI userRepository;
-	
+	@Autowired
+	RoleRepositoryI roleRepository;
 	
 //	@Override
 //	public List<User> getAllUsers() {
@@ -41,6 +45,7 @@ public class UserService implements UserServiceI{
 	@Override
 	public User saveUser(User user) {
 		// TODO Auto-generated method stub
+		user.setRoles(Collections.singletonList(roleRepository.findByDescription("USER")));
 		return userRepository.save(user);
 	}
 
