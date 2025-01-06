@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html layout:decorate="~{layout}">
+<head><meta charset="UTF-8" /></head>
+
+<body>
+	<section class="layout-content" layout:fragment="mybody">
+			
+	        <div class="page-header">
+	            <nav class="navbar navbar-expand-md navbar-top bg-light">
+	                <div class="collapse navbar-collapse" id="navbarsExampleDefault">
+	                    <ul class="navbar-nav">
+	                        <li class="nav-item active">
+	                            <i class="oi oi-caret-right"></i>
+	                            <span>Create Group</span>
+	                        </li>
+	                    </ul>
+	                </div>
+	            </nav>
+	        </div>
+	
+	        <div class="container" id="registration">
+
+		
+				<form th:action="@{/group/create}"
+				                 th:object="${group}" method="POST">
+							  
+					 <div class="form-row">
+ 	                     <div class="form-group col-md-6">
+ 	                         <label for="name">Groupname</label>
+ 	                         <input type="text" class="form-control" id="name" placeholder="Groupname"
+ 	                                autofocus="autofocus" th:field="*{name}" 
+ 	                                th:classappend="${#fields.hasErrors('name')} ? 'is-invalid'" />
+ 	                         <div class="invalid-feedback">
+ 	                             <span th:errors="*{name}"></span>
+ 	                         </div>
+ 	                     </div>
+ 	                 </div>  
+
+					 <div class="form-row">
+					     <div class="form-group col-md-6">
+					             <label for="description">Description</label>
+					             <input type="text" class="form-control" id="description" placeholder="Description"
+					                    th:field="*{description}" 
+					                    th:classappend="${#fields.hasErrors('description')} ? 'is-invalid'" />
+					             <div class="invalid-feedback">
+					 				<span th:errors="*{description}"></span>
+					             </div>
+					      </div>
+					     
+					 </div>
+
+					 <input type="hidden" id="creationDate" th:field="*{creationDate}"/>
+					 <input type="hidden" id="id" th:field="*{id}"/>
+	               <button type="submit" class="btn btn-primary btn-sm">Create</button>
+	           </form>
+	        </div>
+
+		
+	</section>		
+</body>
+</html>

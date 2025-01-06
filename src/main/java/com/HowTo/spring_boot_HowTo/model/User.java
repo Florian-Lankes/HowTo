@@ -4,7 +4,8 @@ package com.HowTo.spring_boot_HowTo.model;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
-
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -18,6 +19,7 @@ import jakarta.persistence.JoinColumn;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.springframework.format.annotation.DateTimeFormat;
@@ -53,7 +55,11 @@ public class User implements Serializable{
 			)	
 	private List<Role> roles = new ArrayList<Role>();
 
-
+	@ManyToMany(cascade = CascadeType.ALL)					//user is in groups
+	private List<Group> groups = new ArrayList<Group>();
+	
+	@OneToMany(mappedBy = "groupowner")					//user can be the owner of many groups
+	private List<Group> ownedgroups = new ArrayList<Group>();
 
 	@NotBlank(message = "password is mandatory")
 	@Size(min = 5, max = 50, message = "{jakarta.validation.constraints.Size}")
@@ -63,7 +69,6 @@ public class User implements Serializable{
 	
 	
 	//private boolean isCreator;
-	
 	
 
 	public Long getId() {
@@ -126,6 +131,38 @@ public class User implements Serializable{
 	}
 	public void setPassword(String password) {
 		this.password = password;
+	}
+	
+	public void addGroup(Group group) {
+		if(!groups.contains(group)) {
+			groups.add(group);
+		}
+	}
+	
+	public void removeGroup(Group group) {
+		if(groups.contains(group)) {
+			groups.remove(group);
+		}
+	}
+	
+	public List<Group> getGroups(){
+		return Collections.unmodifiableList(groups);
+	}
+	
+	public void addOwnedGroup(Group group) {
+		if(!ownedgroups.contains(group)) {
+			ownedgroups.add(group);
+		}
+	}
+	
+	public void removeOwnedGroup(Group group) {
+		if(ownedgroups.contains(group)) {
+			ownedgroups.remove(group);
+		}
+	}
+	
+	public List<Group> getOwnedGroups(){
+		return Collections.unmodifiableList(ownedgroups);
 	}
 
 }
