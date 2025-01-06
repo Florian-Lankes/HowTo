@@ -21,7 +21,7 @@
 		            <span class="visually-hidden">(current)</span>
 		          </a>
 		        </li>
-		        <li class="nav-item">
+		        <li sec:authorize="hasAuthority('ADMIN_RIGHTS')" class="nav-item">
 		          <a class="nav-link" href="/user/all">User</a>
 		        </li>
 		        <li class="nav-item">
