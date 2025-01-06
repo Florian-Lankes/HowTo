@@ -77,8 +77,8 @@ public class SecurityConfiguration {
 	        .requestMatchers(new AntPathRequestMatcher("/user/all")).hasAuthority("VIEW")
     		.requestMatchers(new AntPathRequestMatcher("/tutorial/**")).hasAuthority("VIEW")
     		.requestMatchers(new AntPathRequestMatcher("/channel/all")).hasAuthority("VIEW")
-    		.requestMatchers(new AntPathRequestMatcher("/channel/create")).hasAuthority("VIEW");
-	    	
+    		.requestMatchers(new AntPathRequestMatcher("/channel/create")).hasAuthority("VIEW")
+	    	.requestMatchers(new AntPathRequestMatcher("/history/**")).hasAuthority("VIEW");
 	    	//sites that need Creator Authority
 	    	http.authorizeHttpRequests()
 	     
