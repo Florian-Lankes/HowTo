@@ -2,8 +2,6 @@ package com.HowTo.spring_boot_HowTo.controller;
 
 import java.sql.Timestamp;
 import java.util.List;
-import java.util.Optional;
-
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -42,7 +40,6 @@ public class HistoryController {
 	public String getHistoryId(Model model) {
 		List<History> history = historyService.getAllHistoryFromUser(getCurrentUserId()); 
 		model.addAttribute("history", history );
-		System.out.println(history);
 		return "history";
 		
 	}
@@ -50,11 +47,11 @@ public class HistoryController {
 	@GetMapping("/track/{tutorialid}")
 	public String trackView(@PathVariable("tutorialid") long tutorialid) {
 		History history = new History();
-		history.setId((long) -1 );
+		history.setHistoryId((long) -1 );
 		history.setUserId(getCurrentUserId());
 		history.setTutorialId(tutorialid);
 		Timestamp currentTimestamp = new Timestamp(System.currentTimeMillis());
-		history.setTime(currentTimestamp);
+		history.setCreationTime(currentTimestamp);
 		historyService.saveHistory(history);
 		return "redirect:/tutorial/view/{tutorialid}";
 	}

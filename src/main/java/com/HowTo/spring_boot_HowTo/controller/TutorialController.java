@@ -80,7 +80,7 @@ public class TutorialController {
 	public String createTutorialView(Model model, HttpServletRequest request) {
 		
 		Tutorial tutorial = new Tutorial();
-		tutorial.setId((long) -1); //TODO change dynamically after user authorization is implemented
+		tutorial.setTutorialId((long) -1); //TODO change dynamically after user authorization is implemented
 		tutorial.setLikes((long) 0);
 		tutorial.setDislikes((long) 0);
 		model.addAttribute("tutorial", tutorial);
@@ -104,21 +104,21 @@ public class TutorialController {
 	}
 	
 	@GetMapping("/delete/{id}")
-    public String deleteTutorial(@PathVariable("id") long id, Model model, RedirectAttributes redirectAttributes) {
-        Tutorial tutorial = tutorialService.getTutorialById(id);               
+    public String deleteTutorial(@PathVariable("id") Long tutorialId, Model model, RedirectAttributes redirectAttributes) {
+        Tutorial tutorial = tutorialService.getTutorialById(tutorialId);               
         tutorialService.delete(tutorial);
         redirectAttributes.addFlashAttribute("deleted", "Tutorial deleted!");
         return "redirect:/tutorial/all";
     }
 	
 	@GetMapping("/update/{id}")
-	public String showUpdateTutorialForm(@PathVariable("id") Long id, 
+	public String showUpdateTutorialForm(@PathVariable("id") Long tutorialId, 
 			Model model,
 			HttpServletRequest request) {
-	 	Tutorial tutorial = tutorialService.getTutorialById(id); 
+	 	Tutorial tutorial = tutorialService.getTutorialById(tutorialId); 
     	model.addAttribute("tutorial", tutorial);
 		
-		System.out.println("updating tutorial id="+ id);
+		System.out.println("updating tutorial id="+ tutorialId);
 		return "/tutorials/tutorial-update";
 	}
     
