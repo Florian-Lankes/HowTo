@@ -57,7 +57,7 @@ public class UserController {
 		return userDetails.getId();
 	}
 
-	@GetMapping(value = { "/user", "/user/all" })
+	@GetMapping(value = { "/user/admin", "/user/admin/all" })
 	public String showUserList(Model model, @RequestParam(required = false) String keyword,
 			@RequestParam(required = false, defaultValue = "1") int page,
 			@RequestParam(required = false, defaultValue = "5") int size) {
@@ -86,15 +86,15 @@ public class UserController {
 		return "/users/user-all";
 	}
 
-	@GetMapping("/user/delete/{id}")
+	@GetMapping("/user/admin/delete/{id}")
 	public String deleteUser(@PathVariable("id") long id, Model model, RedirectAttributes redirectAttributes) {
 		User user = userService.getUserById(id);
 		userService.delete(user);
 		redirectAttributes.addFlashAttribute("deleted", "User deleted!");
-		return "redirect:/user/all";
+		return "redirect:/user/admin/all";
 	}
 
-	@GetMapping("/user/update/{id}")
+	@GetMapping("/user/admin/update/{id}")
 	public String showUpdateUserForm(@PathVariable Long id, Model model, HttpServletRequest request) {
 		User user = userService.getUserById(id);
 		model.addAttribute("user", user);
@@ -104,7 +104,7 @@ public class UserController {
 		return "/users/user-update";
 	}
 
-	@PostMapping("/user/update")
+	@PostMapping("/user/admin/update")
 	public String updateUser(@Valid @ModelAttribute("user") User user, BindingResult results, Model model,
 			RedirectAttributes redirectAttributes) {
 		if (results.hasErrors()) {
@@ -114,11 +114,11 @@ public class UserController {
 
 		userService.updateUser(user);
 		redirectAttributes.addFlashAttribute("updated", "user updated!");
-		return "redirect:/user/all";
+		return "redirect:/user/admin/all";
 
 	}
 
-	@GetMapping("/user/add")
+	@GetMapping("/user/admin/add")
 	public String showUserAdForm(Model model, HttpServletRequest request) {
 		User userForm = new User();
 		userForm.setUserId((long) -1);
@@ -130,7 +130,7 @@ public class UserController {
 		return "/users/user-add";
 	}
 
-	@PostMapping("/user/add")
+	@PostMapping("/user/admin/add")
 	public String addUser(@Valid @ModelAttribute User user, BindingResult result, Model model,
 			RedirectAttributes redirectAttributes) {
 		System.out.println("In Function");
@@ -143,7 +143,7 @@ public class UserController {
 		userService.saveUser(user);
 		redirectAttributes.addFlashAttribute("added", "User added!");
 
-		return "redirect:/user/all";
+		return "redirect:/user/admin/all";
 	}
 
 	@GetMapping("/")
@@ -168,7 +168,9 @@ public class UserController {
 			System.out.println(result.getAllErrors().toString());
 			return "/register";
 		}
-
+		System.out.println(user);
+		
+		
 		userService.saveUser(user);
 		redirectAttributes.addFlashAttribute("added", "User added!");
 

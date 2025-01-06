@@ -15,26 +15,26 @@ public class Tutorial implements Serializable{
 	private static final long serialVersionUID = 1L;
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
+	private Long tutorialId;
 	
 	@NotBlank(message = "Title is mandatory")
 	@Size(min = 5, max = 50, message = "{jakarta.validation.constraints.Size}")
 	private String title;
 	
-	private String content_text;
+	private String contentText;
 	
-	private byte[] content_video;
+	private byte[] contentVideo;
 	
-	private Long channel_id;
+	private Long channelId;
 	
 	private Long likes;
 	private Long dislikes;
 	
-	public Long getId() {
-		return id;
+	public Long getTutorialId() {
+		return tutorialId;
 	}
-	public void setId(Long id) {
-		this.id = id;
+	public void setTutorialId(Long tutorialId) {
+		this.tutorialId = tutorialId;
 	}
 	public String getTitle() {
 		return title;
@@ -42,23 +42,23 @@ public class Tutorial implements Serializable{
 	public void setTitle(String title) {
 		this.title = title;
 	}
-	public String getContent_text() {
-		return content_text;
+	public String getContentText() {
+		return contentText;
 	}
-	public void setContent_text(String content_text) {
-		this.content_text = content_text;
+	public void setContentText(String contentText) {
+		this.contentText = contentText;
 	}
-	public byte[] getContent_video() {
-		return content_video;
+	public byte[] getContentVideo() {
+		return contentVideo;
 	}
-	public void setContent_video(byte[] content_video) {
-		this.content_video = content_video;
+	public void setContentVideo(byte[] contentVideo) {
+		this.contentVideo = contentVideo;
 	}
-	public Long getChannel_id() {
-		return channel_id;
-	}
-	public void setChannel_id(Long channel_id) {
-		this.channel_id = channel_id;
+	public Long getChannelId() {
+		return channelId;
+	} 
+	public void setChannelId(Long channel_id) {
+		this.channelId = channel_id;
 	}
 	public Long getLikes() {
 		return likes;

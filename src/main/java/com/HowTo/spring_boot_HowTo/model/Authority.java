@@ -25,7 +25,7 @@ public class Authority implements Serializable {
 
 	@Id
 	@GeneratedValue (strategy = GenerationType.IDENTITY)
-	private Long id;
+	private Long authorityId;
 	private String description;
 
 	 @ManyToMany(mappedBy = "authorities")
@@ -40,12 +40,12 @@ public class Authority implements Serializable {
 			this.roles = roles;
 		}
 
-	public Long getId() {
-		return id;
+	public Long getAuthorityId() {
+		return authorityId;
 	}
 
-	public void setId(Long id) {
-		this.id = id;
+	public void setAuthorityId(Long authorityId) {
+		this.authorityId = authorityId;
 	}
 
 	public String getDescription() {

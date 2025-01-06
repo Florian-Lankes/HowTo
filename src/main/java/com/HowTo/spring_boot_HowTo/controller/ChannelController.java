@@ -62,7 +62,8 @@ public class ChannelController {
 	public String showChannelAdForm(Model model, HttpServletRequest request) {
 		
 		Channel channelForm = new Channel();
-		channelForm.setUserid(getCurrentUserId()); //TODO change dynamically after channel authorization is implemented
+		System.out.println(getCurrentUserId());
+		channelForm.setChannelId(getCurrentUserId()); //TODO change dynamically after channel authorization is implemented
 		LocalDate date= LocalDate.now();
 		channelForm.setCreationDate(date);
 		
@@ -122,23 +123,23 @@ public class ChannelController {
 	}
     
     
-    @GetMapping("/delete/{userid}")
-    public String deleteChannel(@PathVariable("userid") long userid, Model model, RedirectAttributes redirectAttributes) {
-        Channel channel = channelService.getChannelById(userid);               
+    @GetMapping("/delete/{channelId}")
+    public String deleteChannel(@PathVariable("channelId") long channelId, Model model, RedirectAttributes redirectAttributes) {
+        Channel channel = channelService.getChannelById(channelId);               
         channelService.delete(channel);
         redirectAttributes.addFlashAttribute("deleted", "Channel deleted!");
         return "redirect:/channel/all";
     }
 	
-    @GetMapping("/update/{userid}")
-	public String showUpdateChannelForm(@PathVariable("userid") Long userid, 
+    @GetMapping("/update/{channelId}")
+	public String showUpdateChannelForm(@PathVariable("channelId") Long channelId, 
 			Model model,
 			HttpServletRequest request) {
-	 	Channel channel = channelService.getChannelById(userid); 
+	 	Channel channel = channelService.getChannelById(channelId); 
     	model.addAttribute("channel", channel);
 		request.getSession().setAttribute("channelSession", channel);
 		
-		System.out.println("updating channel id="+ userid);
+		System.out.println("updating channel id="+ channelId);
 		return "/channels/channel-update";
 	}
     

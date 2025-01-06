@@ -75,6 +75,8 @@ public class GroupController {
     	
     	groupService.saveGroup(group, getCurrentUserId());
         redirectAttributes.addFlashAttribute("created", "Group created!");
+//        groupService.joinGroup(group, getCurrentUserId()); //doenst wanna join the group after creating
+//        redirectAttributes.addFlashAttribute("joined", "Group joined!");
         
         return "redirect:/group/all";
     }

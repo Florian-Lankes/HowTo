@@ -31,6 +31,7 @@ public class GroupService implements GroupServiceI{
 		User user = userRepository.findById(UserId).get();
 		List<Group> ownedgroups = user.getOwnedGroups();
 		
+		
 		if(user != null && group != null && ownedgroups != null) {
 			if(!ownedgroups.contains(group)) {
 				group.setGroupOwner(user);

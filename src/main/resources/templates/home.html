@@ -6,9 +6,11 @@
 	<section class="layout-content" layout:fragment="mybody">
 			
 		This is the home page with all the Tutorials listed
-		<div th:each="tutorialid : ${tutorial}">
+		<div th:each="element : ${tutorial}">
 		   <p>
-		   <a class="btn btn-info" th:href="@{/tutorial/{tutorialid}(tutorialid = ${tutorialid})}">View Tutorial <span th:text="${tutorialid}"> </a>
+
+		   <a class="btn btn-info" th:href="@{/history/track/{tutorialid}(tutorialid = ${element.tutorialId})}">View Tutorial <span th:text="asdasdasd"> </a>
+
 		</div>
 		<br>
 		<br>

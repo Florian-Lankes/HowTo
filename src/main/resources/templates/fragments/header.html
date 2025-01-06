@@ -22,13 +22,19 @@
 		          </a>
 		        </li>
 		        <li sec:authorize="hasAuthority('ADMIN_RIGHTS')" class="nav-item">
-		          <a class="nav-link" href="/user/all">User</a>
+		          <a class="nav-link" href="/user/admin/all">User</a>
 		        </li>
+				<li class="nav-item">
+						          <a class="nav-link" href="/group/all">Group</a>
+						        </li>
 		        <li class="nav-item">
 		          <a class="nav-link" href="/channel/all">Channel</a>
 		        </li>
 		        <li class="nav-item">
 		          <a class="nav-link" href="/tutorial/all">Tutorial</a>
+		        </li>
+				<li class="nav-item">
+		          <a class="nav-link" href="/history/my">History</a>
 		        </li>
 		        <li  sec:authorize="hasAuthority('ADMIN_RIGHTS')"  class="nav-item dropdown">
 		          <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Dropdown</a>

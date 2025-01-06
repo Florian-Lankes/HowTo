@@ -75,26 +75,30 @@ public class SecurityConfiguration {
 		     
 	        .requestMatchers(new AntPathRequestMatcher("/home")).hasAuthority("VIEW")
     		.requestMatchers(new AntPathRequestMatcher("/tutorial/all")).hasAuthority("VIEW")
+    		.requestMatchers(new AntPathRequestMatcher("/tutorial/view/**")).hasAuthority("VIEW")
+    		.requestMatchers(new AntPathRequestMatcher("/tutorial/like/**")).hasAuthority("VIEW")
+    		.requestMatchers(new AntPathRequestMatcher("/channel/view/**")).hasAuthority("VIEW")
     		.requestMatchers(new AntPathRequestMatcher("/channel/all")).hasAuthority("VIEW")
     		.requestMatchers(new AntPathRequestMatcher("/channel/create")).hasAuthority("VIEW")
-	    	.requestMatchers(new AntPathRequestMatcher("/history/**")).hasAuthority("VIEW")
-	    	.requestMatchers(new AntPathRequestMatcher("/group/**")).hasAuthority("VIEW");
+	    	.requestMatchers(new AntPathRequestMatcher("/group/**")).hasAuthority("VIEW")
+    		.requestMatchers(new AntPathRequestMatcher("/user/update/**")).hasAuthority("VIEW")
+	    	.requestMatchers(new AntPathRequestMatcher("/history/**")).hasAuthority("VIEW");
 	    	
 	    	//sites that need Creator Authority
 	    	http.authorizeHttpRequests()
 	     
 	        .requestMatchers(new AntPathRequestMatcher("/channel/delete/**")).hasAuthority("CREATOR_RIGHTS")
-	        .requestMatchers(new AntPathRequestMatcher("/channel/update/")).hasAuthority("CREATOR_RIGHTS")
+	        .requestMatchers(new AntPathRequestMatcher("/channel/update/**")).hasAuthority("CREATOR_RIGHTS")
 	        .requestMatchers(new AntPathRequestMatcher("/tutorial/create")).hasAuthority("CREATOR_RIGHTS")
 	        .requestMatchers(new AntPathRequestMatcher("/tutorial/upload")).hasAuthority("CREATOR_RIGHTS")
-	        .requestMatchers(new AntPathRequestMatcher("/tutorial/delete")).hasAuthority("CREATOR_RIGHTS");
+	        .requestMatchers(new AntPathRequestMatcher("/tutorial/update/**")).hasAuthority("CREATOR_RIGHTS")
+	        .requestMatchers(new AntPathRequestMatcher("/tutorial/delete/**")).hasAuthority("CREATOR_RIGHTS");
 	    
 	    	//sites that need Admin Authority
 	    	http.authorizeHttpRequests()
 	     
 	        .requestMatchers(new AntPathRequestMatcher("/admin/**")).hasAuthority("ADMIN_RIGHTS")
-	        .requestMatchers(new AntPathRequestMatcher("/channel/update/**")).hasAuthority("CREATOR_RIGHTS")
-	        .requestMatchers(new AntPathRequestMatcher("/user/**")).hasAuthority("ADMIN_RIGHTS");
+	        .requestMatchers(new AntPathRequestMatcher("/user/admin/**")).hasAuthority("ADMIN_RIGHTS");
 
 	    	
 	    	http.headers(headers -> headers.frameOptions(FrameOptionsConfig::disable));   
