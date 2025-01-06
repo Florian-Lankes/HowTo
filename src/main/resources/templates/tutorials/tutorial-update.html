@@ -28,10 +28,10 @@
   	                     <div class="form-group col-md-6">
   	                         <label >Title</label>
   	                         <textarea type="text" class="form-control" 
-  	                                autofocus="autofocus" th:field="*{content_text}" 
-  	                                th:classappend="${#fields.hasErrors('content_text')} ? 'is-invalid'"></textarea>
+  	                                autofocus="autofocus" th:field="*{contentText}" 
+  	                                th:classappend="${#fields.hasErrors('contentText')} ? 'is-invalid'"></textarea>
   	                         <div class="invalid-feedback">
-  	                             <span th:errors="*{content_text}"></span>
+  	                             <span th:errors="*{contentText}"></span>
   	                         </div>
   	                     </div>
   					  </div>   
@@ -39,7 +39,7 @@
 	                  
 					  <input type="hidden"  th:field="*{likes}"/>
 					  <input type="hidden"  th:field="*{dislikes}"/>
-					  <input type="hidden"  th:field="*{id}"/>
+					  <input type="hidden"  th:field="*{tutorialId}"/>
 
 					<button type="submit" class="btn btn-primary btn-sm">Update</button>
 	            </form>

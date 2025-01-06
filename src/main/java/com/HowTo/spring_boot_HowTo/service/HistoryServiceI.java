@@ -1,7 +1,6 @@
 package com.HowTo.spring_boot_HowTo.service;
 
 import java.util.List;
-import java.util.Optional;
 
 import com.HowTo.spring_boot_HowTo.model.History;
 

@@ -168,7 +168,9 @@ public class UserController {
 			System.out.println(result.getAllErrors().toString());
 			return "/register";
 		}
-
+		System.out.println(user);
+		
+		
 		userService.saveUser(user);
 		redirectAttributes.addFlashAttribute("added", "User added!");
 
