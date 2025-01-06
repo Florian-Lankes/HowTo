@@ -92,13 +92,13 @@
 				</thead>
 				<tbody>
 					<tr th:each="user: ${users}">
-						<td th:text="${user.id}"></td>
+						<td th:text="${user.userId}"></td>
 						<td th:text="${user.username}"></td>
 						<td th:text="${user.email}"></td>
 						<td th:text="${user.birthDate}"></td>
 						<td th:text="${user.password}"></td>
 						<td>
-							<a th:href="@{/user/update/{id}(id=${user.id})}" class="btn btn-primary"><svg
+							<a th:href="@{/user/update/{id}(id=${user.userId})}" class="btn btn-primary"><svg
 									xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
 									class="bi bi-pen" viewBox="0 0 16 16">
 									<path
@@ -106,7 +106,7 @@
 								</svg></a>
 
 
-							<a th:href="@{/user/delete/{id}(id=${user.id})}" class="btn btn-danger"><svg
+							<a th:href="@{/user/delete/{id}(id=${user.userId})}" class="btn btn-danger"><svg
 									xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
 									class="bi bi-trash" viewBox="0 0 16 16">
 									<path

@@ -6,15 +6,18 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.HowTo.spring_boot_HowTo.model.User;
 import com.HowTo.spring_boot_HowTo.model.Group;
 import com.HowTo.spring_boot_HowTo.repository.GroupRepositoryI;
-
+import com.HowTo.spring_boot_HowTo.repository.UserRepositoryI;
 import com.HowTo.spring_boot_HowTo.service.GroupServiceI;
 @Service
 public class GroupService implements GroupServiceI{
 
 	@Autowired
 	GroupRepositoryI groupRepository;
+	@Autowired
+	UserRepositoryI userRepository;
 	
 	@Override
 	public List<Group> getAllGroups() {
@@ -23,9 +26,19 @@ public class GroupService implements GroupServiceI{
 	}
 
 	@Override
-	public Group saveGroup(Group group) {
+	public Group saveGroup(Group group, Long UserId) {
 		// TODO Auto-generated method stub
-		return groupRepository.save(group);
+		User user = userRepository.findById(UserId).get();
+		List<Group> ownedgroups = user.getOwnedGroups();
+		
+		if(user != null && group != null && ownedgroups != null) {
+			if(!ownedgroups.contains(group)) {
+				group.setGroupOwner(user);
+				user.addOwnedGroup(group);
+				groupRepository.save(group);
+			}
+		}
+		return group;
 	}
 
 	@Override
@@ -39,6 +52,37 @@ public class GroupService implements GroupServiceI{
 	public Group updateGroup(Group group) {
 		Group local = groupRepository.save(group);
 		return local;
+	}
+	
+	@Override
+	public Group joinGroup(Group group, Long UserId) {
+		User user = userRepository.findById(UserId).get();
+		List<Group> joinedgroups = user.getJoinedGroups();
+		
+		if(user != null && group != null && joinedgroups != null) {
+			if(!joinedgroups.contains(group)) {
+				user.addJoinedGroup(group);
+				group.addUser(user);
+				userRepository.save(user);
+			}
+		}
+		return group;
+	}
+	
+	@Override
+	public Group leaveGroup(Group group, Long UserId){
+		User user = userRepository.findById(UserId).get();
+		List<Group> joinedgroups = user.getJoinedGroups();
+		Group realgroup = groupRepository.findById(group.getGroupId()).get();
+		
+		if(user != null && group != null && joinedgroups != null) {
+			if(joinedgroups.contains(realgroup)) {
+				user.removeJoinedGroup(realgroup);
+				realgroup.removeUser(user);
+				userRepository.save(user);
+			}
+		}
+		return group;
 	}
 
 	@Override

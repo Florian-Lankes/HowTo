@@ -121,7 +121,7 @@ public class UserController {
 	@GetMapping("/user/add")
 	public String showUserAdForm(Model model, HttpServletRequest request) {
 		User userForm = new User();
-		userForm.setId((long) -1);
+		userForm.setUserId((long) -1);
 		LocalDate date = LocalDate.now();
 		userForm.setBirthDate(date);
 		request.getSession().setAttribute("userSession", userForm);
@@ -150,7 +150,7 @@ public class UserController {
 	public String showUserRegisterForm(Model model, HttpServletRequest request) {
 
 		User userForm = new User();
-		userForm.setId((long) -1);
+		userForm.setUserId((long) -1);
 		LocalDate date = LocalDate.now();
 		userForm.setBirthDate(date);
 

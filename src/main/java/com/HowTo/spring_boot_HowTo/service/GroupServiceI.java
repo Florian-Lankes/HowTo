@@ -9,11 +9,15 @@ public interface GroupServiceI {
 	
 	List<Group> getAllGroups();
 	
-	Group saveGroup(Group group);
+	Group saveGroup(Group group, Long userId);
 	
 	Group getGroupById(Long id);
 	
 	Group updateGroup(Group group);
+	
+	Group joinGroup(Group group, Long userId);
+	
+	Group leaveGroup(Group group, Long userId);
 	
 	void delete(Group group);
 }

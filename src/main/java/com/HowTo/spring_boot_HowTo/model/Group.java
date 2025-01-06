@@ -24,7 +24,7 @@ public class Group implements Serializable{
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
+	private Long groupId;
 	
 	@NotBlank(message = "Name is mandatory")
 	@Size(min = 5, max = 50, message = "{jakarta.validation.constraints.Size}")
@@ -37,19 +37,19 @@ public class Group implements Serializable{
 	@DateTimeFormat(pattern="yyyy-MM-dd")
 	private LocalDate creationDate;
 	
-	@ManyToMany(mappedBy = "groups")
+	@ManyToMany(mappedBy = "joinedgroups")
 	private List<User> users = new ArrayList<User>();
 	
 	@ManyToOne()
-	private User groupowner;
+	private User groupOwner;
 	
 	// maybe needs adjustments .... private ArrayList<String> messages = new ArrayList<String>();
 
-	public Long getId() {
-		return id;
+	public Long getGroupId() {
+		return groupId;
 	}
-	public void setId(Long userid) {
-		this.id = userid;
+	public void setGroupId(Long id) {
+		this.groupId = id;
 	}
 	public String getName() {
 		return name;
@@ -90,10 +90,10 @@ public class Group implements Serializable{
 	}
 	
 	public void setGroupOwner(User user) {
-		this.groupowner= user;
+		this.groupOwner= user;
 	}
 	
 	public User getGroupOwner() {
-		return groupowner;
+		return groupOwner;
 	}
 }

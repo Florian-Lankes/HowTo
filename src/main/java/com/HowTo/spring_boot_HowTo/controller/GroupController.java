@@ -5,6 +5,8 @@ import java.util.List;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -13,9 +15,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import com.HowTo.spring_boot_HowTo.model.Channel;
+import com.HowTo.spring_boot_HowTo.config.MyUserDetails;
 import com.HowTo.spring_boot_HowTo.model.Group;
 import com.HowTo.spring_boot_HowTo.service.GroupServiceI;
+
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
@@ -32,12 +35,22 @@ public class GroupController {
 		this.groupService = groupService;
 	}
 	
+	private Long getCurrentUserId() {
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		if (authentication == null || !authentication.isAuthenticated()
+				|| authentication.getPrincipal() instanceof String) {
+			throw new IllegalStateException("User is not authenticated");
+		}
+		MyUserDetails userDetails = (MyUserDetails) authentication.getPrincipal();
+		return userDetails.getId();
+	}
+	
 	//CREATE
 	@GetMapping("/create")
 	public String showGroupAdForm(Model model, HttpServletRequest request) {
 		
 		Group groupForm = new Group();
-		groupForm.setId((long) -1); //TODO change dynamically after user authorization is implemented
+		groupForm.setGroupId((long) -1); //TODO change dynamically after user authorization is implemented
 		LocalDate date= LocalDate.now();
 		groupForm.setCreationDate(date);
 		
@@ -60,7 +73,7 @@ public class GroupController {
         }
 
     	
-    	groupService.saveGroup(group);
+    	groupService.saveGroup(group, getCurrentUserId());
         redirectAttributes.addFlashAttribute("created", "Group created!");
         
         return "redirect:/group/all";
@@ -78,7 +91,13 @@ public class GroupController {
     
     @GetMapping("/delete/{id}")
     public String deleteGroup(@PathVariable("id") long id, Model model, RedirectAttributes redirectAttributes) {
-        Group group = groupService.getGroupById(id);               
+        Group group = groupService.getGroupById(id);    
+        if(group.getGroupOwner().getUserId() != getCurrentUserId()) {
+   	 		System.out.println("wrong user!");
+   	 		
+   	 		redirectAttributes.addFlashAttribute("failed", "not owner!!");
+   	 		return "redirect:/group/all";
+   	 	}
         groupService.delete(group);
         redirectAttributes.addFlashAttribute("deleted", "Group deleted!");
         return "redirect:/group/all";
@@ -87,8 +106,15 @@ public class GroupController {
     @GetMapping("/update/{id}")
    	public String showUpdateGroupForm(@PathVariable("id") Long id, 
    			Model model,
-   			HttpServletRequest request) {
+   			HttpServletRequest request,
+   			RedirectAttributes redirectAttributes) {
    	 	Group group = groupService.getGroupById(id); 
+   	 	if(group.getGroupOwner().getUserId() != getCurrentUserId()) {
+   	 		System.out.println("wrong user!");
+   	 		
+   	 		redirectAttributes.addFlashAttribute("failed", "not owner!!");
+   	 		return "redirect:/group/all";
+   	 	}
        	model.addAttribute("group", group);
    		request.getSession().setAttribute("groupSession", group);
    		
@@ -98,13 +124,18 @@ public class GroupController {
        
        
        @PostMapping("/update")
-   	public String updateChannel(@Valid @ModelAttribute Group group,
+   	public String updateGroup(@Valid @ModelAttribute Group group,
    			BindingResult results,
    			Model model, 
    			RedirectAttributes redirectAttributes) {
    		
-   				
-   		if (results.hasErrors()){
+    	   if(group.getGroupOwner().getUserId() != getCurrentUserId()) {
+      	 		System.out.println("wrong user!");
+      	 		
+      	 		redirectAttributes.addFlashAttribute("failed", "not owner!!");
+      	 		return "/groups/group-all";
+      	 	}	
+       else if (results.hasErrors()){
    			
    			return "/groups/group-update";
    		}
@@ -114,4 +145,40 @@ public class GroupController {
    		return "redirect:/group/all";
    		
    	}
+       
+       @GetMapping("/detail/{id}")
+      	public String showDetailGroup(@PathVariable("id") Long id, 
+      			Model model,
+      			HttpServletRequest request,
+      			RedirectAttributes redirectAttributes) {
+      	 	Group group = groupService.getGroupById(id); 
+          	model.addAttribute("group", group);
+      		request.getSession().setAttribute("groupSession", group);
+      		
+      		System.out.println("detail of group id="+ id);
+      		return "/groups/group-detail";
+      	}
+       
+       @PostMapping("/join")
+      	public String joinGroup(@Valid @ModelAttribute Group group,
+      			BindingResult results,
+      			Model model, 
+      			RedirectAttributes redirectAttributes) {
+      		 
+      		groupService.joinGroup(group, getCurrentUserId());
+              redirectAttributes.addFlashAttribute("joined", "group joined!");
+      		return "redirect:/group/all";
+       }
+       
+       @PostMapping("/leave")
+     	public String leaveGroup(@Valid @ModelAttribute Group group,
+     			BindingResult results,
+     			Model model, 
+     			RedirectAttributes redirectAttributes) {
+     		 
+     		groupService.leaveGroup(group, getCurrentUserId());
+             redirectAttributes.addFlashAttribute("left", "group left!");
+     		return "redirect:/group/all";
+      }
+       
 }
