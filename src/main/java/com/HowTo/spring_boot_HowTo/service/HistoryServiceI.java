@@ -5,6 +5,7 @@ import java.util.List;
 import com.HowTo.spring_boot_HowTo.model.History;
 
 public interface HistoryServiceI {
+	
 	List<History> getAllHistorys();
 	
 	List<History> getAllHistoryFromUser(Long userid);
