@@ -42,7 +42,7 @@
 			</div>
 			<div class="row">
 				<div class="col-lg-3">
-					<a th:href="@{/user/add}" class="btn btn-primary btn-sm mb-3"> Add User</a>
+					<a th:href="@{/user/admin/add}" class="btn btn-primary btn-sm mb-3"> Add User</a>
 				</div>
 			</div>
 			<div th:unless="${users.size() > 0}" style="width: 90%">
@@ -50,7 +50,7 @@
 			</div>
 			<!-- 2o part: search form -->
 			<div>
-				<form th:action="@{/user/all}" id="searchForm" method="get">
+				<form th:action="@{/user/admin/all}" id="searchForm" method="get">
 					<div class="row d-flex">
 						<div class="col-md-6 mt-2">
 							<div class="search">
@@ -98,7 +98,7 @@
 						<td th:text="${user.birthDate}"></td>
 						<td th:text="${user.password}"></td>
 						<td>
-							<a th:href="@{/user/update/{id}(id=${user.id})}" class="btn btn-primary"><svg
+							<a th:href="@{/user/admin/update/{id}(id=${user.id})}" class="btn btn-primary"><svg
 									xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
 									class="bi bi-pen" viewBox="0 0 16 16">
 									<path
@@ -106,7 +106,7 @@
 								</svg></a>
 
 
-							<a th:href="@{/user/delete/{id}(id=${user.id})}" class="btn btn-danger"><svg
+							<a th:href="@{/user/admin/delete/{id}(id=${user.id})}" class="btn btn-danger"><svg
 									xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
 									class="bi bi-trash" viewBox="0 0 16 16">
 									<path
@@ -123,27 +123,27 @@
 			<nav aria-label="Pagination" th:if="${totalPages > 0}">
 				<ul class="pagination justify-content-center">
 					<li class="page-item" th:classappend="${currentPage == 1} ? 'disabled'">
-						<a th:replace="~{fragments/paging :: paging(1, '<<', 'First Page', 'user/all')}"></a>
+						<a th:replace="~{fragments/paging :: paging(1, '<<', 'First Page', 'user/admin/all')}"></a>
 
 					</li>
 					<li class="page-item font-weight-bold" th:classappend="${currentPage == 1} ? 'disabled'">
-						<a th:replace="~{fragments/paging :: paging(${currentPage - 1}, 'Prev', 'Previous Page', 'user/all')}"></a>
+						<a th:replace="~{fragments/paging :: paging(${currentPage - 1}, 'Prev', 'Previous Page', 'user/admin/all')}"></a>
 					</li>
 					<li class="page-item disabled" th:if="${currentPage - 2 > 1}">
 						<a class="page-link" href="#">...</a>
 					</li>
 					<li class="page-item" th:classappend="${page == currentPage} ? 'active'" th:each="page : ${#numbers.sequence(currentPage > 2 ? currentPage - 2 : 1, currentPage + 2 < totalPages ?
 	 currentPage + 2 : totalPages)}">
-						<a th:replace="~{fragments/paging :: paging(${page}, ${page}, 'Page ' + ${page}, 'user/all')}"></a>
+						<a th:replace="~{fragments/paging :: paging(${page}, ${page}, 'Page ' + ${page}, 'user/admin/all')}"></a>
 					</li>
 					<li class="page-item disabled" th:if="${currentPage + 2 < totalPages}">
 						<a class="page-link" href="#">...</a>
 					</li>
 					<li class="page-item font-weight-bold" th:classappend="${currentPage == totalPages} ? 'disabled'">
-						<a th:replace="~{fragments/paging :: paging(${currentPage + 1},'Next', 'Next Page', 'user/all')}"></a>
+						<a th:replace="~{fragments/paging :: paging(${currentPage + 1},'Next', 'Next Page', 'user/admin/all')}"></a>
 					</li>
 					<li class="page-item" th:classappend="${currentPage == totalPages} ? 'disabled'">
-						<a th:replace="~{fragments/paging :: paging(${totalPages}, '>>', 'Last Page', 'user/all')}"></a>
+						<a th:replace="~{fragments/paging :: paging(${totalPages}, '>>', 'Last Page', 'user/admin/all')}"></a>
 					</li>
 				</ul>
 			</nav>
