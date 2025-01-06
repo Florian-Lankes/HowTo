@@ -74,7 +74,7 @@ public class SecurityConfiguration {
 	    	http.authorizeHttpRequests()
 		     
 	        .requestMatchers(new AntPathRequestMatcher("/home")).hasAuthority("VIEW")
-    		.requestMatchers(new AntPathRequestMatcher("/tutorial/all")).hasAuthority("VIEW")
+    		.requestMatchers(new AntPathRequestMatcher("/tutorial/**")).hasAuthority("VIEW")
     		.requestMatchers(new AntPathRequestMatcher("/channel/all")).hasAuthority("VIEW")
     		.requestMatchers(new AntPathRequestMatcher("/channel/create")).hasAuthority("VIEW")
 	    	.requestMatchers(new AntPathRequestMatcher("/history/**")).hasAuthority("VIEW");

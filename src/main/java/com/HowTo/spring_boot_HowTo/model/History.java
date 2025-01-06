@@ -17,18 +17,18 @@ private static final long serialVersionUID = 1L;
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	
-	private Long TutorialId;
+	private Long tutorialId;
 	
-	private Long UserId;
+	private Long userId;
 	
 	private Timestamp time;
 	
 	public Long getTutorialId() {
-		return TutorialId;
+		return tutorialId;
 	}
 
 	public void setTutorialId(Long tutorialId) {
-		TutorialId = tutorialId;
+		this.tutorialId = tutorialId;
 	}
 
 	public Timestamp getTime() {
@@ -48,11 +48,11 @@ private static final long serialVersionUID = 1L;
 	}
 
 	public Long getUserId() {
-		return UserId;
+		return userId;
 	}
 
 	public void setUserId(Long userId) {
-		UserId = userId;
+		this.userId = userId;
 	}
 
 }
