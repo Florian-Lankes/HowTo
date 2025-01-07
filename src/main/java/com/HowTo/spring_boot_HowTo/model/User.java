@@ -58,13 +58,16 @@ public class User implements Serializable{
 	@ManyToMany(cascade = CascadeType.ALL)					//user is in groups
 	private List<Group> joinedgroups = new ArrayList<Group>();
 	
-	@OneToMany(mappedBy = "groupOwner")					//user can be the owner of many groups
+	@OneToMany(mappedBy = "groupOwner")						//user can be the owner of many groups
 	private List<Group> ownedgroups = new ArrayList<Group>();
 
 	@NotBlank(message = "password is mandatory")
 	@Size(min = 5, max = 50, message = "{jakarta.validation.constraints.Size}")
 	private String password;
 	
+	//TODO was passiert wenn ein user gelöscht wird der noch comments hat
+	@OneToMany(mappedBy = "CommentOwner")							//user can be the owner of many comments
+	private List<Comment> ownedComments = new ArrayList<Comment>();
 	//private boolean isAdmin;
 	
 	
@@ -164,5 +167,22 @@ public class User implements Serializable{
 	public List<Group> getOwnedGroups(){
 		return Collections.unmodifiableList(ownedgroups);
 	}
+	
+	public void addOwnedComment(Comment comment){
+		if(!ownedComments.contains(comment)) {
+			ownedComments.add(comment);
+		}
+	}
+	
+	public void removeOwnedComment(Comment comment) {
+		if(ownedComments.contains(comment)) {
+			ownedComments.remove(comment);
+		}
+	}
+	
+	public List<Comment> getOwnedComments(){
+		return Collections.unmodifiableList(ownedComments);
+	}
+	
 
 }
