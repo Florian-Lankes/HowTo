@@ -109,5 +109,6 @@ public class Tutorial implements Serializable{
 	
 	public Channel getCreatedByChannel() {
 		return createdByChannel;
+
 	}
 }
