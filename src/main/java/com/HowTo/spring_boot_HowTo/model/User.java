@@ -61,6 +61,7 @@ public class User implements Serializable{
 	@OneToMany(mappedBy = "groupOwner")					//user can be the owner of many groups
 	private List<Group> ownedgroups = new ArrayList<Group>();
 
+
 	@NotBlank(message = "password is mandatory")
 	@Size(min = 5, max = 50, message = "{jakarta.validation.constraints.Size}")
 	private String password;
@@ -70,6 +71,9 @@ public class User implements Serializable{
 	
 	//private boolean isCreator;
 	
+	@OneToMany(mappedBy = "watchLaterOwner")
+	private List<WatchLater> watchLater = new ArrayList<WatchLater>();
+
 
 	public Long getUserId() {
 		return userId;
@@ -132,7 +136,21 @@ public class User implements Serializable{
 	public void setPassword(String password) {
 		this.password = password;
 	}
-	
+
+	public void addToWatchLater(WatchLater w) {
+		if(!watchLater.contains(w)) {
+			watchLater.add(w);
+		}
+	}
+	 public void removeWatchLater(WatchLater w) {
+        if(watchLater.contains(w)) {
+        	watchLater.remove(w);
+        }
+    }
+	 public List<WatchLater> getWatchLater(){
+        return Collections.unmodifiableList(watchLater);
+    }
+
 	public void addJoinedGroup(Group group) {
 		if(!joinedgroups.contains(group)) {
 			joinedgroups.add(group);
@@ -164,5 +182,6 @@ public class User implements Serializable{
 	public List<Group> getOwnedGroups(){
 		return Collections.unmodifiableList(ownedgroups);
 	}
+
 
 }

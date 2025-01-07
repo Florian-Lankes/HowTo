@@ -24,6 +24,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import com.HowTo.spring_boot_HowTo.config.MyUserDetails;
 import com.HowTo.spring_boot_HowTo.model.User;
 import com.HowTo.spring_boot_HowTo.service.UserServiceI;
+import com.HowTo.spring_boot_HowTo.validator.UserAlreadyExistException;
 import com.HowTo.spring_boot_HowTo.validator.UserValidator;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -132,7 +133,7 @@ public class UserController {
 
 	@PostMapping("/user/admin/add")
 	public String addUser(@Valid @ModelAttribute User user, BindingResult result, Model model,
-			RedirectAttributes redirectAttributes) {
+			RedirectAttributes redirectAttributes) throws Exception {
 		System.out.println("In Function");
 
 		if (result.hasErrors()) {
@@ -162,16 +163,22 @@ public class UserController {
 
 	@PostMapping("/register")
 	public String registerUser(@Valid @ModelAttribute User user, BindingResult result, Model model,
-			RedirectAttributes redirectAttributes) {
+			RedirectAttributes redirectAttributes){
 		System.out.println("In Function");
 		if (result.hasErrors()) {
 			System.out.println(result.getAllErrors().toString());
-			return "/register";
+			return "/";
 		}
+		
+		try {
+	        User registered = userService.saveUser(user);
+	    } catch (UserAlreadyExistException uaeEx) {
+	    	redirectAttributes.addFlashAttribute("register", "An account for that username/email already exists.");
+	        return "redirect:/";
+	    }
 		System.out.println(user);
 		
 		
-		userService.saveUser(user);
 		redirectAttributes.addFlashAttribute("added", "User added!");
 
 		return "redirect:/home";

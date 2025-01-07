@@ -3,6 +3,7 @@ package com.HowTo.spring_boot_HowTo.model;
 import java.io.Serializable;
 import java.sql.Timestamp;
 
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -34,6 +35,7 @@ public class Tutorial implements Serializable{
 	
 	private Long likes;
 	private Long dislikes;
+	
 	
 	public Long getTutorialId() {
 		return tutorialId;
