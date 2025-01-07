@@ -5,14 +5,13 @@
 <body>
 	<section class="layout-content" layout:fragment="mybody">
 		<div class="">
-			<p>This is your channel</p>
+			<p>This is the channel page</p>
 		</div>
-		
-		<div th:each="tutorialid : ${tutorial}">
+		<p th:text = ${channel.channelname}></p>
+		<div th:each="element : ${tutorials}">
 		   <p>
-		   <a class="btn btn-info" th:href="@{/tutorial/{tutorialid}(tutorialid = ${tutorialid})}">View Tutorial <span th:text="${tutorialid}"> </a>
+		   <a class="btn btn-info" th:href="@{/tutorial/view/{id}(id = ${element.tutorialId})}">View Tutorial <span th:text="${element.tutorialId}"> </a>
 		</div>
-		
 		
 				
 	</section>		

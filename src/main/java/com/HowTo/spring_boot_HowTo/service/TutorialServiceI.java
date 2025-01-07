@@ -9,7 +9,7 @@ public interface TutorialServiceI {
 	
 	List<Tutorial> getAllTutorials();
 	
-	Tutorial saveTutorial(Tutorial tutorial);
+	Tutorial saveTutorial(Tutorial tutorial, Long channelId);
 	
 	Tutorial getTutorialById(Long id);
 	

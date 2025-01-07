@@ -24,6 +24,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.HowTo.spring_boot_HowTo.config.MyUserDetails;
 import com.HowTo.spring_boot_HowTo.model.Channel;
+import com.HowTo.spring_boot_HowTo.model.Tutorial;
 import com.HowTo.spring_boot_HowTo.service.ChannelServiceI;
 import com.HowTo.spring_boot_HowTo.validator.ChannelValidator;
 
@@ -55,6 +56,17 @@ public class ChannelController {
 		}
 		MyUserDetails userDetails = (MyUserDetails) authentication.getPrincipal();
 		return userDetails.getId();
+	}
+	
+	@GetMapping("/view/{id}")
+	public String showChannelList(@PathVariable("id") Long channelid ,Model model) {
+		
+    	Channel channel = channelService.getChannelById(channelid);
+    	List<Tutorial> tutorials = channel.getTutorials();
+    	model.addAttribute("channel", channel);
+		model.addAttribute("tutorials", tutorials);
+				
+		return "/channel";
 	}
 	
 	//CREATE
