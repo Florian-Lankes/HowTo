@@ -1,11 +1,15 @@
 package com.HowTo.spring_boot_HowTo.model;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.ManyToMany;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
@@ -29,6 +33,7 @@ public class Tutorial implements Serializable{
 	
 	private Long likes;
 	private Long dislikes;
+	
 	
 	public Long getTutorialId() {
 		return tutorialId;

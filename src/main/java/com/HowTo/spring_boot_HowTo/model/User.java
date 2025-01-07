@@ -4,7 +4,7 @@ package com.HowTo.spring_boot_HowTo.model;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
-
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -18,6 +18,7 @@ import jakarta.persistence.JoinColumn;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.springframework.format.annotation.DateTimeFormat;
@@ -52,8 +53,8 @@ public class User implements Serializable{
 			inverseJoinColumns = @JoinColumn(name="idrole")
 			)	
 	private List<Role> roles = new ArrayList<Role>();
-
-
+	
+	
 
 	@NotBlank(message = "password is mandatory")
 	@Size(min = 5, max = 50, message = "{jakarta.validation.constraints.Size}")
@@ -64,7 +65,8 @@ public class User implements Serializable{
 	
 	//private boolean isCreator;
 	
-	
+	@OneToMany(mappedBy = "watchLaterOwner")
+	private List<WatchLater> watchLater = new ArrayList<WatchLater>();
 
 	public Long getId() {
 		return id;
@@ -127,5 +129,17 @@ public class User implements Serializable{
 	public void setPassword(String password) {
 		this.password = password;
 	}
-
+	public void addToWatchLater(WatchLater w) {
+		if(!watchLater.contains(w)) {
+			watchLater.add(w);
+		}
+	}
+	 public void removeWatchLater(WatchLater w) {
+        if(watchLater.contains(w)) {
+        	watchLater.remove(w);
+        }
+    }
+	 public List<WatchLater> getWatchLater(){
+        return Collections.unmodifiableList(watchLater);
+    }
 }

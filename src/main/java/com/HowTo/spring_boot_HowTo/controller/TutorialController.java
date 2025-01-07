@@ -1,6 +1,5 @@
 package com.HowTo.spring_boot_HowTo.controller;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.stereotype.Controller;
