@@ -12,18 +12,23 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.HowTo.spring_boot_HowTo.config.MyUserDetails;
+import com.HowTo.spring_boot_HowTo.model.User;
 import com.HowTo.spring_boot_HowTo.model.WatchLater;
+import com.HowTo.spring_boot_HowTo.service.UserServiceI;
 import com.HowTo.spring_boot_HowTo.service.WatchLaterServiceI;
+import com.HowTo.spring_boot_HowTo.service.impl.UserService;
 
 @Controller
 @RequestMapping("/watchLater")
 public class WatchlaterController {
 	
 	private WatchLaterServiceI watchLaterService;
+	private UserServiceI userService;
 	
-	public WatchlaterController(WatchLaterServiceI watchLaterService) {
+	public WatchlaterController(WatchLaterServiceI watchLaterService, UserServiceI userService) {
 		super();
 		this.watchLaterService = watchLaterService;
+		this.userService = userService;
 	}
 	
 	private Long getCurrentUserId() {
@@ -38,7 +43,8 @@ public class WatchlaterController {
 	
 	@GetMapping("/my")
 	public String getWatchLaterId(Model model) {
-		List<WatchLater> watchLater = watchLaterService.getAllWatchLaterFromUser(getCurrentUserId()); 
+		User user = userService.getUserById(getCurrentUserId());
+		List<WatchLater> watchLater = user.getWatchLater(); 
 		model.addAttribute("watchLater", watchLater );
 		return "watchLater";
 		

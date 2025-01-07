@@ -10,7 +10,7 @@
 		<p th:text = ${channel.channelname}></p>
 		<div th:each="element : ${tutorials}">
 		   <p>
-		   <a class="btn btn-info" th:href="@{/tutorials/tutorial/view/{id}(id = ${element.tutorialId})}">View Tutorial <span th:text="${element.tutorialId}"> </a>
+		   <a class="btn btn-info" th:href="@{/history/track/{tutorialid}(tutorialid = ${element.tutorialId})}">View Tutorial <span th:text="${element.tutorialId}"> </a>
 		</div>
 		
 				

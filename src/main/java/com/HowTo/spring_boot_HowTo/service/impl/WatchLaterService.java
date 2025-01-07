@@ -67,9 +67,4 @@ public class WatchLaterService implements WatchLaterServiceI{
 		watchLaterRepository.delete(watchLater);
 	}
 
-	@Override
-	public List<WatchLater> getAllWatchLaterFromUser(Long userid) {
-        User user = userRepository.findById(userid).get();
-		return watchLaterRepository.findByWatchLaterOwner(user);
-	}
 }

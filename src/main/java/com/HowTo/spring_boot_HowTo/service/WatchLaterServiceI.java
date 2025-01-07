@@ -8,8 +8,6 @@ public interface WatchLaterServiceI {
 	
 	List<WatchLater> getAllWatchLaters();
 	
-	List<WatchLater> getAllWatchLaterFromUser(Long userid);
-	
 	WatchLater saveWatchLater(WatchLater watchLater, Long userid, Long tutorialid);
 	
 	WatchLater getWatchLaterById(Long id);

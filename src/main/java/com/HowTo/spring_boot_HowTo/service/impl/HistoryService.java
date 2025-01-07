@@ -9,7 +9,6 @@ import org.springframework.stereotype.Service;
 import com.HowTo.spring_boot_HowTo.model.History;
 import com.HowTo.spring_boot_HowTo.model.Tutorial;
 import com.HowTo.spring_boot_HowTo.model.User;
-import com.HowTo.spring_boot_HowTo.model.WatchLater;
 import com.HowTo.spring_boot_HowTo.repository.HistoryRepositoryI;
 import com.HowTo.spring_boot_HowTo.repository.TutorialRepositoryI;
 import com.HowTo.spring_boot_HowTo.repository.UserRepositoryI;
@@ -68,10 +67,6 @@ public class HistoryService implements HistoryServiceI{
 		historyRepository.delete(history);
 	}
 
-	@Override
-	public List<History> getAllHistoryFromUser(Long userid) {
-        User user = userRepository.findById(userid).get();
-		return historyRepository.findByHistoryOwner(user);
-	}
+
 
 }
