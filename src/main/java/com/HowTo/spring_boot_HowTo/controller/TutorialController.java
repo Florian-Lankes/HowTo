@@ -62,7 +62,6 @@ public class TutorialController {
 		
 		model.addAttribute("tutorial", tutorial );
 		model.addAttribute("comment", commentForm);
-		//model.addAttribute("allCommentsOfTutorial", tutorial.getAttachedComments());
 		return "tutorials/tutorial";
 	}
 	
