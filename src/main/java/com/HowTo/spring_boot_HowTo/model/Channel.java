@@ -2,6 +2,9 @@ package com.HowTo.spring_boot_HowTo.model;
 
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
@@ -9,6 +12,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -32,7 +36,10 @@ public class Channel implements Serializable{
 	
 	@DateTimeFormat(pattern="yyyy-MM-dd")
 	private LocalDate creationDate;
-
+	
+	@OneToMany(mappedBy="createdByChannel")
+	private List<Tutorial> createdTutorials = new ArrayList<Tutorial>();
+	
 	public Long getChannelId() {
 		return channelId;
 	}
@@ -65,5 +72,19 @@ public class Channel implements Serializable{
 		this.creationDate = creationDate;
 	}
 	
+	public void addTutorial(Tutorial tutorial) {
+		if(!createdTutorials.contains(tutorial)) {
+			createdTutorials.add(tutorial);
+		}
+	}
 	
+	public void removeTutorial(Tutorial tutorial) {
+		if(createdTutorials.contains(tutorial)) {
+			createdTutorials.remove(tutorial);
+		}
+	}
+	
+	public List<Tutorial> getTutorials(){
+		return Collections.unmodifiableList(createdTutorials);
+	}
 }

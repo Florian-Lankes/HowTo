@@ -1,6 +1,7 @@
 package com.HowTo.spring_boot_HowTo.model;
 
 import java.io.Serializable;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -10,6 +11,8 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.ManyToOne;
+
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
@@ -29,7 +32,10 @@ public class Tutorial implements Serializable{
 	
 	private byte[] contentVideo;
 	
-	private Long channelId;
+	private Timestamp creationTime;
+	
+	@ManyToOne
+	private Channel createdByChannel;
 	
 	private Long likes;
 	private Long dislikes;
@@ -61,12 +67,6 @@ public class Tutorial implements Serializable{
 	public void setContentVideo(byte[] contentVideo) {
 		this.contentVideo = contentVideo;
 	}
-	public Long getChannelId() {
-		return channelId;
-	} 
-	public void setChannelId(Long channel_id) {
-		this.channelId = channel_id;
-	}
 	public Long getLikes() {
 		return likes;
 	}
@@ -94,5 +94,20 @@ public class Tutorial implements Serializable{
 	
 	public List<Comment> getAttachedComments(){
 		return Collections.unmodifiableList(attachedComments);
+	}
+	public Timestamp getCreationTime() {
+		return creationTime;
+	}
+
+	public void setCreationTime(Timestamp creation_time) {
+		this.creationTime = creation_time;
+	}
+	
+	public void setCreatedByChannel(Channel channel) {
+		this.createdByChannel = channel;
+	}
+	
+	public Channel getCreatedByChannel() {
+		return createdByChannel;
 	}
 }
