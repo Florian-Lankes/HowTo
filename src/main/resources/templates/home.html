@@ -9,7 +9,7 @@
 		<div th:each="element : ${tutorial}">
 		   <p>
 
-		   <a class="btn btn-info" th:href="@{/history/track/{tutorialid}(tutorialid = ${element.tutorialId})}">View Tutorial <span th:text="asdasdasd"> </a>
+		   <a class="btn btn-info" th:href="@{/history/track/{tutorialid}(tutorialid = ${element.tutorialId})}">View Tutorial <span th:text="${element.tutorialId}"> </a>
 
 		</div>
 		<br>
