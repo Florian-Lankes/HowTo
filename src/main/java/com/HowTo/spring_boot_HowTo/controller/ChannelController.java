@@ -62,6 +62,7 @@ public class ChannelController {
 	public String showChannelAdForm(Model model, HttpServletRequest request) {
 		
 		Channel channelForm = new Channel();
+		System.out.println(getCurrentUserId());
 		channelForm.setChannelId(getCurrentUserId()); //TODO change dynamically after channel authorization is implemented
 		LocalDate date= LocalDate.now();
 		channelForm.setCreationDate(date);

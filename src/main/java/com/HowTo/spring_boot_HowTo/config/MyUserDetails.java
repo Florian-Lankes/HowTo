@@ -30,7 +30,7 @@ public class MyUserDetails implements UserDetails {
 		// TODO Auto-generated constructor stub
 		this.userName = user.getUsername();
 		this.password = user.getPassword();
-		this.id = user.getId();
+		this.id = user.getUserId();
 		System.out.println("password of the user is=" + password);
 		System.out.println("userName of the user is=" + this.userName);
 		System.out.println("id of the user is=" + this.id);
