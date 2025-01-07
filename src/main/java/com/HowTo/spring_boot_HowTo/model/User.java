@@ -5,6 +5,7 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -32,7 +33,7 @@ public class User implements Serializable{
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
+	private Long userId;
 	
 	@NotBlank(message = "Name is mandatory")
 	@Size(min = 5, max = 50, message = "{jakarta.validation.constraints.Size}")
@@ -53,8 +54,13 @@ public class User implements Serializable{
 			inverseJoinColumns = @JoinColumn(name="idrole")
 			)	
 	private List<Role> roles = new ArrayList<Role>();
+
+	@ManyToMany(cascade = CascadeType.ALL)					//user is in groups
+	private List<Group> joinedgroups = new ArrayList<Group>();
 	
-	
+	@OneToMany(mappedBy = "groupOwner")					//user can be the owner of many groups
+	private List<Group> ownedgroups = new ArrayList<Group>();
+
 
 	@NotBlank(message = "password is mandatory")
 	@Size(min = 5, max = 50, message = "{jakarta.validation.constraints.Size}")
@@ -68,11 +74,12 @@ public class User implements Serializable{
 	@OneToMany(mappedBy = "watchLaterOwner")
 	private List<WatchLater> watchLater = new ArrayList<WatchLater>();
 
-	public Long getId() {
-		return id;
+
+	public Long getUserId() {
+		return userId;
 	}
-	public void setId(Long id) {
-		this.id = id;
+	public void setUserId(Long userId) {
+		this.userId = userId;
 	}
 	public String getUsername() {
 		return username;
@@ -129,6 +136,7 @@ public class User implements Serializable{
 	public void setPassword(String password) {
 		this.password = password;
 	}
+
 	public void addToWatchLater(WatchLater w) {
 		if(!watchLater.contains(w)) {
 			watchLater.add(w);
@@ -142,4 +150,38 @@ public class User implements Serializable{
 	 public List<WatchLater> getWatchLater(){
         return Collections.unmodifiableList(watchLater);
     }
+
+	public void addJoinedGroup(Group group) {
+		if(!joinedgroups.contains(group)) {
+			joinedgroups.add(group);
+		}
+	}
+	
+	public void removeJoinedGroup(Group group) {
+		if(joinedgroups.contains(group)) {
+			joinedgroups.remove(group);
+		}
+	}
+	
+	public List<Group> getJoinedGroups(){
+		return Collections.unmodifiableList(joinedgroups);
+	}
+	
+	public void addOwnedGroup(Group group) {
+		if(!ownedgroups.contains(group)) {
+			ownedgroups.add(group);
+		}
+	}
+	
+	public void removeOwnedGroup(Group group) {
+		if(ownedgroups.contains(group)) {
+			ownedgroups.remove(group);
+		}
+	}
+	
+	public List<Group> getOwnedGroups(){
+		return Collections.unmodifiableList(ownedgroups);
+	}
+
+
 }

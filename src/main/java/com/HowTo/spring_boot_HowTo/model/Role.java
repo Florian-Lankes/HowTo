@@ -21,7 +21,7 @@ public class Role implements Serializable {
 
 	@Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long roleId;
 
     private String description;
     
@@ -31,17 +31,17 @@ public class Role implements Serializable {
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
         name = "roleauthority", 
-        joinColumns = @JoinColumn(name = "idrole", referencedColumnName = "id"), 
+        joinColumns = @JoinColumn(name = "idrole", referencedColumnName = "roleId"), 
         inverseJoinColumns = @JoinColumn(
-          name = "idauthority", referencedColumnName = "id"))
+          name = "idauthority", referencedColumnName = "authorityId"))
     private Collection<Authority> authorities;
 
-	public Long getId() {
-		return id;
+	public Long getRoleId() {
+		return roleId;
 	}
 
-	public void setId(Long id) {
-		this.id = id;
+	public void setRoleId(Long roleId) {
+		this.roleId = roleId;
 	}
 
 	public String getDescription() {

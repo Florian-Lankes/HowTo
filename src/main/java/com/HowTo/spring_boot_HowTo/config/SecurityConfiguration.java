@@ -80,10 +80,11 @@ public class SecurityConfiguration {
     		.requestMatchers(new AntPathRequestMatcher("/channel/view/**")).hasAuthority("VIEW")
     		.requestMatchers(new AntPathRequestMatcher("/channel/all")).hasAuthority("VIEW")
     		.requestMatchers(new AntPathRequestMatcher("/channel/create")).hasAuthority("VIEW")
+	    	.requestMatchers(new AntPathRequestMatcher("/group/**")).hasAuthority("VIEW")
     		.requestMatchers(new AntPathRequestMatcher("/user/update/**")).hasAuthority("VIEW")
     		.requestMatchers(new AntPathRequestMatcher("/watchLater/**")).hasAuthority("VIEW")
 	    	.requestMatchers(new AntPathRequestMatcher("/history/**")).hasAuthority("VIEW");
-
+	    	
 	    	//sites that need Creator Authority
 	    	http.authorizeHttpRequests()
 	     
@@ -94,7 +95,7 @@ public class SecurityConfiguration {
 	        .requestMatchers(new AntPathRequestMatcher("/tutorial/update/**")).hasAuthority("CREATOR_RIGHTS")
 	        .requestMatchers(new AntPathRequestMatcher("/tutorial/delete/**")).hasAuthority("CREATOR_RIGHTS");
 	    
-	    	//sites that need Authority
+	    	//sites that need Admin Authority
 	    	http.authorizeHttpRequests()
 	     
 	        .requestMatchers(new AntPathRequestMatcher("/admin/**")).hasAuthority("ADMIN_RIGHTS")
