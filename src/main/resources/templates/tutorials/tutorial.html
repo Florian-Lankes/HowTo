@@ -76,14 +76,10 @@
 			</thead>
 
 			<tbody>
-				<tr th:each="element: ${allCommentsOfTutorial}">
+				<tr th:each="element: ${tutorial.attachedComments}">
 					<td th:text="${element.commentTitle}"></td>
 					<td th:text="${element.content}"></td>
 					<td th:text="${element.creationDate}"></td>
-
-					<!--td>  COMMENT: LIKE COMING SOON
-						<a th:href="@{/tutorial/like/{id}(id = ${element.tutorialId})}">Like</a>
-					</td-->
 				</tr>
 			</tbody>
 		</table>
