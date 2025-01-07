@@ -18,6 +18,7 @@
 </head>
 <body>
 	<section class="layout-content" layout:fragment="mybody">
+		
 			
 	        <div class="page-header">
 	            <nav class="navbar navbar-expand-md navbar-top bg-light">
@@ -37,8 +38,7 @@
 	        </div>
 	
 	        <div class="container" id="registration">
-
-		
+				
 				<form th:action="@{/register}"
 				                 th:object="${user}" method="POST">
 							  
@@ -92,8 +92,11 @@
 	               <input type="hidden" id="userId" th:field="*{userId}"/>
 	               <button type="submit" class="btn btn-primary btn-sm">Save</button>
 	           </form>
-	        </div>
+			   <div th:replace="~{fragments/alert::alert}">
+			   			</div>
 
+	        </div>
+			
 		
 	</section>		
 </body>

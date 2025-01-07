@@ -18,9 +18,10 @@ import com.HowTo.spring_boot_HowTo.repository.CommentRepositoryI;
 import com.HowTo.spring_boot_HowTo.repository.GroupRepositoryI;
 import com.HowTo.spring_boot_HowTo.repository.RoleRepositoryI;
 import com.HowTo.spring_boot_HowTo.service.UserServiceI;
+import com.HowTo.spring_boot_HowTo.validator.UserAlreadyExistException;
 
 @Service
-public class UserService implements UserServiceI{
+public class UserService implements UserServiceI {
 
 	@Autowired
 	UserRepositoryI userRepository;
@@ -53,6 +54,14 @@ public class UserService implements UserServiceI{
 	@Override
 	public User saveUser(User user) {
 		// TODO Auto-generated method stub
+		  if (emailExists(user.getEmail())) {
+	            throw new UserAlreadyExistException("There is an account with that email address: "
+	              + user.getEmail());
+	        }
+		  if (usernameExists(user.getUsername())) {
+	            throw new UserAlreadyExistException("There is an account with that username: "
+	              + user.getUsername());
+	        }
 		user.setRoles(Collections.singletonList(roleRepository.findByDescription("USER")));
 		return userRepository.save(user);
 	}
@@ -87,6 +96,14 @@ public class UserService implements UserServiceI{
 	public List<User> findUserByName(String name) {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	private boolean emailExists(String email) {
+		return !userRepository.findUserByEmail(email).isEmpty();
+	}
+	
+	private boolean usernameExists(String username) {
+		return !userRepository.findUserByUsername(username).isEmpty();
 	}
 
 }
