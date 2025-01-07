@@ -40,7 +40,7 @@
 			<tbody>
 				<tr th:each = "element: ${history}">
 					<td th:text = "${element.historyId}"></td>
-					<td th:text = "${element.tutorialId}"></td>
+					<td th:text = "${element.historyTutorial.tutorialId}"></td>
 					<td th:text = "${element.creationTime}"></td>
 					<td>
 						<a th:href = "@{/history/delete/{id}(id = ${element.historyId})}"

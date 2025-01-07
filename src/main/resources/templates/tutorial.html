@@ -9,6 +9,7 @@
 			<p th:text = ${tutorial.title}></p>
 			<div class="content">
 				<p th:text = ${tutorial.contentText}></p>
+				<a th:href=@{/watchLater/save/{id}(id=${tutorial.tutorialId})}>Save</a>
 			</div>
 		</div>
 		

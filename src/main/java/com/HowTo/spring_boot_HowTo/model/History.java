@@ -7,6 +7,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.ManyToOne;
 
 @Entity
 public class History implements Serializable{
@@ -17,20 +18,14 @@ private static final long serialVersionUID = 1L;
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long historyId;
 	
-	private Long tutorialId;
+	@ManyToOne
+	private Tutorial historyTutorial;
 	
-	private Long userId;
+	@ManyToOne
+	private User historyOwner;
 	
 	private Timestamp creationTime;
-	
-	public Long getTutorialId() {
-		return tutorialId;
-	}
 
-	public void setTutorialId(Long tutorialId) {
-		this.tutorialId = tutorialId;
-	}
-	
 	public Long getHistoryId() {
 		return historyId;
 	}
@@ -39,12 +34,20 @@ private static final long serialVersionUID = 1L;
 		this.historyId = historyId;
 	}
 
-	public Long getUserId() {
-		return userId;
+	public Tutorial getHistoryTutorial() {
+		return historyTutorial;
 	}
 
-	public void setUserId(Long userId) {
-		this.userId = userId;
+	public void setHistoryTutorial(Tutorial historyTutorial) {
+		this.historyTutorial = historyTutorial;
+	}
+
+	public User getHistoryOwner() {
+		return historyOwner;
+	}
+
+	public void setHistoryOwner(User historyOwner) {
+		this.historyOwner = historyOwner;
 	}
 
 	public Timestamp getCreationTime() {

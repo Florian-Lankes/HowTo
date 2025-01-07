@@ -48,11 +48,9 @@ public class HistoryController {
 	public String trackView(@PathVariable("tutorialid") long tutorialid) {
 		History history = new History();
 		history.setHistoryId((long) -1 );
-		history.setUserId(getCurrentUserId());
-		history.setTutorialId(tutorialid);
 		Timestamp currentTimestamp = new Timestamp(System.currentTimeMillis());
 		history.setCreationTime(currentTimestamp);
-		historyService.saveHistory(history);
+		historyService.saveHistory(history,  getCurrentUserId(),tutorialid);
 		return "redirect:/tutorial/view/{tutorialid}";
 	}
 	
