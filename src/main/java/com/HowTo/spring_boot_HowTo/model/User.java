@@ -10,8 +10,6 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.Table;
-
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import jakarta.persistence.JoinColumn;
@@ -70,12 +68,14 @@ public class User implements Serializable{
 	private List<Comment> ownedComments = new ArrayList<Comment>();
 	//private boolean isAdmin;
 	
-	
+	@OneToMany(mappedBy = "historyOwner")
+	private List<History> history = new ArrayList<History>();
 	//private boolean isCreator;
 	
 	@OneToMany(mappedBy = "watchLaterOwner")
 	private List<WatchLater> watchLater = new ArrayList<WatchLater>();
-
+	
+	
 
 	public Long getUserId() {
 		return userId;
@@ -144,13 +144,26 @@ public class User implements Serializable{
 			watchLater.add(w);
 		}
 	}
-	 public void removeWatchLater(WatchLater w) {
+	public void removeWatchLater(WatchLater w) {
         if(watchLater.contains(w)) {
         	watchLater.remove(w);
         }
     }
-	 public List<WatchLater> getWatchLater(){
+	public List<WatchLater> getWatchLater(){
         return Collections.unmodifiableList(watchLater);
+    }
+	public void addToHistory(History h) {
+		if(!history.contains(h)) {
+			history.add(h);
+		}
+	}
+	public void removeHistory(History h) {
+        if(history.contains(h)) {
+        	history.remove(h);
+        }
+    }
+	public List<History> getHistory(){
+        return Collections.unmodifiableList(history);
     }
 
 	public void addJoinedGroup(Group group) {

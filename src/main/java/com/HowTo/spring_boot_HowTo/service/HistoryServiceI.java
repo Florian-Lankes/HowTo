@@ -10,7 +10,7 @@ public interface HistoryServiceI {
 	
 	List<History> getAllHistoryFromUser(Long userid);
 	
-	History saveHistory(History history);
+	History saveHistory(History history, Long userid, Long tutorialid);
 	
 	History getHistoryById(Long id);
 	
