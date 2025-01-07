@@ -65,8 +65,7 @@ public class User implements Serializable{
 	@Size(min = 5, max = 50, message = "{jakarta.validation.constraints.Size}")
 	private String password;
 	
-	//TODO was passiert wenn ein user gelöscht wird der noch comments hat
-	@OneToMany(mappedBy = "CommentOwner")							//user can be the owner of many comments
+	@OneToMany(mappedBy = "commentOwner")							//user can be the owner of many comments
 	private List<Comment> ownedComments = new ArrayList<Comment>();
 	//private boolean isAdmin;
 	

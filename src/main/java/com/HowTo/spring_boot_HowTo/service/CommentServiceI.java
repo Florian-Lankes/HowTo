@@ -14,7 +14,7 @@ public interface CommentServiceI {
 	
 	List<Comment> findCommentByTitle(String title);
 	
-	Comment saveComment(Comment comment);
+	Comment saveComment(Comment comment, Long userId, Long tutorialId);
 	
 	Comment getCommentById(Long id);
 	

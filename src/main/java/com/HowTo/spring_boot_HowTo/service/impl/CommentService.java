@@ -9,7 +9,11 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.HowTo.spring_boot_HowTo.model.Comment;
+import com.HowTo.spring_boot_HowTo.model.Tutorial;
+import com.HowTo.spring_boot_HowTo.model.User;
 import com.HowTo.spring_boot_HowTo.repository.CommentRepositoryI;
+import com.HowTo.spring_boot_HowTo.repository.TutorialRepositoryI;
+import com.HowTo.spring_boot_HowTo.repository.UserRepositoryI;
 import com.HowTo.spring_boot_HowTo.service.CommentServiceI;
 
 @Service
@@ -17,6 +21,10 @@ public class CommentService implements CommentServiceI{
 	
 	@Autowired
 	CommentRepositoryI commentRepository;
+	@Autowired
+	UserRepositoryI userRepository;
+	@Autowired
+	TutorialRepositoryI tutorialRepository;
 	
 	@Override
 	public Page<Comment> getAllComments(String title, Pageable pageable) {
@@ -31,9 +39,24 @@ public class CommentService implements CommentServiceI{
 	}
 
 	@Override
-	public Comment saveComment(Comment comment) {
-		return commentRepository.save(comment);
-	}
+	public Comment saveComment(Comment comment, Long userId, Long tutorialId) {
+        // TODO Auto-generated method stub
+        User user = userRepository.findById(userId).get();
+        Tutorial tutorial = tutorialRepository.findById(tutorialId).get();
+        
+        List<Comment> ownedComments = user.getOwnedComments();
+
+        if(user != null && tutorial != null && ownedComments != null && comment != null) {
+            if(!ownedComments.contains(comment)) {
+            	comment.setCommentOwner(user);
+                user.addOwnedComment(comment);
+                comment.setCommentTutorial(tutorial);
+                tutorial.addAttachedComment(comment);
+                commentRepository.save(comment);
+            }
+        }
+        return comment;
+    }
 
 	@Override
 	public Comment getCommentById(Long id) {

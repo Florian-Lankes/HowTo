@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html layout:decorate="~{layout}">
+
+<head>
+	<meta charset="UTF-8" />
+</head>
+
+<body>
+	<section class="layout-content" layout:fragment="mybody">
+		<div class="container">
+			<h1>Tutorial Details</h1>
+			<div class="content"> <strong>Title:</strong>
+				<p th:text="${tutorial.title}"></p>
+			</div>
+			<div class="content"> <strong>Content Text:</strong>
+				<p th:text="${tutorial.contentText}"></p>
+			</div>
+			<div class="content"> <strong>Content Video:</strong>
+				<p th:text="${tutorial.contentVideo}"></p>
+			</div>
+			<div class="content"> <strong>Channel ID:</strong>
+				<p th:text="${tutorial.channelId}"></p>
+			</div>
+			<div class="content"> <strong>Likes:</strong>
+				<p th:text="${tutorial.likes}"></p>
+			</div>
+			<div class="content"> <strong>Dislikes:</strong>
+				<p th:text="${tutorial.dislikes}"></p>
+			</div>
+		</div>
+
+		<form th:action="@{/comment/{id}/create(id=${tutorial.tutorialId})}" th:object="${comment}" method="POST">
+
+
+			<div class="form-row">
+				<div class="form-group col-md-6">
+					<label for="commentTitle">Title</label>
+					<input type="text" class="form-control" id="commentTitle" placeholder="commentTitle" th:field="*{commentTitle}"
+						th:classappend="${#fields.hasErrors('commentTitle')} ? 'is-invalid'" />
+					<div class="invalid-feedback">
+						<span th:errors="*{commentTitle}"></span>
+					</div>
+				</div>
+			</div>
+			<div class="form-row">
+				<div class="form-group col-md-6">
+					<label for="content">content</label>
+					<input type="text" class="form-control" id="content" placeholder="content" th:field="*{content}"
+						th:classappend="${#fields.hasErrors('content')} ? 'is-invalid'" />
+					<div class="invalid-feedback">
+						<span th:errors="*{content}"></span>
+					</div>
+				</div>
+			</div>
+
+			<input type="hidden" id="commentId" th:field="*{commentId}" />
+			<input type="hidden" id="creationDate" th:field="*{creationDate}" />
+
+			<button type="submit" class="btn btn-primary btn-sm">Post Comment</button>
+		</form>
+		<div class="content">
+			LIST OF ALL COMMENTS OF TUTORIAL
+		</div>
+
+	</section>
+</body>
+
+</html>

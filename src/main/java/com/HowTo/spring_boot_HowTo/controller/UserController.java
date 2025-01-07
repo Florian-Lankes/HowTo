@@ -189,5 +189,12 @@ public class UserController {
 //		System.out.println(password);
 //		return "/home";
 //	}
+	
+	@GetMapping("/user/profile/{id}")
+	public String showUserProfile(@PathVariable("id") long id, Model model, RedirectAttributes redirectAttributes) {
+
+		return "/users/profile";
+	}
+	
 
 }

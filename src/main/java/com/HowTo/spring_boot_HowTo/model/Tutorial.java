@@ -1,11 +1,15 @@
 package com.HowTo.spring_boot_HowTo.model;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
@@ -29,6 +33,9 @@ public class Tutorial implements Serializable{
 	
 	private Long likes;
 	private Long dislikes;
+	
+	@OneToMany(mappedBy = "commentTutorial")							//Multiple Comments can be attached to one Tutorial
+	private List<Comment> attachedComments = new ArrayList<Comment>();
 	
 	public Long getTutorialId() {
 		return tutorialId;
@@ -71,5 +78,21 @@ public class Tutorial implements Serializable{
 	}
 	public void setDislikes(Long dislikes) {
 		this.dislikes = dislikes;
+	}
+	
+	public void addAttachedComment(Comment comment){
+		if(!attachedComments.contains(comment)) {
+			attachedComments.add(comment);
+		}
+	}
+	
+	public void removeAttachedComment(Comment comment) {
+		if(attachedComments.contains(comment)) {
+			attachedComments.remove(comment);
+		}
+	}
+	
+	public List<Comment> getAttachedComments(){
+		return Collections.unmodifiableList(attachedComments);
 	}
 }

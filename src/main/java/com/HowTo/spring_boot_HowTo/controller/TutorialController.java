@@ -1,5 +1,6 @@
 package com.HowTo.spring_boot_HowTo.controller;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,9 +15,10 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import com.HowTo.spring_boot_HowTo.model.Comment;
 import com.HowTo.spring_boot_HowTo.model.Tutorial;
 import com.HowTo.spring_boot_HowTo.service.TutorialServiceI;
-import com.HowTo.spring_boot_HowTo.validator.TutorialValidator;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
@@ -32,17 +34,20 @@ public class TutorialController {
 		this.tutorialService = tutorialService;
 	}
 	
-	@InitBinder
-	public void initBinder(WebDataBinder binder) {
-		binder.addValidators(new TutorialValidator());
-	}
-	
 	@GetMapping("/view/{id}")
-	public String getTutorialId(@PathVariable("id") Long id, Model model) {
+	public String getTutorialView(@PathVariable("id") Long id, Model model) {
 		
 		Tutorial tutorial = tutorialService.getTutorialById(id); 
+		
+		//For comment Form in Tutorial
+		Comment commentForm = new Comment();
+		commentForm.setCommentId((long) -1); //TODO change dynamically after user authorization is implemented
+		LocalDate date= LocalDate.now();
+		commentForm.setCreationDate(date);
+		
 		model.addAttribute("tutorial", tutorial );
-		return "tutorial";
+		model.addAttribute("comment", commentForm);
+		return "tutorials/tutorial";
 	}
 	
 	@GetMapping("/like/{id}")

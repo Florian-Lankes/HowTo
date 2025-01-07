@@ -23,9 +23,9 @@ public class Comment {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long commentId;
 	
-	@NotBlank(message = "Titel is mandatory")
+	@NotBlank(message = "Title is mandatory")
 	@Size(min = 1, max = 20, message = "{jakarta.validation.constraints.Size}")
-	private String titel;
+	private String commentTitle;
 	
 	@NotBlank(message = "Comment can not be empty")
 	@Size(min = 1, max = 500, message = "{jakarta.validation.constraints.Size}")
@@ -35,6 +35,56 @@ public class Comment {
 	private LocalDate creationDate;
 	
 	@ManyToOne
-	private User CommentOwner;	
+	private User commentOwner;
+	
+	@ManyToOne
+	private Tutorial commentTutorial;
+
+	public Long getCommentId() {
+		return commentId;
+	}
+
+	public void setCommentId(Long commentId) {
+		this.commentId = commentId;
+	}
+
+	public String getCommentTitle() {
+		return commentTitle;
+	}
+
+	public void setCommentTitle(String commentTitle) {
+		this.commentTitle = commentTitle;
+	}
+
+	public String getContent() {
+		return content;
+	}
+
+	public void setContent(String content) {
+		this.content = content;
+	}
+
+	public LocalDate getCreationDate() {
+		return creationDate;
+	}
+
+	public void setCreationDate(LocalDate creationDate) {
+		this.creationDate = creationDate;
+	}
+
+	public User getCommentOwner() {
+		return commentOwner;
+	}
+
+	public void setCommentOwner(User commentOwner) {
+		this.commentOwner = commentOwner;
+	}	
+	public Tutorial getCommentTutorial() {
+		return commentTutorial;
+	}
+
+	public void setCommentTutorial(Tutorial commentTutorial) {
+		this.commentTutorial = commentTutorial;
+	}
 	
 }
