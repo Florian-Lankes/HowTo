@@ -6,6 +6,7 @@ import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -30,6 +31,7 @@ public class User implements Serializable{
 	private static final long serialVersionUID = 1L;
 	
 	@Id
+	@Column(unique = true, nullable = false)
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long userId;
 	
@@ -64,6 +66,9 @@ public class User implements Serializable{
 	@Size(min = 5, max = 50, message = "{jakarta.validation.constraints.Size}")
 	private String password;
 	
+
+	private boolean enabled;
+	
 	@OneToMany(mappedBy = "commentOwner")							//user can be the owner of many comments
 	private List<Comment> ownedComments = new ArrayList<Comment>();
 	//private boolean isAdmin;
@@ -72,11 +77,16 @@ public class User implements Serializable{
 	private List<History> history = new ArrayList<History>();
 	//private boolean isCreator;
 	
+	 public User() {
+	        super();
+	        this.enabled = false;
+	    }
 	@OneToMany(mappedBy = "watchLaterOwner")
 	private List<WatchLater> watchLater = new ArrayList<WatchLater>();
 	
+	@ManyToMany
+	private List<Channel> subscribedChannels = new ArrayList<Channel>();
 	
-
 	public Long getUserId() {
 		return userId;
 	}
@@ -130,6 +140,14 @@ public class User implements Serializable{
 	public void setRoles(List<Role> roles) {
 		this.roles = roles;
 	}
+	
+	  public boolean isEnabled() {
+	        return enabled;
+	    }
+
+	    public void setEnabled(boolean enabled) {
+	        this.enabled = enabled;
+	    }
 	
 
 	public String getPassword() {
@@ -214,6 +232,21 @@ public class User implements Serializable{
 		return Collections.unmodifiableList(ownedComments);
 	}
 	
+	public void addSubscription(Channel channel){
+		if(!subscribedChannels.contains(channel)) {
+			subscribedChannels.add(channel);
+		}
+	}
+	
+	public void removeSubscription(Channel channel) {
+		if(subscribedChannels.contains(channel)) {
+			subscribedChannels.remove(channel);
+		}
+	}
+	
+	public List<Channel> getSubscribedChannels(){
+		return Collections.unmodifiableList(subscribedChannels);
+	}
 
 
 }

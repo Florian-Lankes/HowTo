@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -13,7 +14,9 @@ import org.springframework.stereotype.Service;
 import com.HowTo.spring_boot_HowTo.model.Comment;
 import com.HowTo.spring_boot_HowTo.model.Group;
 import com.HowTo.spring_boot_HowTo.model.User;
+import com.HowTo.spring_boot_HowTo.model.VerificationToken;
 import com.HowTo.spring_boot_HowTo.repository.UserRepositoryI;
+import com.HowTo.spring_boot_HowTo.repository.VerificationTokenRepository;
 import com.HowTo.spring_boot_HowTo.repository.CommentRepositoryI;
 import com.HowTo.spring_boot_HowTo.repository.GroupRepositoryI;
 import com.HowTo.spring_boot_HowTo.repository.RoleRepositoryI;
@@ -28,9 +31,11 @@ public class UserService implements UserServiceI {
 	@Autowired
 	RoleRepositoryI roleRepository;
 	@Autowired
+    VerificationTokenRepository tokenRepository;
 	CommentRepositoryI commentRepository;
 	@Autowired
 	GroupRepositoryI groupRepository;
+
 	
 //	@Override
 //	public List<User> getAllUsers() {
@@ -65,6 +70,25 @@ public class UserService implements UserServiceI {
 		user.setRoles(Collections.singletonList(roleRepository.findByDescription("USER")));
 		return userRepository.save(user);
 	}
+	
+  @Override
+    public VerificationToken getVerificationToken(final String VerificationToken) {
+        return tokenRepository.findByToken(VerificationToken);
+    }
+  
+  @Override
+  public void createVerificationTokenForUser(final User user, final String token) {
+      VerificationToken myToken = new VerificationToken();
+      myToken.setUser(user);
+      myToken.setToken(token);
+      myToken.setExpiryDate();
+      tokenRepository.save(myToken);
+  }
+	
+    @Override
+    public void saveRegisteredUser(User user) {
+        userRepository.save(user);
+    }
 
 	@Override
 	public User getUserById(Long id) {
@@ -72,6 +96,12 @@ public class UserService implements UserServiceI {
 		Optional<User> opUser = userRepository.findById(id);
 		return opUser.isPresent()? opUser.get(): null;
 	}
+	
+	 @Override
+	    public User getUserByToken(String verificationToken) {
+	        User user = tokenRepository.findByToken(verificationToken).getUser();
+	        return user;
+	    }
 
 	@Override
 	public User updateUser(User user) {

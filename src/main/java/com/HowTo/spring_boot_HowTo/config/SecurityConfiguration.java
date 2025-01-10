@@ -64,6 +64,7 @@ public class SecurityConfiguration {
             		.requestMatchers(new AntPathRequestMatcher("/h2-console/**")).permitAll()
             		.requestMatchers(new AntPathRequestMatcher("/login")).permitAll()
             		.requestMatchers(new AntPathRequestMatcher("/register")).permitAll()
+            		.requestMatchers(new AntPathRequestMatcher("/registrationConfirm")).permitAll()
             		.requestMatchers(new AntPathRequestMatcher("/logout")).permitAll()
             		.requestMatchers(new AntPathRequestMatcher("/")).permitAll());
 	    	
@@ -78,13 +79,18 @@ public class SecurityConfiguration {
     		.requestMatchers(new AntPathRequestMatcher("/tutorial/view/**")).hasAuthority("VIEW")
     		.requestMatchers(new AntPathRequestMatcher("/tutorial/like/**")).hasAuthority("VIEW")
     		.requestMatchers(new AntPathRequestMatcher("/channel/view/**")).hasAuthority("VIEW")
+    		.requestMatchers(new AntPathRequestMatcher("/channel/subscribe")).hasAuthority("VIEW")
+    		.requestMatchers(new AntPathRequestMatcher("/channel/unsubscribe")).hasAuthority("VIEW")
+    		.requestMatchers(new AntPathRequestMatcher("/channel/subscriberlist/**")).hasAuthority("VIEW")
+    		.requestMatchers(new AntPathRequestMatcher("/channel/subscribed")).hasAuthority("VIEW")
     		.requestMatchers(new AntPathRequestMatcher("/channel/all")).hasAuthority("VIEW")
     		.requestMatchers(new AntPathRequestMatcher("/channel/create")).hasAuthority("VIEW")
 	    	.requestMatchers(new AntPathRequestMatcher("/group/**")).hasAuthority("VIEW")
     		.requestMatchers(new AntPathRequestMatcher("/user/update/**")).hasAuthority("VIEW")
 	    	.requestMatchers(new AntPathRequestMatcher("/history/**")).hasAuthority("VIEW")
 	    	.requestMatchers(new AntPathRequestMatcher("/comment/**")).hasAuthority("VIEW")
-    		.requestMatchers(new AntPathRequestMatcher("/watchLater/**")).hasAuthority("VIEW");
+    		.requestMatchers(new AntPathRequestMatcher("/watchLater/**")).hasAuthority("VIEW")
+    		.requestMatchers(new AntPathRequestMatcher("/user/my")).hasAuthority("VIEW");
 
 	    	
 	    	//sites that need Creator Authority

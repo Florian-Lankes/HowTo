@@ -1,5 +1,7 @@
 package com.HowTo.spring_boot_HowTo.service.impl;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -9,7 +11,12 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.HowTo.spring_boot_HowTo.model.Channel;
+import com.HowTo.spring_boot_HowTo.model.Group;
+import com.HowTo.spring_boot_HowTo.model.Role;
+import com.HowTo.spring_boot_HowTo.model.User;
 import com.HowTo.spring_boot_HowTo.repository.ChannelRepositoryI;
+import com.HowTo.spring_boot_HowTo.repository.RoleRepositoryI;
+import com.HowTo.spring_boot_HowTo.repository.UserRepositoryI;
 import com.HowTo.spring_boot_HowTo.service.ChannelServiceI;
 
 @Service
@@ -17,6 +24,10 @@ public class ChannelService implements ChannelServiceI{
 
 	@Autowired
 	ChannelRepositoryI channelRepository;
+	@Autowired
+	UserRepositoryI userRepository;
+	@Autowired
+	RoleRepositoryI roleRepository;
 	
 	@Override
 	public Page<Channel> getAllChannels(String channelname, Pageable pageable) {
@@ -32,9 +43,15 @@ public class ChannelService implements ChannelServiceI{
 	}
 
 	@Override
-	public Channel saveChannel(Channel channel) {
+	public Channel saveChannel(Channel channel, Long userId) {
 		// TODO Auto-generated method stub
-		return channelRepository.save(channel);
+		Channel c =  channelRepository.save(channel);
+		User user = userRepository.findById(userId).get();
+		List<Role> liste = new ArrayList<>();
+		liste.add(roleRepository.findByDescription("CREATOR"));
+		user.setRoles(liste);
+		userRepository.save(user);
+		return c;
 	}
 
 	@Override
@@ -55,6 +72,40 @@ public class ChannelService implements ChannelServiceI{
 	public void delete(Channel channel) {
 		// TODO Auto-generated method stub
 		channelRepository.delete(channel);
+	}
+	
+	@Override
+	public Channel subscribeChannel(Channel channel, Long userId) {
+		User user = userRepository.findById(userId).get();
+		Channel c = channelRepository.findById(channel.getChannelId()).get();
+		List<User> subscribedBy = c.getSubscribedFromUserList();
+		List<Channel> subscribed = user.getSubscribedChannels();
+		
+		if(user != null && c != null && userId != null) {
+			if(!subscribedBy.contains(user) && !subscribed.contains(c)) {
+				user.addSubscription(c);
+				c.addSubscribedFromUser(user);
+				userRepository.save(user);
+			}
+		}
+		return channel;
+	}
+	
+	@Override
+	public Channel unsubscribeChannel(Channel channel, Long userId) {
+		User user = userRepository.findById(userId).get();
+		Channel c = channelRepository.findById(channel.getChannelId()).get();
+		List<User> subscribedBy = c.getSubscribedFromUserList();
+		List<Channel> subscribed = user.getSubscribedChannels();
+		
+		if(user != null && c != null && userId != null) {
+			if(subscribedBy.contains(user) && subscribed.contains(c)) {
+				user.removeSubscription(c);
+				c.removeSubscribedFromUser(user);
+				userRepository.save(user);
+			}
+		}
+		return channel;
 	}
 
 }

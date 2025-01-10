@@ -11,11 +11,15 @@ public interface ChannelServiceI {
 	
 	Page<Channel> getAllChannels(String channelname, Pageable pageable);
 	
-	Channel saveChannel(Channel channel);
+	Channel saveChannel(Channel channel, Long userId);
 	
 	Channel getChannelById(Long id);
 	
 	Channel updateChannel(Channel channel);
+	
+	Channel subscribeChannel(Channel channel, Long userId);
+	
+	Channel unsubscribeChannel(Channel channel, Long userId);
 	
 	void delete(Channel channel);
 }
