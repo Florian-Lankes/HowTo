@@ -117,11 +117,13 @@ public class TutorialController {
 	}
 	// 
 	@PostMapping("/upload")
-	public String uploadTutorial(@Valid @ModelAttribute Tutorial tutorial, @RequestParam("categorySelection") Long categoryId,
+	public String uploadTutorial(@RequestParam("categorySelection") Long categoryId, @Valid @ModelAttribute Tutorial tutorial, 
 			BindingResult results, Model model, 
 			RedirectAttributes redirectAttributes ) {
 		if (results.hasErrors()) {
 			System.out.println(results.getAllErrors().toString());
+			List<Category> categories = categoryService.getAllCategorys();
+			model.addAttribute("categories",categories);
     		return "/tutorials/tutorial-create";
         }
 		tutorialService.saveTutorial(tutorial, getCurrentUserId(), categoryId);
