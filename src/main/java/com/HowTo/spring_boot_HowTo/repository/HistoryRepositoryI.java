@@ -9,5 +9,4 @@ import com.HowTo.spring_boot_HowTo.model.User;
 
 public interface HistoryRepositoryI extends JpaRepository<History, Long>{
 	
-	List<History> findByHistoryOwner(User historyOwner);
 }

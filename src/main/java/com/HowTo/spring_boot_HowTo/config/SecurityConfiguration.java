@@ -64,6 +64,7 @@ public class SecurityConfiguration {
             		.requestMatchers(new AntPathRequestMatcher("/h2-console/**")).permitAll()
             		.requestMatchers(new AntPathRequestMatcher("/login")).permitAll()
             		.requestMatchers(new AntPathRequestMatcher("/register")).permitAll()
+            		.requestMatchers(new AntPathRequestMatcher("/registrationConfirm")).permitAll()
             		.requestMatchers(new AntPathRequestMatcher("/logout")).permitAll()
             		.requestMatchers(new AntPathRequestMatcher("/")).permitAll());
 	    	
