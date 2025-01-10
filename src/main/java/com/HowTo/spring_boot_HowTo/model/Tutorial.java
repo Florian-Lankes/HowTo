@@ -35,6 +35,10 @@ public class Tutorial implements Serializable{
 	@ManyToOne
 	private Channel createdByChannel;
 	
+	@ManyToOne
+	private Category tutorialCategory;
+	
+	
 	private Long likes;
 	private Long dislikes;
 	
@@ -106,6 +110,7 @@ public class Tutorial implements Serializable{
 		return createdByChannel;
 
 	}
+
 	
 	//Cloudinary
 	public String getVideoUrl() {
@@ -114,4 +119,12 @@ public class Tutorial implements Serializable{
 	public void setVideoUrl(String videoUrl) {
 		this.videoUrl = videoUrl;
 	}
+
+	public Category getTutorialCategory() {
+		return tutorialCategory;
+	}
+	public void setTutorialCategory(Category tutorialCategory) {
+		this.tutorialCategory = tutorialCategory;
+	}
+
 }
