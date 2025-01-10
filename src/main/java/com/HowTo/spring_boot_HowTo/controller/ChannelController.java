@@ -24,6 +24,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.HowTo.spring_boot_HowTo.config.MyUserDetails;
 import com.HowTo.spring_boot_HowTo.model.Channel;
+import com.HowTo.spring_boot_HowTo.model.Group;
 import com.HowTo.spring_boot_HowTo.model.Tutorial;
 import com.HowTo.spring_boot_HowTo.service.ChannelServiceI;
 import com.HowTo.spring_boot_HowTo.validator.ChannelValidator;
@@ -173,4 +174,38 @@ public class ChannelController {
 		return "redirect:/channel/all";
 		
 	}
+    
+    @PostMapping("/subscribe")
+    public String subscribeChannel(@Valid @ModelAttribute Channel channel,
+		BindingResult results,
+		Model model, 
+		RedirectAttributes redirectAttributes) {
+    	
+    	channelService.subscribeChannel(channel, getCurrentUserId());
+    	redirectAttributes.addFlashAttribute("subscribed", "subscribed!");
+    	return "redirect:/channel/view/"+channel.getChannelId();
+    }
+    
+    @PostMapping("/unsubscribe")
+    public String unsubscribeChannel(@Valid @ModelAttribute Channel channel,
+		BindingResult results,
+		Model model, 
+		RedirectAttributes redirectAttributes) {
+    	
+    	channelService.unsubscribeChannel(channel, getCurrentUserId());
+    	redirectAttributes.addFlashAttribute("unsubscribed", "unsubscribed!");
+    	return "redirect:/channel/view/"+channel.getChannelId();
+    }
+
+    @GetMapping("/subscriberlist/{id}")
+   	public String showChannelSubscriber(@PathVariable("id") Long channelId, 
+   			Model model,
+   			HttpServletRequest request) {
+   	 	Channel channel = channelService.getChannelById(channelId); 
+       	model.addAttribute("channel", channel);
+   		request.getSession().setAttribute("channelSession", channel);
+   		
+   		System.out.println("get subscriberlist="+ channelId);
+   		return "/channels/subscriber-list";
+   	}
 }

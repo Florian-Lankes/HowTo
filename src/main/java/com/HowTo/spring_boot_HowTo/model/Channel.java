@@ -12,6 +12,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -39,6 +40,9 @@ public class Channel implements Serializable{
 	
 	@OneToMany(mappedBy="createdByChannel")
 	private List<Tutorial> createdTutorials = new ArrayList<Tutorial>();
+	
+	@ManyToMany(mappedBy="subscribedChannels")
+	private List<User> subscribedFromUserList = new ArrayList<User>();
 	
 	public Long getChannelId() {
 		return channelId;
@@ -86,5 +90,21 @@ public class Channel implements Serializable{
 	
 	public List<Tutorial> getTutorials(){
 		return Collections.unmodifiableList(createdTutorials);
+	}
+	
+	public void addSubscribedFromUser(User user) {
+		if(!subscribedFromUserList.contains(user)) {
+			subscribedFromUserList.add(user);
+		}
+	}
+	
+	public void removeSubscribedFromUser(User user) {
+		if(subscribedFromUserList.contains(user)) {
+			subscribedFromUserList.remove(user);
+		}
+	}
+	
+	public List<User> getSubscribedFromUserList(){
+		return Collections.unmodifiableList(subscribedFromUserList);
 	}
 }

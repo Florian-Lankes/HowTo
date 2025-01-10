@@ -75,7 +75,8 @@ public class User implements Serializable{
 	@OneToMany(mappedBy = "watchLaterOwner")
 	private List<WatchLater> watchLater = new ArrayList<WatchLater>();
 	
-	
+	@ManyToMany
+	private List<Channel> subscribedChannels = new ArrayList<Channel>();
 
 	public Long getUserId() {
 		return userId;
@@ -214,6 +215,21 @@ public class User implements Serializable{
 		return Collections.unmodifiableList(ownedComments);
 	}
 	
+	public void addSubscription(Channel channel){
+		if(!subscribedChannels.contains(channel)) {
+			subscribedChannels.add(channel);
+		}
+	}
+	
+	public void removeSubscription(Channel channel) {
+		if(subscribedChannels.contains(channel)) {
+			subscribedChannels.remove(channel);
+		}
+	}
+	
+	public List<Channel> getSubscribedChannels(){
+		return Collections.unmodifiableList(subscribedChannels);
+	}
 
 
 }

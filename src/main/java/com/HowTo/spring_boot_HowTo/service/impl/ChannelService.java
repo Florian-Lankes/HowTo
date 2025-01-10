@@ -9,7 +9,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.HowTo.spring_boot_HowTo.model.Channel;
+import com.HowTo.spring_boot_HowTo.model.Group;
+import com.HowTo.spring_boot_HowTo.model.User;
 import com.HowTo.spring_boot_HowTo.repository.ChannelRepositoryI;
+import com.HowTo.spring_boot_HowTo.repository.UserRepositoryI;
 import com.HowTo.spring_boot_HowTo.service.ChannelServiceI;
 
 @Service
@@ -17,6 +20,8 @@ public class ChannelService implements ChannelServiceI{
 
 	@Autowired
 	ChannelRepositoryI channelRepository;
+	@Autowired
+	UserRepositoryI userRepository;
 	
 	@Override
 	public Page<Channel> getAllChannels(String channelname, Pageable pageable) {
@@ -55,6 +60,40 @@ public class ChannelService implements ChannelServiceI{
 	public void delete(Channel channel) {
 		// TODO Auto-generated method stub
 		channelRepository.delete(channel);
+	}
+	
+	@Override
+	public Channel subscribeChannel(Channel channel, Long userId) {
+		User user = userRepository.findById(userId).get();
+		Channel c = channelRepository.findById(channel.getChannelId()).get();
+		List<User> subscribedBy = c.getSubscribedFromUserList();
+		List<Channel> subscribed = user.getSubscribedChannels();
+		
+		if(user != null && c != null && userId != null) {
+			if(!subscribedBy.contains(user) && !subscribed.contains(c)) {
+				user.addSubscription(c);
+				c.addSubscribedFromUser(user);
+				userRepository.save(user);
+			}
+		}
+		return channel;
+	}
+	
+	@Override
+	public Channel unsubscribeChannel(Channel channel, Long userId) {
+		User user = userRepository.findById(userId).get();
+		Channel c = channelRepository.findById(channel.getChannelId()).get();
+		List<User> subscribedBy = c.getSubscribedFromUserList();
+		List<Channel> subscribed = user.getSubscribedChannels();
+		
+		if(user != null && c != null && userId != null) {
+			if(subscribedBy.contains(user) && subscribed.contains(c)) {
+				user.removeSubscription(c);
+				c.removeSubscribedFromUser(user);
+				userRepository.save(user);
+			}
+		}
+		return channel;
 	}
 
 }

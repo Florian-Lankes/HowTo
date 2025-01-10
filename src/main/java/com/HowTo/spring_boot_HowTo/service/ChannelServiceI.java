@@ -17,5 +17,9 @@ public interface ChannelServiceI {
 	
 	Channel updateChannel(Channel channel);
 	
+	Channel subscribeChannel(Channel channel, Long userId);
+	
+	Channel unsubscribeChannel(Channel channel, Long userId);
+	
 	void delete(Channel channel);
 }

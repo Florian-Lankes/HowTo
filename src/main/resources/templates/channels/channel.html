@@ -7,7 +7,21 @@
 		<div class="">
 			<p>This is the channel page</p>
 		</div>
-		<p th:text = ${channel.channelname}></p>
+		<form th:action="@{/channel/subscribe}"
+				   th:object="${channel}" method="POST">
+				   <input type="text" readonly class="form-control" id="channelname" th:field="*{channelname}" />
+				   <input type="hidden" id="description" th:field="*{description}" />
+				   <input type="hidden" id="creationDate" th:field="*{creationDate}"/>
+					<input type="hidden" readonly id="channelId" th:field="*{channelId}"/>
+					   	               <button type="submit" class="btn btn- btn-success">Subscribe</button>
+					   	           </form>		
+								   
+			<form th:action="@{/channel/unsubscribe}"
+					th:object="${channel}" method="POST">
+								<input type="hidden" readonly id="channelId" th:field="*{channelId}"/>
+								<button type="submit" class="btn btn-danger btn-sm">Unsubscribe</button>
+					</form>	
+					<a class="btn btn-info" th:href="@{/channel/subscriberlist/{id}(id = ${channel.channelId})}">Subscriber</a>
 		<div th:each="element : ${tutorials}">
 		   <p>
 		   <a class="btn btn-info" th:href="@{/tutorials/tutorial/view/{id}(id = ${element.tutorialId})}">View Tutorial <span th:text="${element.tutorialId}"> </a>
