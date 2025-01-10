@@ -2,8 +2,12 @@ package com.HowTo.spring_boot_HowTo.controller;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
+import java.util.Locale;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -19,10 +23,13 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.HowTo.spring_boot_HowTo.config.MyUserDetails;
 import com.HowTo.spring_boot_HowTo.model.User;
+import com.HowTo.spring_boot_HowTo.model.VerificationToken;
+import com.HowTo.spring_boot_HowTo.registration.OnRegistrationCompleteEvent;
 import com.HowTo.spring_boot_HowTo.service.UserServiceI;
 import com.HowTo.spring_boot_HowTo.validator.UserAlreadyExistException;
 import com.HowTo.spring_boot_HowTo.validator.UserValidator;
@@ -37,6 +44,9 @@ import org.springframework.security.core.context.SecurityContextHolder;
 public class UserController {
 
 	private UserServiceI userService;
+	
+	@Autowired
+    private ApplicationEventPublisher eventPublisher;
 
 	public UserController(UserServiceI userService) {
 		super();
@@ -158,12 +168,38 @@ public class UserController {
 		request.getSession().setAttribute("userSession", userForm);
 		model.addAttribute("user", userForm);
 
-		return "/register";
+		return "/register"; 
+	}
+	
+	@GetMapping("/registrationConfirm")
+	public String confirmRegistration
+	  (WebRequest request, Model model, @RequestParam("token") String token) {
+	 
+	    // Locale locale = request.getLocale();
+	    
+	    VerificationToken verificationToken = userService.getVerificationToken(token);
+	    if (verificationToken == null) {
+//	        String message = messages.getMessage("auth.message.invalidToken", null, locale);
+//	        model.addAttribute("message", message);
+	        return "redirect:/badUser"; // ?lang="  + locale.getLanguage();
+	    }
+	    
+	    User user = verificationToken.getUser();
+	    Calendar cal = Calendar.getInstance();
+	    if ((verificationToken.getExpiryDate().getTime() - cal.getTime().getTime()) <= 0) {
+//	        String messageValue = messages.getMessage("auth.message.expired", null, locale);
+//	        model.addAttribute("message", messageValue);
+	        return "redirect:/badUser"; //?lang=" + locale.getLanguage();
+	    } 
+	    System.out.println("Test");
+	    user.setEnabled(true); 
+	    userService.saveRegisteredUser(user); 
+	    return "redirect:/login"; // + request.getLocale().getLanguage(); 
 	}
 
 	@PostMapping("/register")
 	public String registerUser(@Valid @ModelAttribute User user, BindingResult result, Model model,
-			RedirectAttributes redirectAttributes){
+			RedirectAttributes redirectAttributes, HttpServletRequest request){
 		System.out.println("In Function");
 		if (result.hasErrors()) {
 			System.out.println(result.getAllErrors().toString());
@@ -172,6 +208,9 @@ public class UserController {
 		
 		try {
 	        User registered = userService.saveUser(user);
+	        String appUrl = request.getContextPath();
+	        eventPublisher.publishEvent(new OnRegistrationCompleteEvent(registered, 
+	          request.getLocale(), appUrl));
 	    } catch (UserAlreadyExistException uaeEx) {
 	    	redirectAttributes.addFlashAttribute("register", "An account for that username/email already exists.");
 	        return "redirect:/";
@@ -181,7 +220,7 @@ public class UserController {
 		
 		redirectAttributes.addFlashAttribute("added", "User added!");
 
-		return "redirect:/home";
+		return "redirect:/login";
 	}
 
 //	@GetMapping("/login")

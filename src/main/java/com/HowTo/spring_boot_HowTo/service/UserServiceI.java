@@ -6,6 +6,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import com.HowTo.spring_boot_HowTo.model.User;
+import com.HowTo.spring_boot_HowTo.model.VerificationToken;
 
 public interface UserServiceI {
 
@@ -17,7 +18,16 @@ public interface UserServiceI {
 	
 	User getUserById(Long id);
 	
+	User getUserByToken(String verificationToken);
+	
 	User updateUser(User user);
 	
 	void delete(User user);
+	
+	void saveRegisteredUser(User user);
+	
+	VerificationToken getVerificationToken(String VerificationToken);
+
+	void createVerificationTokenForUser(User user, String token);
+
 }

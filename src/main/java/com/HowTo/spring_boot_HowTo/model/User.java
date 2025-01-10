@@ -6,6 +6,7 @@ import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -32,6 +33,7 @@ public class User implements Serializable{
 	private static final long serialVersionUID = 1L;
 	
 	@Id
+	@Column(unique = true, nullable = false)
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long userId;
 	
@@ -65,10 +67,17 @@ public class User implements Serializable{
 	@Size(min = 5, max = 50, message = "{jakarta.validation.constraints.Size}")
 	private String password;
 	
+	private boolean enabled;
+	
 	//private boolean isAdmin;
 	
 	
 	//private boolean isCreator;
+	
+	 public User() {
+	        super();
+	        this.enabled = false;
+	    }
 	
 
 	public Long getUserId() {
@@ -124,6 +133,14 @@ public class User implements Serializable{
 	public void setRoles(List<Role> roles) {
 		this.roles = roles;
 	}
+	
+	  public boolean isEnabled() {
+	        return enabled;
+	    }
+
+	    public void setEnabled(boolean enabled) {
+	        this.enabled = enabled;
+	    }
 	
 
 	public String getPassword() {
