@@ -50,7 +50,7 @@ public class GroupController {
 	public String showGroupAdForm(Model model, HttpServletRequest request) {
 		
 		Group groupForm = new Group();
-		groupForm.setGroupId((long) -1); //TODO change dynamically after user authorization is implemented
+		//groupForm.setGroupId(null); //TODO change dynamically after user authorization is implemented
 		LocalDate date= LocalDate.now();
 		groupForm.setCreationDate(date);
 		
@@ -73,10 +73,12 @@ public class GroupController {
         }
 
     	
-    	groupService.saveGroup(group, getCurrentUserId());
+    	Group r= groupService.saveGroup(group, getCurrentUserId());
+    	System.out.println(r.getGroupId());
         redirectAttributes.addFlashAttribute("created", "Group created!");
-//        groupService.joinGroup(group, getCurrentUserId()); //doenst wanna join the group after creating
-//        redirectAttributes.addFlashAttribute("joined", "Group joined!");
+        groupService.joinGroup(r, getCurrentUserId()); //doenst wanna join the group after creating
+        redirectAttributes.addFlashAttribute("joined", "Group joined!");
+        
         
         return "redirect:/group/all";
     }
