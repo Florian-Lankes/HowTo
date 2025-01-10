@@ -26,7 +26,10 @@ import com.HowTo.spring_boot_HowTo.config.MyUserDetails;
 import com.HowTo.spring_boot_HowTo.model.Channel;
 import com.HowTo.spring_boot_HowTo.model.Group;
 import com.HowTo.spring_boot_HowTo.model.Tutorial;
+import com.HowTo.spring_boot_HowTo.model.User;
+import com.HowTo.spring_boot_HowTo.model.WatchLater;
 import com.HowTo.spring_boot_HowTo.service.ChannelServiceI;
+import com.HowTo.spring_boot_HowTo.service.UserServiceI;
 import com.HowTo.spring_boot_HowTo.validator.ChannelValidator;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -38,10 +41,13 @@ public class ChannelController {
 
 	private ChannelServiceI channelService;
 	
+	private UserServiceI userService;
 	
-	public ChannelController(ChannelServiceI channelService) {
+	
+	public ChannelController(ChannelServiceI channelService, UserServiceI userService) {
 		super();
 		this.channelService = channelService;
+		this.userService = userService;
 	}
 	
 	@InitBinder
@@ -208,4 +214,13 @@ public class ChannelController {
    		System.out.println("get subscriberlist="+ channelId);
    		return "/channels/subscriber-list";
    	}
+    
+	@GetMapping("/subscribed")
+	public String showSubscribedChannelList(Model model, HttpServletRequest request) {
+		User user = userService.getUserById(getCurrentUserId());
+		List<Channel> channels = user.getSubscribedChannels(); 
+		model.addAttribute("channels", channels );
+				
+		return "/subscribedChannel";
+	}
 }

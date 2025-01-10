@@ -82,6 +82,7 @@ public class SecurityConfiguration {
     		.requestMatchers(new AntPathRequestMatcher("/channel/subscribe")).hasAuthority("VIEW")
     		.requestMatchers(new AntPathRequestMatcher("/channel/unsubscribe")).hasAuthority("VIEW")
     		.requestMatchers(new AntPathRequestMatcher("/channel/subscriberlist/**")).hasAuthority("VIEW")
+    		.requestMatchers(new AntPathRequestMatcher("/channel/subscribed")).hasAuthority("VIEW")
     		.requestMatchers(new AntPathRequestMatcher("/channel/all")).hasAuthority("VIEW")
     		.requestMatchers(new AntPathRequestMatcher("/channel/create")).hasAuthority("VIEW")
 	    	.requestMatchers(new AntPathRequestMatcher("/group/**")).hasAuthority("VIEW")

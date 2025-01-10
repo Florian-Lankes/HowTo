@@ -86,7 +86,7 @@ public class User implements Serializable{
 	
 	@ManyToMany
 	private List<Channel> subscribedChannels = new ArrayList<Channel>();
-
+	
 	public Long getUserId() {
 		return userId;
 	}
