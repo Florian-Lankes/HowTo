@@ -37,6 +37,10 @@ public class Tutorial implements Serializable{
 	@ManyToOne
 	private Channel createdByChannel;
 	
+	@ManyToOne
+	private Category tutorialCategory;
+	
+	
 	private Long likes;
 	private Long dislikes;
 	
@@ -111,4 +115,11 @@ public class Tutorial implements Serializable{
 		return createdByChannel;
 
 	}
+	public Category getTutorialCategory() {
+		return tutorialCategory;
+	}
+	public void setTutorialCategory(Category tutorialCategory) {
+		this.tutorialCategory = tutorialCategory;
+	}
+	
 }
