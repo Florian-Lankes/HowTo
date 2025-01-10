@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html layout:decorate="~{layout}">
+<head><meta charset="UTF-8" /></head>
+
+<body>
+	<section class="layout-content" layout:fragment="mybody">
+			
+	        <div class="page-header">
+	            <nav class="navbar navbar-expand-md navbar-top bg-light">
+	                <div class="collapse navbar-collapse" id="navbarsExampleDefault">
+	                    <ul class="navbar-nav">
+	                        <li class="nav-item active">
+	                            <i class="oi oi-caret-right"></i>
+	                            <span>Create Category</span>
+	                        </li>
+	                    </ul>
+	                </div>
+	            </nav>
+	        </div>
+	
+	        <div class="container" id="registration">
+
+		
+				<form th:action="@{/category/create}"
+				                 th:object="${category}" method="POST">
+							  
+					 <div class="form-row">
+ 	                     <div class="form-category col-md-6">
+ 	                         <label for="name">Kategorie Name</label>
+ 	                         <input type="text" class="form-control" id="name" placeholder="Meine Kategorie"
+ 	                                autofocus="autofocus" th:field="*{categoryName}" 
+ 	                                th:classappend="${#fields.hasErrors('categoryName')} ? 'is-invalid'" />
+ 	                         <div class="invalid-feedback">
+ 	                             <span th:errors="*{categoryName}"></span>
+ 	                         </div>
+ 	                     </div>
+ 	                 </div>  
+	               <button type="submit" class="btn btn-primary btn-sm">Create</button>
+	           </form>
+	        </div>
+
+		
+	</section>		
+</body>
+</html>

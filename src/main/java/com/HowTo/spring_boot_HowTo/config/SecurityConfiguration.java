@@ -90,6 +90,8 @@ public class SecurityConfiguration {
 	    	.requestMatchers(new AntPathRequestMatcher("/history/**")).hasAuthority("VIEW")
 	    	.requestMatchers(new AntPathRequestMatcher("/comment/**")).hasAuthority("VIEW")
     		.requestMatchers(new AntPathRequestMatcher("/watchLater/**")).hasAuthority("VIEW")
+	        .requestMatchers(new AntPathRequestMatcher("/category/view/**")).hasAuthority("VIEW")
+	        .requestMatchers(new AntPathRequestMatcher("/category/all")).hasAuthority("VIEW")
     		.requestMatchers(new AntPathRequestMatcher("/user/my")).hasAuthority("VIEW");
 
 	    	
@@ -107,6 +109,10 @@ public class SecurityConfiguration {
 	    	http.authorizeHttpRequests()
 	     
 	        .requestMatchers(new AntPathRequestMatcher("/admin/**")).hasAuthority("ADMIN_RIGHTS")
+	        .requestMatchers(new AntPathRequestMatcher("/category/create")).hasAuthority("ADMIN_RIGHTS")
+	        .requestMatchers(new AntPathRequestMatcher("/category/delete/**")).hasAuthority("ADMIN_RIGHTS")
+	        .requestMatchers(new AntPathRequestMatcher("/category/update/**")).hasAuthority("ADMIN_RIGHTS")
+	        .requestMatchers(new AntPathRequestMatcher("/category/update")).hasAuthority("ADMIN_RIGHTS")
 	        .requestMatchers(new AntPathRequestMatcher("/user/admin/**")).hasAuthority("ADMIN_RIGHTS");
 
 	    	

@@ -9,11 +9,11 @@ public interface TutorialServiceI {
 	
 	List<Tutorial> getAllTutorials();
 	
-	Tutorial saveTutorial(Tutorial tutorial, Long channelId);
+	Tutorial saveTutorial(Tutorial tutorial, Long channelId, Long categoryId);
 	
 	Tutorial getTutorialById(Long id);
 	
-	Tutorial updateTutorial(Tutorial tutorial);
+	Tutorial updateTutorial(Tutorial tutorial, Long categoryId);
 	
 	void delete(Tutorial tutorial);
 }

@@ -45,7 +45,6 @@ public class HistoryController {
 		User user = userService.getUserById(getCurrentUserId());
 		model.addAttribute("history", user.getHistory() );
 		return "history";
-		
 	}
 	
 	@GetMapping("/track/{tutorialid}")

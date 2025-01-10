@@ -14,14 +14,16 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-
+import com.HowTo.spring_boot_HowTo.model.Category;
 import com.HowTo.spring_boot_HowTo.model.Comment;
 
 import com.HowTo.spring_boot_HowTo.config.MyUserDetails;
 
 import com.HowTo.spring_boot_HowTo.model.Tutorial;
+import com.HowTo.spring_boot_HowTo.service.CategoryServiceI;
 import com.HowTo.spring_boot_HowTo.service.TutorialServiceI;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -32,10 +34,12 @@ import jakarta.validation.Valid;
 public class TutorialController {
 	
 	private TutorialServiceI tutorialService;
+	private CategoryServiceI categoryService;
 	
-	public TutorialController(TutorialServiceI tutorialService) {
+	public TutorialController(TutorialServiceI tutorialService, CategoryServiceI categoryService) {
 		super();
 		this.tutorialService = tutorialService;
+		this.categoryService = categoryService;
 	}
 	
 	
@@ -48,6 +52,7 @@ public class TutorialController {
 		MyUserDetails userDetails = (MyUserDetails) authentication.getPrincipal();
 		return userDetails.getId();
 	}
+	
 	
 	@GetMapping("/view/{id}")
 	public String getTutorialView(@PathVariable("id") Long id, Model model) {
@@ -71,7 +76,7 @@ public class TutorialController {
 			HttpServletRequest request) {
 	 	Tutorial tutorial = tutorialService.getTutorialById(id); 
 	 	tutorial.setLikes(tutorial.getLikes()+1);
-		tutorialService.updateTutorial(tutorial);
+		tutorialService.updateTutorial(tutorial, tutorial.getTutorialCategory().getCategoryId());
 
 		return "redirect:/tutorial/all";
 	}
@@ -82,7 +87,7 @@ public class TutorialController {
 			HttpServletRequest request) {
 	 	Tutorial tutorial = tutorialService.getTutorialById(id); 
 	 	tutorial.setDislikes(tutorial.getDislikes()+1);
-		tutorialService.updateTutorial(tutorial);
+		tutorialService.updateTutorial(tutorial, tutorial.getTutorialCategory().getCategoryId());
 		
 		return "redirect:/tutorial/all";
 	}
@@ -97,28 +102,29 @@ public class TutorialController {
 	}
 	
 	@GetMapping("/create")
-	public String createTutorialView(Model model, HttpServletRequest request) {
+	public String createTutorialView(Model model) {
 		
 		Tutorial tutorial = new Tutorial();
-		tutorial.setTutorialId((long) -1); //TODO change dynamically after user authorization is implemented
 		tutorial.setLikes((long) 0);
 		tutorial.setDislikes((long) 0);
 		Timestamp currentTimestamp = new Timestamp(System.currentTimeMillis());
 		tutorial.setCreationTime(currentTimestamp);
+		List<Category> categories = categoryService.getAllCategorys();
 		model.addAttribute("tutorial", tutorial);
+		model.addAttribute("categories",categories);
 		
 		return "tutorials/tutorial-create";
 	}
-	
+	// 
 	@PostMapping("/upload")
-	public String uploadTutorial(@Valid @ModelAttribute Tutorial tutorial, 
+	public String uploadTutorial(@Valid @ModelAttribute Tutorial tutorial, @RequestParam("categorySelection") Long categoryId,
 			BindingResult results, Model model, 
 			RedirectAttributes redirectAttributes ) {
 		if (results.hasErrors()) {
 			System.out.println(results.getAllErrors().toString());
     		return "/tutorials/tutorial-create";
         }
-		tutorialService.saveTutorial(tutorial, getCurrentUserId());
+		tutorialService.saveTutorial(tutorial, getCurrentUserId(), categoryId);
 		redirectAttributes.addFlashAttribute("created", "Tutorial created!");
 		
 		return "redirect:/tutorial/all";
@@ -138,15 +144,16 @@ public class TutorialController {
 			HttpServletRequest request) {
 	 	Tutorial tutorial = tutorialService.getTutorialById(tutorialId); 
     	model.addAttribute("tutorial", tutorial);
-    	//model.addAttribute("createdByChannel", tutorial.getCreatedByChannel());
-		
+    	List<Category> categories = categoryService.getAllCategorys();
+		model.addAttribute("categories",categories);
+
 		System.out.println("updating tutorial id="+ tutorialId);
 		return "/tutorials/tutorial-update";
 	}
     
     
     @PostMapping("/update")
-	public String updateTutorial(@Valid @ModelAttribute Tutorial tutorial, //@Valid @ModelAttribute Long channel,
+	public String updateTutorial(@Valid @ModelAttribute Tutorial tutorial, @RequestParam("categorySelection") Long categoryId,//@Valid @ModelAttribute Long channel,
 			BindingResult results,
 			Model model, 
 			RedirectAttributes redirectAttributes) {
@@ -155,7 +162,7 @@ public class TutorialController {
 			return "/tutorials/tutorial-update";
 		}
 		
-		tutorialService.updateTutorial(tutorial);
+		tutorialService.updateTutorial(tutorial, categoryId);
         redirectAttributes.addFlashAttribute("updated", "tutorial updated!");
 		return "redirect:/tutorial/all";
 	}
