@@ -11,8 +11,6 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.Table;
-
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import jakarta.persistence.JoinColumn;
@@ -60,24 +58,31 @@ public class User implements Serializable{
 	@ManyToMany(cascade = CascadeType.ALL)					//user is in groups
 	private List<Group> joinedgroups = new ArrayList<Group>();
 	
-	@OneToMany(mappedBy = "groupOwner")					//user can be the owner of many groups
+	@OneToMany(mappedBy = "groupOwner")						//user can be the owner of many groups
 	private List<Group> ownedgroups = new ArrayList<Group>();
+
 
 	@NotBlank(message = "password is mandatory")
 	@Size(min = 5, max = 50, message = "{jakarta.validation.constraints.Size}")
 	private String password;
 	
+
 	private boolean enabled;
 	
+	@OneToMany(mappedBy = "commentOwner")							//user can be the owner of many comments
+	private List<Comment> ownedComments = new ArrayList<Comment>();
 	//private boolean isAdmin;
 	
-	
+	@OneToMany(mappedBy = "historyOwner")
+	private List<History> history = new ArrayList<History>();
 	//private boolean isCreator;
 	
 	 public User() {
 	        super();
 	        this.enabled = false;
 	    }
+	@OneToMany(mappedBy = "watchLaterOwner")
+	private List<WatchLater> watchLater = new ArrayList<WatchLater>();
 	
 
 	public Long getUserId() {
@@ -149,7 +154,34 @@ public class User implements Serializable{
 	public void setPassword(String password) {
 		this.password = password;
 	}
-	
+
+	public void addToWatchLater(WatchLater w) {
+		if(!watchLater.contains(w)) {
+			watchLater.add(w);
+		}
+	}
+	public void removeWatchLater(WatchLater w) {
+        if(watchLater.contains(w)) {
+        	watchLater.remove(w);
+        }
+    }
+	public List<WatchLater> getWatchLater(){
+        return Collections.unmodifiableList(watchLater);
+    }
+	public void addToHistory(History h) {
+		if(!history.contains(h)) {
+			history.add(h);
+		}
+	}
+	public void removeHistory(History h) {
+        if(history.contains(h)) {
+        	history.remove(h);
+        }
+    }
+	public List<History> getHistory(){
+        return Collections.unmodifiableList(history);
+    }
+
 	public void addJoinedGroup(Group group) {
 		if(!joinedgroups.contains(group)) {
 			joinedgroups.add(group);
@@ -181,5 +213,23 @@ public class User implements Serializable{
 	public List<Group> getOwnedGroups(){
 		return Collections.unmodifiableList(ownedgroups);
 	}
+	
+	public void addOwnedComment(Comment comment){
+		if(!ownedComments.contains(comment)) {
+			ownedComments.add(comment);
+		}
+	}
+	
+	public void removeOwnedComment(Comment comment) {
+		if(ownedComments.contains(comment)) {
+			ownedComments.remove(comment);
+		}
+	}
+	
+	public List<Comment> getOwnedComments(){
+		return Collections.unmodifiableList(ownedComments);
+	}
+	
+
 
 }

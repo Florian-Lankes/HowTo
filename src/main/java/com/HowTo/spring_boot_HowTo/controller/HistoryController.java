@@ -1,7 +1,6 @@
 package com.HowTo.spring_boot_HowTo.controller;
 
 import java.sql.Timestamp;
-import java.util.List;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -13,17 +12,22 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.HowTo.spring_boot_HowTo.config.MyUserDetails;
 import com.HowTo.spring_boot_HowTo.model.History;
+import com.HowTo.spring_boot_HowTo.model.User;
 import com.HowTo.spring_boot_HowTo.service.HistoryServiceI;
+import com.HowTo.spring_boot_HowTo.service.UserServiceI;
 
 @Controller
 @RequestMapping("/history")
 public class HistoryController {
 	
 	private HistoryServiceI historyService;
-	
-	public HistoryController(HistoryServiceI historyService) {
+	private UserServiceI userService;
+
+	public HistoryController(HistoryServiceI historyService, UserServiceI userService) {
 		super();
 		this.historyService = historyService;
+		this.userService = userService;
+
 	}
 	
 	private Long getCurrentUserId() {
@@ -38,8 +42,8 @@ public class HistoryController {
 	
 	@GetMapping("/my")
 	public String getHistoryId(Model model) {
-		List<History> history = historyService.getAllHistoryFromUser(getCurrentUserId()); 
-		model.addAttribute("history", history );
+		User user = userService.getUserById(getCurrentUserId());
+		model.addAttribute("history", user.getHistory() );
 		return "history";
 		
 	}
@@ -48,11 +52,9 @@ public class HistoryController {
 	public String trackView(@PathVariable("tutorialid") long tutorialid) {
 		History history = new History();
 		history.setHistoryId((long) -1 );
-		history.setUserId(getCurrentUserId());
-		history.setTutorialId(tutorialid);
 		Timestamp currentTimestamp = new Timestamp(System.currentTimeMillis());
 		history.setCreationTime(currentTimestamp);
-		historyService.saveHistory(history);
+		historyService.saveHistory(history,  getCurrentUserId(),tutorialid);
 		return "redirect:/tutorial/view/{tutorialid}";
 	}
 	

@@ -11,10 +11,14 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import com.HowTo.spring_boot_HowTo.model.Comment;
+import com.HowTo.spring_boot_HowTo.model.Group;
 import com.HowTo.spring_boot_HowTo.model.User;
 import com.HowTo.spring_boot_HowTo.model.VerificationToken;
 import com.HowTo.spring_boot_HowTo.repository.UserRepositoryI;
 import com.HowTo.spring_boot_HowTo.repository.VerificationTokenRepository;
+import com.HowTo.spring_boot_HowTo.repository.CommentRepositoryI;
+import com.HowTo.spring_boot_HowTo.repository.GroupRepositoryI;
 import com.HowTo.spring_boot_HowTo.repository.RoleRepositoryI;
 import com.HowTo.spring_boot_HowTo.service.UserServiceI;
 import com.HowTo.spring_boot_HowTo.validator.UserAlreadyExistException;
@@ -28,7 +32,10 @@ public class UserService implements UserServiceI {
 	RoleRepositoryI roleRepository;
 	@Autowired
     VerificationTokenRepository tokenRepository;
-	
+	CommentRepositoryI commentRepository;
+	@Autowired
+	GroupRepositoryI groupRepository;
+
 	
 //	@Override
 //	public List<User> getAllUsers() {
@@ -106,8 +113,13 @@ public class UserService implements UserServiceI {
 	@Override
 	public void delete(User user) {
 		// TODO Auto-generated method stub
+		// TODO Delete groups
+		List<Group> allGroups = user.getOwnedGroups();
+		allGroups.forEach(group -> groupRepository.delete(group));
+		// TODO Delete Comments
+		List<Comment> allComments = user.getOwnedComments();
+		allComments.forEach(comment -> commentRepository.delete(comment));
 		userRepository.delete(user);
-		
 	}
 
 	@Override

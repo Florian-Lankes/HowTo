@@ -4,17 +4,16 @@
 
 <body>
 	<section class="layout-content" layout:fragment="mybody">
-			
-		This is the home page with all the Tutorials listed
-		<div th:each="element : ${tutorial}">
-		   <p>
-
-		   <a class="btn btn-info" th:href="@{/history/track/{tutorialid}(tutorialid = ${element.tutorialId})}">View Tutorial <span th:text="${element.tutorialId}"> </a>
-
+		<div class="">
+			<p>This is the channel page</p>
 		</div>
-		<br>
-		<br>
-		<br>		
+		<p th:text = ${channel.channelname}></p>
+		<div th:each="element : ${tutorials}">
+		   <p>
+		   <a class="btn btn-info" th:href="@{/history/track/{tutorialid}(tutorialid = ${element.tutorialId})}">View Tutorial <span th:text="${element.tutorialId}"> </a>
+		</div>
+		
+				
 	</section>		
 </body>
 </html>

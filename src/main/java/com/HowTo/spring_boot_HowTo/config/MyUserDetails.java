@@ -2,11 +2,16 @@ package com.HowTo.spring_boot_HowTo.config;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
+import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.util.Assert;
 
 import com.HowTo.spring_boot_HowTo.model.Authority;
 import com.HowTo.spring_boot_HowTo.model.Role;
@@ -18,6 +23,7 @@ public class MyUserDetails implements UserDetails {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
+	
 
 	private String userName;
 	private String password;
@@ -28,6 +34,7 @@ public class MyUserDetails implements UserDetails {
 
 	public MyUserDetails(User user) {
 		// TODO Auto-generated constructor stub
+		
 		this.userName = user.getUsername();
 		this.password = user.getPassword();
 		this.id = user.getUserId();
@@ -99,5 +106,5 @@ public class MyUserDetails implements UserDetails {
 	public Long getId() {
 		return this.id;
 	}
-
+	
 }
