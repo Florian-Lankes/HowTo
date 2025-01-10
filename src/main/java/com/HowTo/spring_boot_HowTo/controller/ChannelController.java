@@ -104,7 +104,7 @@ public class ChannelController {
         }
 
     	
-    	channelService.saveChannel(channel);
+    	channelService.saveChannel(channel, getCurrentUserId());
         redirectAttributes.addFlashAttribute("created", "Channel created!");
         
         return "redirect:/channel/all";

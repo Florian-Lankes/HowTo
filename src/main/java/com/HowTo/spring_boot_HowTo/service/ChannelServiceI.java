@@ -11,7 +11,7 @@ public interface ChannelServiceI {
 	
 	Page<Channel> getAllChannels(String channelname, Pageable pageable);
 	
-	Channel saveChannel(Channel channel);
+	Channel saveChannel(Channel channel, Long userId);
 	
 	Channel getChannelById(Long id);
 	

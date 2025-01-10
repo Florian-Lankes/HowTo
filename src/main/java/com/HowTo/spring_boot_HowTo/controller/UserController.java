@@ -235,9 +235,25 @@ public class UserController {
 //		return "/home";
 //	}
 	
-	@GetMapping("/user/profile/{id}")
-	public String showUserProfile(@PathVariable("id") long id, Model model, RedirectAttributes redirectAttributes) {
-
+	@GetMapping("/user/my")
+	public String showUserProfile(Model model, RedirectAttributes redirectAttributes) {
+		
+		User current_user = userService.getUserById(getCurrentUserId());
+		model.addAttribute("user", current_user);
+		
+		// IF USER: Get creator
+		// IF CREATOR: Show all subscribers
+		// IF CREATOR: Show all Uploaded videos
+		
+		// Change password
+		// CHANGE username or channelname and discription
+		
+		
+		//Enable 2fa
+		
+		
+		
+		
 		return "/users/profile";
 	}
 	
