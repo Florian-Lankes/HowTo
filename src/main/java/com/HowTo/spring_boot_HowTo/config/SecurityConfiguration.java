@@ -100,6 +100,8 @@ public class SecurityConfiguration {
 	        .requestMatchers(new AntPathRequestMatcher("/channel/update/**")).hasAuthority("CREATOR_RIGHTS")
 	        .requestMatchers(new AntPathRequestMatcher("/tutorial/create")).hasAuthority("CREATOR_RIGHTS")
 	        .requestMatchers(new AntPathRequestMatcher("/tutorial/upload")).hasAuthority("CREATOR_RIGHTS")
+	        .requestMatchers(new AntPathRequestMatcher("/tutorial/uploadvideo/**")).hasAuthority("CREATOR_RIGHTS")
+	        .requestMatchers(new AntPathRequestMatcher("/tutorial/deletevideo/**")).hasAuthority("CREATOR_RIGHTS")
 	        .requestMatchers(new AntPathRequestMatcher("/tutorial/update/**")).hasAuthority("CREATOR_RIGHTS")
 	        .requestMatchers(new AntPathRequestMatcher("/tutorial/delete/**")).hasAuthority("CREATOR_RIGHTS");
 	    

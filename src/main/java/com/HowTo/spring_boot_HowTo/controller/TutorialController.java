@@ -2,6 +2,7 @@ package com.HowTo.spring_boot_HowTo.controller;
 
 
 import java.time.LocalDate;
+import java.io.File;
 import java.sql.Timestamp;
 import java.util.List;
 import org.springframework.security.core.Authentication;
@@ -14,6 +15,8 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 
@@ -22,6 +25,7 @@ import com.HowTo.spring_boot_HowTo.model.Comment;
 import com.HowTo.spring_boot_HowTo.config.MyUserDetails;
 
 import com.HowTo.spring_boot_HowTo.model.Tutorial;
+import com.HowTo.spring_boot_HowTo.service.CloudinaryServiceI;
 import com.HowTo.spring_boot_HowTo.service.TutorialServiceI;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -32,10 +36,12 @@ import jakarta.validation.Valid;
 public class TutorialController {
 	
 	private TutorialServiceI tutorialService;
+	private CloudinaryServiceI cloudinaryService;
 	
-	public TutorialController(TutorialServiceI tutorialService) {
+	public TutorialController(TutorialServiceI tutorialService, CloudinaryServiceI cloudinaryService) {
 		super();
 		this.tutorialService = tutorialService;
+		this.cloudinaryService = cloudinaryService;
 	}
 	
 	
@@ -146,7 +152,7 @@ public class TutorialController {
     
     
     @PostMapping("/update")
-	public String updateTutorial(@Valid @ModelAttribute Tutorial tutorial, //@Valid @ModelAttribute Long channel,
+	public String updateTutorial(@Valid @ModelAttribute Tutorial tutorial,
 			BindingResult results,
 			Model model, 
 			RedirectAttributes redirectAttributes) {
@@ -159,5 +165,42 @@ public class TutorialController {
         redirectAttributes.addFlashAttribute("updated", "tutorial updated!");
 		return "redirect:/tutorial/all";
 	}
-	
+    
+    @PostMapping("/uploadvideo/{id}")
+	public String uploadVideo(@PathVariable("id") Long tutorialId, @RequestParam("video") MultipartFile file, RedirectAttributes redirectAttributes) {
+    	
+    	Tutorial tutorial = tutorialService.getTutorialById(tutorialId);
+    	if(tutorial.getVideoUrl() != null) {
+    		
+    		String s = tutorial.getVideoUrl();  //String split to get public id and delete it
+    		String[] news = s.split("/");
+    		String name = news[news.length-1];
+    		String[] test = name.split("\\.");
+    		String publicId = test[0];
+    		cloudinaryService.deleteFile(publicId);
+    	}
+		cloudinaryService.uploadFile(file, tutorialId);
+        redirectAttributes.addFlashAttribute("updated", "tutorial video updated!");
+		return "redirect:/tutorial/all";
+	}
+    
+    @GetMapping("/deletevideo/{id}")
+	public String deleteVideo(@PathVariable("id") Long tutorialId, 
+			Model model,
+			HttpServletRequest request, RedirectAttributes redirectAttributes) {
+    	Tutorial tutorial = tutorialService.getTutorialById(tutorialId);
+    	if(tutorial.getVideoUrl() != null) {
+    		
+    		String s = tutorial.getVideoUrl();  //String split to get public id and delete it
+    		String[] news = s.split("/");
+    		String name = news[news.length-1];
+    		String[] test = name.split("\\.");
+    		String publicId = test[0];
+    		cloudinaryService.deleteFile(publicId);
+    		cloudinaryService.deleteVideoUrl(tutorialId);
+    	}
+    	redirectAttributes.addFlashAttribute("deleted", "tutorial video deleted!");
+		return "redirect:/tutorial/all";
+	}
+    
 }
