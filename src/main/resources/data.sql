@@ -35,3 +35,6 @@ INSERT INTO roleauthority(idrole, idauthority) VALUES (1,3);
 INSERT INTO roleauthority(idrole, idauthority) VALUES (2,2);
 INSERT INTO roleauthority(idrole, idauthority) VALUES (2,3);
 INSERT INTO roleauthority(idrole, idauthority) VALUES (3,3);
+
+INSERT INTO category(category_id,category_name) Values(1,'Sport');
+INSERT INTO category(category_id,category_name) Values(2,'Alltag');

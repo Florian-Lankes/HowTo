@@ -56,6 +56,7 @@ public class SecurityConfiguration {
 	            "/console/**"
 	            
 	    };
+		
 		@Bean public SecurityFilterChain filterChain(HttpSecurity http) throws Exception { 
 			http.csrf().disable()
 			.csrf().ignoringRequestMatchers(new AntPathRequestMatcher("/api/**")) 
@@ -119,6 +120,7 @@ public class SecurityConfiguration {
 			http.formLogin(Customizer.withDefaults());
 			http.httpBasic(Customizer.withDefaults()); 
 			return http.build(); } 
+
 	    @Bean
 	    public WebSecurityCustomizer webSecurityCustomizer() {
 	        return (web) -> web.ignoring().requestMatchers("/images/**", "/js/**", "/webjars/**");
