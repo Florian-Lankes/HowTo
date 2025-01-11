@@ -1,33 +1,39 @@
 <!DOCTYPE html>
 <html layout:decorate="~{layout}">
-<head><meta charset="UTF-8" /></head>
+
+<head>
+	<meta charset="UTF-8" />
+</head>
 
 <body>
 	<section class="layout-content" layout:fragment="mybody">
 		<div class="">
 			<p>This is the channel page</p>
 		</div>
-		<form th:action="@{/channel/subscribe}"
-				   th:object="${channel}" method="POST">
-				   <input type="text" readonly class="form-control" id="channelname" th:field="*{channelname}" />
-				   <input type="hidden" id="description" th:field="*{description}" />
-				   <input type="hidden" id="creationDate" th:field="*{creationDate}"/>
-					<input type="hidden" readonly id="channelId" th:field="*{channelId}"/>
-					   	               <button type="submit" class="btn btn- btn-success">Subscribe</button>
-					   	           </form>		
-								   
-			<form th:action="@{/channel/unsubscribe}"
-					th:object="${channel}" method="POST">
-								<input type="hidden" readonly id="channelId" th:field="*{channelId}"/>
-								<button type="submit" class="btn btn-danger btn-sm">Unsubscribe</button>
-					</form>	
-					<a class="btn btn-info" th:href="@{/channel/subscriberlist/{id}(id = ${channel.channelId})}">Subscriber</a>
-		<div th:each="element : ${tutorials}">
-		   <p>
-		   <a class="btn btn-info" th:href="@{/history/track/{tutorialid}(tutorialid = ${element.tutorialId})}">View Tutorial <span th:text="${element.tutorialId}"> </a>
-		</div>
+		<form th:action="@{/channel/subscribe}" th:object="${channel}" method="POST">
+			<input type="text" readonly class="form-control" id="channelname" th:field="*{channelname}" />
+			<input type="hidden" id="description" th:field="*{description}" />
+			<input type="hidden" id="creationDate" th:field="*{creationDate}" />
+			<input type="hidden" readonly id="channelId" th:field="*{channelId}" />
+			<button type="submit" class="btn btn- btn-success">Subscribe</button>
+		</form>
 		
-				
-	</section>		
+		<a class="btn btn-info" th:href="@{/report/user/{id}(id = ${channel.channelId})}">REPORT</a>
+
+		<form th:action="@{/channel/unsubscribe}" th:object="${channel}" method="POST">
+			<input type="hidden" readonly id="channelId" th:field="*{channelId}" />
+			<button type="submit" class="btn btn-danger btn-sm">Unsubscribe</button>
+		</form>
+		<a class="btn btn-info" th:href="@{/channel/subscriberlist/{id}(id = ${channel.channelId})}">Subscriber</a>
+		<div th:each="element : ${tutorials}">
+			<p>
+				<a class="btn btn-info"
+					th:href="@{/history/track/{tutorialid}(tutorialid = ${element.tutorialId})}">View Tutorial <span
+						th:text="${element.tutorialId}"> </a>
+		</div>
+
+
+	</section>
 </body>
+
 </html>
