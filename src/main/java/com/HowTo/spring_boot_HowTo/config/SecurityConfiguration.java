@@ -13,6 +13,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
 import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer.FrameOptionsConfig;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -20,6 +21,9 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.security.config.Customizer;
 
+import com.HowTo.spring_boot_HowTo.config.google2fa.CustomAuthenticationProvider;
+//import com.HowTo.spring_boot_HowTo.config.google2fa.CustomAuthenticationProvider;
+import com.HowTo.spring_boot_HowTo.config.google2fa.CustomWebAuthenticationDetailsSource;
 import com.HowTo.spring_boot_HowTo.service.MyUserDetailService;
 
 
@@ -30,6 +34,19 @@ public class SecurityConfiguration {
 		
 		@Autowired
 	    MyUserDetailService userDetailsService;
+		@Autowired
+		CustomWebAuthenticationDetailsSource authenticationDetailsSource;
+
+		
+		@Bean public PasswordEncoder passwordEncoder() {
+			return new BCryptPasswordEncoder();
+		} 
+		
+		@Bean public CustomAuthenticationProvider customAuthenticationProvider() {
+			CustomAuthenticationProvider provider = new CustomAuthenticationProvider(userDetailsService);
+			provider.setPasswordEncoder(passwordEncoder());
+			return provider;
+		}
 		
 		private static final String[] AUTH_WHITE_LIST = {
 	            "/v3/api-docs/**",
@@ -39,86 +56,69 @@ public class SecurityConfiguration {
 	            "/console/**"
 	            
 	    };
-		
-			    
-	    @Bean
-	    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-	    	
-	    	http.csrf().disable();
-	        http.csrf()
-	        .ignoringRequestMatchers(new AntPathRequestMatcher("/api/**"))
-	        .ignoringRequestMatchers(new AntPathRequestMatcher("/h2-console/**"));
-	        
-	        http.headers(headersConfigurer ->
-	        headersConfigurer.frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin));
-
-	        
-	      //sites that don't need Authority
-	    	http.authorizeHttpRequests(auth ->
-            auth
-            		.requestMatchers(new AntPathRequestMatcher("/resources/**")).permitAll()	
-            		.requestMatchers(new AntPathRequestMatcher("/api/**")).permitAll()
-            		.requestMatchers(new AntPathRequestMatcher("/api/workshops/**")).permitAll()
-            		
-            		.requestMatchers(new AntPathRequestMatcher("/webjars/**")).permitAll()
-            		.requestMatchers(new AntPathRequestMatcher("/h2-console/**")).permitAll()
-            		.requestMatchers(new AntPathRequestMatcher("/login")).permitAll()
-            		.requestMatchers(new AntPathRequestMatcher("/register")).permitAll()
-            		.requestMatchers(new AntPathRequestMatcher("/registrationConfirm")).permitAll()
-            		.requestMatchers(new AntPathRequestMatcher("/logout")).permitAll()
-            		.requestMatchers(new AntPathRequestMatcher("/")).permitAll());
-	    	
-	    	http.formLogin().defaultSuccessUrl("/home",true);
-    
-	    	
-	    	//sites that need User Authority
-	    	http.authorizeHttpRequests()
-		     
-	        .requestMatchers(new AntPathRequestMatcher("/home")).hasAuthority("VIEW")
-    		.requestMatchers(new AntPathRequestMatcher("/tutorial/all")).hasAuthority("VIEW")
-    		.requestMatchers(new AntPathRequestMatcher("/tutorial/view/**")).hasAuthority("VIEW")
-    		.requestMatchers(new AntPathRequestMatcher("/tutorial/like/**")).hasAuthority("VIEW")
-    		.requestMatchers(new AntPathRequestMatcher("/channel/view/**")).hasAuthority("VIEW")
-    		.requestMatchers(new AntPathRequestMatcher("/channel/subscribe")).hasAuthority("VIEW")
-    		.requestMatchers(new AntPathRequestMatcher("/channel/unsubscribe")).hasAuthority("VIEW")
-    		.requestMatchers(new AntPathRequestMatcher("/channel/subscriberlist/**")).hasAuthority("VIEW")
-    		.requestMatchers(new AntPathRequestMatcher("/channel/subscribed")).hasAuthority("VIEW")
-    		.requestMatchers(new AntPathRequestMatcher("/channel/all")).hasAuthority("VIEW")
-    		.requestMatchers(new AntPathRequestMatcher("/channel/create")).hasAuthority("VIEW")
-	    	.requestMatchers(new AntPathRequestMatcher("/group/**")).hasAuthority("VIEW")
-    		.requestMatchers(new AntPathRequestMatcher("/user/update/**")).hasAuthority("VIEW")
-	    	.requestMatchers(new AntPathRequestMatcher("/history/**")).hasAuthority("VIEW")
-	    	.requestMatchers(new AntPathRequestMatcher("/comment/**")).hasAuthority("VIEW")
-    		.requestMatchers(new AntPathRequestMatcher("/watchLater/**")).hasAuthority("VIEW")
-    		.requestMatchers(new AntPathRequestMatcher("/user/my")).hasAuthority("VIEW");
-
-	    	
-	    	//sites that need Creator Authority
-	    	http.authorizeHttpRequests()
-	     
-	        .requestMatchers(new AntPathRequestMatcher("/channel/delete/**")).hasAuthority("CREATOR_RIGHTS")
-	        .requestMatchers(new AntPathRequestMatcher("/channel/update/**")).hasAuthority("CREATOR_RIGHTS")
-	        .requestMatchers(new AntPathRequestMatcher("/tutorial/create")).hasAuthority("CREATOR_RIGHTS")
-	        .requestMatchers(new AntPathRequestMatcher("/tutorial/upload")).hasAuthority("CREATOR_RIGHTS")
-	        .requestMatchers(new AntPathRequestMatcher("/tutorial/update/**")).hasAuthority("CREATOR_RIGHTS")
-	        .requestMatchers(new AntPathRequestMatcher("/tutorial/delete/**")).hasAuthority("CREATOR_RIGHTS");
-	    
-	    	//sites that need Admin Authority
-	    	http.authorizeHttpRequests()
-	     
-	        .requestMatchers(new AntPathRequestMatcher("/admin/**")).hasAuthority("ADMIN_RIGHTS")
-	        .requestMatchers(new AntPathRequestMatcher("/user/admin/**")).hasAuthority("ADMIN_RIGHTS");
-
-	    	
-	    	http.headers(headers -> headers.frameOptions(FrameOptionsConfig::disable));   
-	    	
-	    	http.formLogin(Customizer.withDefaults());
-	        http.httpBasic(Customizer.withDefaults());
-	        
-	    	
-	        return http.build();
-	    }
-	 
+		@Bean public SecurityFilterChain filterChain(HttpSecurity http) throws Exception { 
+			http.csrf().disable()
+			.csrf().ignoringRequestMatchers(new AntPathRequestMatcher("/api/**")) 
+			.ignoringRequestMatchers(new AntPathRequestMatcher("/h2-console/**"))
+			.and()
+			.headers(headersConfigurer -> headersConfigurer.frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin))
+		//	.authenticationProvider(customAuthenticationProvider)
+			.formLogin(formLogin -> formLogin 
+					.loginPage("/login") 
+					.authenticationDetailsSource(authenticationDetailsSource) 
+					.defaultSuccessUrl("/home", true) 
+					.failureUrl("/login?error=true") 
+					.permitAll()
+			)
+			.logout(logout -> logout 
+			.logoutUrl("/logout") 
+			.logoutSuccessUrl("/")
+			.deleteCookies("JSESSIONID")
+			.permitAll()
+			)
+			.authorizeHttpRequests(authorize -> authorize 
+			.requestMatchers("/resources/**").permitAll()
+			.requestMatchers("/api/**").permitAll()
+			.requestMatchers("/api/workshops/**").permitAll()
+			.requestMatchers("/webjars/**").permitAll()
+			.requestMatchers("/h2-console/**").permitAll()
+			.requestMatchers("/register").permitAll()
+			.requestMatchers("/registrationConfirm").permitAll()
+			.requestMatchers("/").permitAll()
+			
+			.requestMatchers("/home").hasAuthority("VIEW")
+			.requestMatchers("/tutorial/all").hasAuthority("VIEW")
+			.requestMatchers("/tutorial/view/**").hasAuthority("VIEW")
+			.requestMatchers("/tutorial/like/**").hasAuthority("VIEW")
+			.requestMatchers("/channel/view/**").hasAuthority("VIEW")
+			.requestMatchers("/channel/subscribe").hasAuthority("VIEW")
+			.requestMatchers("/channel/unsubscribe").hasAuthority("VIEW")
+			.requestMatchers("/channel/subscriberlist/**").hasAuthority("VIEW")
+			.requestMatchers("/channel/subscribed").hasAuthority("VIEW")
+			.requestMatchers("/channel/all").hasAuthority("VIEW")
+			.requestMatchers("/channel/create").hasAuthority("VIEW")
+			.requestMatchers("/group/**").hasAuthority("VIEW")
+			.requestMatchers("/user/update/**").hasAuthority("VIEW")
+			.requestMatchers("/history/**").hasAuthority("VIEW")
+			.requestMatchers("/comment/**").hasAuthority("VIEW")
+			.requestMatchers("/watchLater/**").hasAuthority("VIEW")
+			.requestMatchers("/user/my/**").hasAuthority("VIEW")
+			
+			.requestMatchers("/channel/delete/**").hasAuthority("CREATOR_RIGHTS")
+			.requestMatchers("/channel/update/**").hasAuthority("CREATOR_RIGHTS")
+			.requestMatchers("/tutorial/create").hasAuthority("CREATOR_RIGHTS")
+			.requestMatchers("/tutorial/upload").hasAuthority("CREATOR_RIGHTS")
+			.requestMatchers("/tutorial/update/**").hasAuthority("CREATOR_RIGHTS")
+			.requestMatchers("/tutorial/delete/**").hasAuthority("CREATOR_RIGHTS")
+			.requestMatchers("/admin/**").hasAuthority("ADMIN_RIGHTS")
+			.requestMatchers("/user/admin/**").hasAuthority("ADMIN_RIGHTS")
+			.anyRequest().authenticated()
+			);
+			http.headers(headers -> headers.frameOptions(HeadersConfigurer.FrameOptionsConfig::disable));
+			http.formLogin().defaultSuccessUrl("/home", true);
+			http.formLogin(Customizer.withDefaults());
+			http.httpBasic(Customizer.withDefaults()); 
+			return http.build(); } 
 	    @Bean
 	    public WebSecurityCustomizer webSecurityCustomizer() {
 	        return (web) -> web.ignoring().requestMatchers("/images/**", "/js/**", "/webjars/**");
@@ -131,10 +131,10 @@ public class SecurityConfiguration {
         }
 	    
 	
-	    @Bean
-		public PasswordEncoder getPasswordEncoder() {
-			//return new BCryptPasswordEncoder();
-			return NoOpPasswordEncoder.getInstance();
-		}
+//		@Bean
+//		public PasswordEncoder getPasswordEncoder() {
+//			//return new BCryptPasswordEncoder();
+//			return new BCryptPasswordEncoder();
+//		}
 
 }

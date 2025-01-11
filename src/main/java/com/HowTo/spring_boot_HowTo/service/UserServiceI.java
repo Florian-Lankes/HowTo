@@ -1,5 +1,6 @@
 package com.HowTo.spring_boot_HowTo.service;
 
+import java.io.UnsupportedEncodingException;
 import java.util.List;
 
 import org.springframework.data.domain.Page;
@@ -29,5 +30,7 @@ public interface UserServiceI {
 	VerificationToken getVerificationToken(String VerificationToken);
 
 	void createVerificationTokenForUser(User user, String token);
+	
+	String generateQRUrl(User user) throws UnsupportedEncodingException;
 
 }

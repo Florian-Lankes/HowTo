@@ -1,5 +1,6 @@
 package com.HowTo.spring_boot_HowTo.controller;
 
+import java.io.UnsupportedEncodingException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -64,8 +65,8 @@ public class UserController {
 				|| authentication.getPrincipal() instanceof String) {
 			throw new IllegalStateException("User is not authenticated");
 		}
-		MyUserDetails userDetails = (MyUserDetails) authentication.getPrincipal();
-		return userDetails.getId();
+		User user = (User) authentication.getPrincipal();
+		return user.getUserId();
 	}
 
 	@GetMapping(value = { "/user/admin", "/user/admin/all" })
@@ -221,11 +222,39 @@ public class UserController {
 
 		return "redirect:/login";
 	}
+	
+	@GetMapping("user/my/activate2fa")
+	public String activate2fa(Model model) throws UnsupportedEncodingException{
+		System.out.println("In Function");
+		User user = userService.getUserById(getCurrentUserId());
+		String qr = userService.generateQRUrl(user);
+		model.addAttribute("qr", userService.generateQRUrl(user));
+		System.out.println("this is the qr code: " + qr);
+		user.setUsing2FA(true);
+		userService.saveRegisteredUser(user);
+        return "users/qrcode";
+		
+	}
+	
+	@GetMapping("user/my/deactivate2fa")
+	public String deactivate2fa(Model model){
+		User user = userService.getUserById(getCurrentUserId());
+		user.setUsing2FA(false);
+		userService.saveRegisteredUser(user);
+        return "/login";
+		
+	}
 
-//	@GetMapping("/login")
-//	public String showLoginForm() {
-//		return "login";
-//	}
+	@GetMapping("/login")
+	public String showLoginForm() {
+		
+		return "login";
+}
+	
+	@GetMapping("/logout")
+	public String logout() {
+		return "redirect:/login";
+}
 //
 //	@PostMapping("/login/process")
 //	public String processLogin(@RequestParam String user, @RequestParam String password) {

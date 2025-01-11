@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.jboss.aerogear.security.otp.api.Base32;
 import org.springframework.format.annotation.DateTimeFormat;
 
 @Entity
@@ -47,6 +48,9 @@ public class User implements Serializable{
 	@DateTimeFormat(pattern="yyyy-MM-dd")
 	private LocalDate birthDate;
 	
+	private boolean isUsing2FA;
+    private String secret;
+	
 	@ManyToMany(fetch = FetchType.EAGER)
 	@JoinTable(
 			name="userrole",
@@ -63,7 +67,7 @@ public class User implements Serializable{
 
 
 	@NotBlank(message = "password is mandatory")
-	@Size(min = 5, max = 50, message = "{jakarta.validation.constraints.Size}")
+	@Size(min = 0, message = "{jakarta.validation.constraints.Size}")
 	private String password;
 	
 
@@ -80,6 +84,8 @@ public class User implements Serializable{
 	 public User() {
 	        super();
 	        this.enabled = false;
+	        this.setSecret(Base32.random());
+
 	    }
 	@OneToMany(mappedBy = "watchLaterOwner")
 	private List<WatchLater> watchLater = new ArrayList<WatchLater>();
@@ -246,6 +252,18 @@ public class User implements Serializable{
 	
 	public List<Channel> getSubscribedChannels(){
 		return Collections.unmodifiableList(subscribedChannels);
+	}
+	public boolean isUsing2FA() {
+		return isUsing2FA;
+	}
+	public void setUsing2FA(boolean isUsing2FA) {
+		this.isUsing2FA = isUsing2FA;
+	}
+	public String getSecret() {
+		return secret;
+	}
+	public void setSecret(String secret) {
+		this.secret = secret;
 	}
 
 

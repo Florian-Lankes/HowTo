@@ -17,6 +17,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import com.HowTo.spring_boot_HowTo.config.MyUserDetails;
 import com.HowTo.spring_boot_HowTo.model.Comment;
 import com.HowTo.spring_boot_HowTo.model.Tutorial;
+import com.HowTo.spring_boot_HowTo.model.User;
 import com.HowTo.spring_boot_HowTo.service.CommentServiceI;
 
 
@@ -40,8 +41,8 @@ public class CommentController {
 				|| authentication.getPrincipal() instanceof String) {
 			throw new IllegalStateException("User is not authenticated");
 		}
-		MyUserDetails userDetails = (MyUserDetails) authentication.getPrincipal();
-		return userDetails.getId();
+		User user = (User) authentication.getPrincipal();
+		return user.getUserId();
 	}
 	
 	//CREATE
