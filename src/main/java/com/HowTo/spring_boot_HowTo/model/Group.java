@@ -14,6 +14,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
@@ -39,6 +40,10 @@ public class Group implements Serializable{
 	
 	@ManyToMany(mappedBy = "joinedgroups")
 	private List<User> users = new ArrayList<User>();
+	
+	@OneToMany(mappedBy = "messageGroup")							//user can be the owner of many comments
+	private List<Message> ownedMessagesGroup = new ArrayList<Message>();
+	
 	
 	@ManyToOne()
 	private User groupOwner;

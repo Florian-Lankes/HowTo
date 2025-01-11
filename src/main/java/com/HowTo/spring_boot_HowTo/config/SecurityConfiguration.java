@@ -2,6 +2,7 @@ package com.HowTo.spring_boot_HowTo.config;
 
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.security.reactive.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.access.hierarchicalroles.RoleHierarchy;
@@ -36,8 +37,8 @@ public class SecurityConfiguration {
 	            "/swagger-ui/**",
 	            "/logout",
 	            "/h2-console/**",
-	            "/console/**"
-	            
+	            "/console/**",
+	            "/static/**"
 	    };
 		
 			    
@@ -66,7 +67,8 @@ public class SecurityConfiguration {
             		.requestMatchers(new AntPathRequestMatcher("/register")).permitAll()
             		.requestMatchers(new AntPathRequestMatcher("/registrationConfirm")).permitAll()
             		.requestMatchers(new AntPathRequestMatcher("/logout")).permitAll()
-            		.requestMatchers(new AntPathRequestMatcher("/")).permitAll());
+            		.requestMatchers(new AntPathRequestMatcher("/")).permitAll()
+            		.requestMatchers(new AntPathRequestMatcher("/ws/**")).permitAll());
 	    	
 	    	http.formLogin().defaultSuccessUrl("/home",true);
     
@@ -90,7 +92,8 @@ public class SecurityConfiguration {
 	    	.requestMatchers(new AntPathRequestMatcher("/history/**")).hasAuthority("VIEW")
 	    	.requestMatchers(new AntPathRequestMatcher("/comment/**")).hasAuthority("VIEW")
     		.requestMatchers(new AntPathRequestMatcher("/watchLater/**")).hasAuthority("VIEW")
-    		.requestMatchers(new AntPathRequestMatcher("/user/my")).hasAuthority("VIEW");
+    		.requestMatchers(new AntPathRequestMatcher("/user/my")).hasAuthority("VIEW")
+    		.requestMatchers(new AntPathRequestMatcher("/chat")).hasAuthority("VIEW");
 
 	    	
 	    	//sites that need Creator Authority
@@ -121,7 +124,7 @@ public class SecurityConfiguration {
 	 
 	    @Bean
 	    public WebSecurityCustomizer webSecurityCustomizer() {
-	        return (web) -> web.ignoring().requestMatchers("/images/**", "/js/**", "/webjars/**");
+	        return (web) -> web.ignoring().requestMatchers("/images/**", "/js/**", "/webjars/**", "/css/**");
 	    }
 	    
 	    @Bean
