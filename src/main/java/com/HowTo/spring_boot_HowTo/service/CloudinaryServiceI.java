@@ -12,4 +12,9 @@ public interface CloudinaryServiceI {
 	
 	void deleteVideoUrl(Long tutorialId);
 	
+	String uploadFileAdvertisement(MultipartFile file, Long advertisementId);
+	
+	void deleteFileAdvertisement(String publicId) ;
+	
+	void deleteVideoUrlAdvertisement(Long advertisementId) ;
 }

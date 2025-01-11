@@ -28,6 +28,9 @@ private static final long serialVersionUID = 1L;
 	@OneToMany(mappedBy="tutorialCategory")
 	private List<Tutorial> tutorials;
 	
+	@OneToMany(mappedBy="advertisementCategory")
+	private List<Advertisement> advertisements ;
+	
 	public Long getCategoryId() {
 		return categoryId;
 	}
@@ -60,6 +63,20 @@ private static final long serialVersionUID = 1L;
 		return Collections.unmodifiableList(tutorials);
 	}
 	
+	public void addAdvertisements(Advertisement a) {
+		if(!advertisements.contains(a)) {
+			advertisements.add(a);
+		}
+	}
 	
+	public void removeAdvertisements(Advertisement a) {
+		if(advertisements.contains(a)) {
+			advertisements.remove(a);
+		}
+	}
+	
+	public List<Advertisement> getAdvertisements(){
+		return Collections.unmodifiableList(advertisements);
+	}
 	
 }

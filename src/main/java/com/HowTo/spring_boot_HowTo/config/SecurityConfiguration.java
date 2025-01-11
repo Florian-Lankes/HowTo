@@ -115,6 +115,7 @@ public class SecurityConfiguration {
 	        .requestMatchers(new AntPathRequestMatcher("/category/delete/**")).hasAuthority("ADMIN_RIGHTS")
 	        .requestMatchers(new AntPathRequestMatcher("/category/update/**")).hasAuthority("ADMIN_RIGHTS")
 	        .requestMatchers(new AntPathRequestMatcher("/category/update")).hasAuthority("ADMIN_RIGHTS")
+	        .requestMatchers(new AntPathRequestMatcher("/advertisement/**")).hasAuthority("ADMIN_RIGHTS")
 	        .requestMatchers(new AntPathRequestMatcher("/user/admin/**")).hasAuthority("ADMIN_RIGHTS");
 
 	    	
