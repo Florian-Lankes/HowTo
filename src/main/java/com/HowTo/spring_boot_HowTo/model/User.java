@@ -62,7 +62,7 @@ public class User implements Serializable{
 	@ManyToMany(cascade = CascadeType.ALL)					//user is in groups
 	private List<Group> joinedgroups = new ArrayList<Group>();
 	
-	@OneToMany(mappedBy = "groupOwner")						//user can be the owner of many groups
+	@OneToMany(mappedBy = "groupOwner" , cascade = CascadeType.REMOVE)						//user can be the owner of many groups
 	private List<Group> ownedgroups = new ArrayList<Group>();
 
 
@@ -73,11 +73,11 @@ public class User implements Serializable{
 
 	private boolean enabled;
 	
-	@OneToMany(mappedBy = "commentOwner")							//user can be the owner of many comments
+	@OneToMany(mappedBy = "commentOwner", cascade = CascadeType.REMOVE)							//user can be the owner of many comments
 	private List<Comment> ownedComments = new ArrayList<Comment>();
 	//private boolean isAdmin;
 	
-	@OneToMany(mappedBy = "historyOwner")
+	@OneToMany(mappedBy = "historyOwner", cascade = CascadeType.REMOVE)
 	private List<History> history = new ArrayList<History>();
 	//private boolean isCreator;
 	
@@ -87,7 +87,7 @@ public class User implements Serializable{
 	        this.setSecret(Base32.random());
 
 	    }
-	@OneToMany(mappedBy = "watchLaterOwner")
+	@OneToMany(mappedBy = "watchLaterOwner"  , cascade = CascadeType.REMOVE)
 	private List<WatchLater> watchLater = new ArrayList<WatchLater>();
 	
 	@ManyToMany

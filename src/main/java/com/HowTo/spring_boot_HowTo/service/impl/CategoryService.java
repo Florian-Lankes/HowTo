@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.HowTo.spring_boot_HowTo.model.Category;
+import com.HowTo.spring_boot_HowTo.model.Tutorial;
 import com.HowTo.spring_boot_HowTo.repository.CategoryRepositoryI;
 import com.HowTo.spring_boot_HowTo.service.CategoryServiceI;
 @Service
@@ -42,6 +43,10 @@ public class CategoryService implements CategoryServiceI{
 
 	@Override
 	public void delete(Category category) {
+		List<Tutorial> tutorials = category.getTutorials();
+		for (Tutorial tutorial : tutorials) {
+			tutorial.setTutorialCategory(null);
+			} 
 		categoryRepository.delete(category);
 	}
 

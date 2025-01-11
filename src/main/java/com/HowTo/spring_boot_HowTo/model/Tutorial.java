@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -42,7 +43,7 @@ public class Tutorial implements Serializable{
 	private Long likes;
 	private Long dislikes;
 	
-	@OneToMany(mappedBy = "commentTutorial")							//Multiple Comments can be attached to one Tutorial
+	@OneToMany(mappedBy = "commentTutorial"  , cascade = CascadeType.REMOVE)							//Multiple Comments can be attached to one Tutorial
 	private List<Comment> attachedComments = new ArrayList<Comment>();
 	
 	//Cloudinary

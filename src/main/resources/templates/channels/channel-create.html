@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html layout:decorate="~{layout}">
+<html layout:decorate="~{layout}"> 
+
 <head><meta charset="UTF-8" /></head>
 
 <body>
@@ -18,9 +19,7 @@
 	            </nav>
 	        </div>
 	
-	        <div class="container" id="registration">
-
-		
+	        <div class="container" id="registration"> 
 				<form th:action="@{/channel/create}"
 				                 th:object="${channel}" method="POST">
 							  

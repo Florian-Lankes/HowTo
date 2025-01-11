@@ -22,7 +22,6 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.security.config.Customizer;
 
 import com.HowTo.spring_boot_HowTo.config.google2fa.CustomAuthenticationProvider;
-//import com.HowTo.spring_boot_HowTo.config.google2fa.CustomAuthenticationProvider;
 import com.HowTo.spring_boot_HowTo.config.google2fa.CustomWebAuthenticationDetailsSource;
 import com.HowTo.spring_boot_HowTo.service.MyUserDetailService;
 
