@@ -38,8 +38,8 @@ public class WatchlaterController {
 				|| authentication.getPrincipal() instanceof String) {
 			throw new IllegalStateException("User is not authenticated");
 		}
-		MyUserDetails userDetails = (MyUserDetails) authentication.getPrincipal();
-		return userDetails.getId();
+		User user = (User) authentication.getPrincipal();
+		return user.getUserId();
 	}
 	
 	@GetMapping("/my")

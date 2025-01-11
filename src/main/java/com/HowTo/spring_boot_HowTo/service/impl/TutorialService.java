@@ -13,6 +13,7 @@ import com.HowTo.spring_boot_HowTo.model.Group;
 import com.HowTo.spring_boot_HowTo.model.Tutorial;
 import com.HowTo.spring_boot_HowTo.repository.CategoryRepositoryI;
 import com.HowTo.spring_boot_HowTo.repository.ChannelRepositoryI;
+import com.HowTo.spring_boot_HowTo.repository.HistoryRepositoryI;
 import com.HowTo.spring_boot_HowTo.repository.TutorialRepositoryI;
 
 import com.HowTo.spring_boot_HowTo.service.TutorialServiceI;
@@ -27,6 +28,7 @@ public class TutorialService implements TutorialServiceI{
 	
 	@Autowired
 	CategoryRepositoryI categoryRepository;
+	
 	
 	@Override
 	public List<Tutorial> getAllTutorials() {
@@ -76,6 +78,7 @@ public class TutorialService implements TutorialServiceI{
 	@Override
 	public void delete(Tutorial tutorial) {
 		// TODO Auto-generated method stub
+		
 		tutorialRepository.delete(tutorial);
 	}
 	

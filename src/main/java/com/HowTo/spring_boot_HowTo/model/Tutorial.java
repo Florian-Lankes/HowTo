@@ -43,7 +43,7 @@ public class Tutorial implements Serializable{
 	private Long likes;
 	private Long dislikes;
 	
-	@OneToMany(mappedBy = "commentTutorial")							//Multiple Comments can be attached to one Tutorial
+	@OneToMany(mappedBy = "commentTutorial"  , cascade = CascadeType.REMOVE)							//Multiple Comments can be attached to one Tutorial
 	private List<Comment> attachedComments = new ArrayList<Comment>();
 	
 	//Cloudinary

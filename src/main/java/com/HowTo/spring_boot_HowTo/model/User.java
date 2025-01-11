@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.jboss.aerogear.security.otp.api.Base32;
 import org.springframework.format.annotation.DateTimeFormat;
 
 @Entity
@@ -47,6 +48,9 @@ public class User implements Serializable{
 	@DateTimeFormat(pattern="yyyy-MM-dd")
 	private LocalDate birthDate;
 	
+	private boolean isUsing2FA;
+    private String secret;
+	
 	@ManyToMany(fetch = FetchType.EAGER)
 	@JoinTable(
 			name="userrole",
@@ -58,30 +62,32 @@ public class User implements Serializable{
 	@ManyToMany(cascade = CascadeType.ALL)					//user is in groups
 	private List<Group> joinedgroups = new ArrayList<Group>();
 	
-	@OneToMany(mappedBy = "groupOwner")						//user can be the owner of many groups
+	@OneToMany(mappedBy = "groupOwner" , cascade = CascadeType.REMOVE)						//user can be the owner of many groups
 	private List<Group> ownedgroups = new ArrayList<Group>();
 
 
 	@NotBlank(message = "password is mandatory")
-	@Size(min = 5, max = 50, message = "{jakarta.validation.constraints.Size}")
+	@Size(min = 0, message = "{jakarta.validation.constraints.Size}")
 	private String password;
 	
 
 	private boolean enabled;
 	
-	@OneToMany(mappedBy = "commentOwner")							//user can be the owner of many comments
+	@OneToMany(mappedBy = "commentOwner", cascade = CascadeType.REMOVE)							//user can be the owner of many comments
 	private List<Comment> ownedComments = new ArrayList<Comment>();
 	//private boolean isAdmin;
 	
-	@OneToMany(mappedBy = "historyOwner")
+	@OneToMany(mappedBy = "historyOwner", cascade = CascadeType.REMOVE)
 	private List<History> history = new ArrayList<History>();
 	//private boolean isCreator;
 	
 	 public User() {
 	        super();
 	        this.enabled = false;
+	        this.setSecret(Base32.random());
+
 	    }
-	@OneToMany(mappedBy = "watchLaterOwner")
+	@OneToMany(mappedBy = "watchLaterOwner"  , cascade = CascadeType.REMOVE)
 	private List<WatchLater> watchLater = new ArrayList<WatchLater>();
 	
 	@ManyToMany
@@ -246,6 +252,18 @@ public class User implements Serializable{
 	
 	public List<Channel> getSubscribedChannels(){
 		return Collections.unmodifiableList(subscribedChannels);
+	}
+	public boolean isUsing2FA() {
+		return isUsing2FA;
+	}
+	public void setUsing2FA(boolean isUsing2FA) {
+		this.isUsing2FA = isUsing2FA;
+	}
+	public String getSecret() {
+		return secret;
+	}
+	public void setSecret(String secret) {
+		this.secret = secret;
 	}
 
 

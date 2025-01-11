@@ -1,5 +1,7 @@
 package com.HowTo.spring_boot_HowTo.service.impl;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -8,6 +10,8 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.HowTo.spring_boot_HowTo.model.Comment;
@@ -34,13 +38,24 @@ public class UserService implements UserServiceI {
 	CommentRepositoryI commentRepository;
 	@Autowired
 	GroupRepositoryI groupRepository;
-
+	
+	private final PasswordEncoder passwordEncoder;
+	
+	
+	public static String QR_PREFIX = "https://qrcode.tec-it.com/API/QRCode?data=";
+    public static String APP_NAME = "SpringRegistration";
+	
+	@Autowired
+	public UserService() {
+		this.passwordEncoder = new BCryptPasswordEncoder();
+	};
 	
 //	@Override
 //	public List<User> getAllUsers() {
 //		// TODO Auto-generated method stub
 //		return userRepository.findAll();
 //	}
+	
 		
 	@Override
 	public Page<User> getAllUsers(String username, Pageable pageable) {
@@ -66,6 +81,7 @@ public class UserService implements UserServiceI {
 	            throw new UserAlreadyExistException("There is an account with that username: "
 	              + user.getUsername());
 	        }
+		user.setPassword(passwordEncoder.encode(user.getPassword()));
 		user.setRoles(Collections.singletonList(roleRepository.findByDescription("USER")));
 		return userRepository.save(user);
 	}
@@ -134,5 +150,10 @@ public class UserService implements UserServiceI {
 	private boolean usernameExists(String username) {
 		return !userRepository.findUserByUsername(username).isEmpty();
 	}
+	
+	@Override
+    public String generateQRUrl(User user) throws UnsupportedEncodingException {
+        return QR_PREFIX + URLEncoder.encode(String.format("otpauth://totp/%s:%s?secret=%s&issuer=%s", APP_NAME, user.getEmail(), user.getSecret(), APP_NAME), "UTF-8");
+    }
 
 }

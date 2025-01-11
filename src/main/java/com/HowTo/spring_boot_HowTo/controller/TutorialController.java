@@ -29,6 +29,7 @@ import com.HowTo.spring_boot_HowTo.model.Comment;
 import com.HowTo.spring_boot_HowTo.config.MyUserDetails;
 
 import com.HowTo.spring_boot_HowTo.model.Tutorial;
+import com.HowTo.spring_boot_HowTo.model.User;
 import com.HowTo.spring_boot_HowTo.service.CloudinaryServiceI;
 import com.HowTo.spring_boot_HowTo.service.CategoryServiceI;
 import com.HowTo.spring_boot_HowTo.service.TutorialServiceI;
@@ -59,8 +60,8 @@ private CategoryServiceI categoryService;
 				|| authentication.getPrincipal() instanceof String) {
 			throw new IllegalStateException("User is not authenticated");
 		}
-		MyUserDetails userDetails = (MyUserDetails) authentication.getPrincipal();
-		return userDetails.getId();
+		User user = (User) authentication.getPrincipal();
+		return user.getUserId();
 	}
 	
 	
