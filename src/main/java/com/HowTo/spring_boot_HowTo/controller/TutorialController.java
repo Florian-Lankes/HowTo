@@ -2,8 +2,11 @@ package com.HowTo.spring_boot_HowTo.controller;
 
 
 import java.time.LocalDate;
+import java.io.File;
 import java.sql.Timestamp;
 import java.util.List;
+import java.util.Random;
+
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -15,14 +18,19 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
+
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.HowTo.spring_boot_HowTo.model.Advertisement;
 import com.HowTo.spring_boot_HowTo.model.Category;
 import com.HowTo.spring_boot_HowTo.model.Comment;
 
 import com.HowTo.spring_boot_HowTo.config.MyUserDetails;
 
 import com.HowTo.spring_boot_HowTo.model.Tutorial;
+import com.HowTo.spring_boot_HowTo.model.User;
+import com.HowTo.spring_boot_HowTo.service.CloudinaryServiceI;
 import com.HowTo.spring_boot_HowTo.service.CategoryServiceI;
 import com.HowTo.spring_boot_HowTo.service.TutorialServiceI;
 
@@ -34,12 +42,15 @@ import jakarta.validation.Valid;
 public class TutorialController {
 	
 	private TutorialServiceI tutorialService;
-	private CategoryServiceI categoryService;
+	private CloudinaryServiceI cloudinaryService;
+private CategoryServiceI categoryService;
 	
-	public TutorialController(TutorialServiceI tutorialService, CategoryServiceI categoryService) {
+	public TutorialController(TutorialServiceI tutorialService, CategoryServiceI categoryService, CloudinaryServiceI cloudinaryService) {
 		super();
 		this.tutorialService = tutorialService;
 		this.categoryService = categoryService;
+		this.cloudinaryService = cloudinaryService;
+
 	}
 	
 	
@@ -49,8 +60,8 @@ public class TutorialController {
 				|| authentication.getPrincipal() instanceof String) {
 			throw new IllegalStateException("User is not authenticated");
 		}
-		MyUserDetails userDetails = (MyUserDetails) authentication.getPrincipal();
-		return userDetails.getId();
+		User user = (User) authentication.getPrincipal();
+		return user.getUserId();
 	}
 	
 	
@@ -64,7 +75,26 @@ public class TutorialController {
 		commentForm.setCommentId((long) -1); //TODO change dynamically after user authorization is implemented
 		LocalDate date= LocalDate.now();
 		commentForm.setCreationDate(date);
+		Category category = tutorial.getTutorialCategory();
 		
+		if(category != null) {
+			List<Advertisement> advertisements = category.getAdvertisements();
+			int size = advertisements.size();
+			if (size > 0) {
+				Random r = new Random();
+				int random = r.nextInt(size);
+			    Advertisement randomAd = advertisements.get(random);
+			    String advertisement = randomAd.getVideoUrl();
+			    model.addAttribute("advertisement", advertisement );
+			    // Use randomAd as needed
+			} else {
+			    // Handle case when the list is empty
+			    System.out.println("No advertisements available.");
+			}
+		}
+		else {
+			System.out.println("No category available.");
+		}
 		model.addAttribute("tutorial", tutorial );
 		model.addAttribute("comment", commentForm);
 		return "tutorials/tutorial";
@@ -134,7 +164,17 @@ public class TutorialController {
 	
 	@GetMapping("/delete/{id}")
     public String deleteTutorial(@PathVariable("id") Long tutorialId, Model model, RedirectAttributes redirectAttributes) {
-        Tutorial tutorial = tutorialService.getTutorialById(tutorialId);               
+        Tutorial tutorial = tutorialService.getTutorialById(tutorialId);     
+        if(tutorial != null &&tutorial.getVideoUrl() != null && !tutorial.getVideoUrl().isEmpty()) {
+    		
+    		String s = tutorial.getVideoUrl();  //String split to get public id and delete it
+    		String[] news = s.split("/");
+    		String name = news[news.length-1];
+    		String[] test = name.split("\\.");
+    		String publicId = test[0];
+    		cloudinaryService.deleteFile(publicId);
+    		cloudinaryService.deleteVideoUrl(tutorialId);
+    	}
         tutorialService.delete(tutorial);
         redirectAttributes.addFlashAttribute("deleted", "Tutorial deleted!");
         return "redirect:/tutorial/all";
@@ -168,5 +208,42 @@ public class TutorialController {
         redirectAttributes.addFlashAttribute("updated", "tutorial updated!");
 		return "redirect:/tutorial/all";
 	}
-	
+    
+    @PostMapping("/uploadvideo/{id}")
+	public String uploadVideo(@PathVariable("id") Long tutorialId, @RequestParam("video") MultipartFile file, RedirectAttributes redirectAttributes) {
+    	
+    	Tutorial tutorial = tutorialService.getTutorialById(tutorialId);
+    	if(tutorial.getVideoUrl() != null && !tutorial.getVideoUrl().isEmpty()) {
+    		
+    		String s = tutorial.getVideoUrl();  //String split to get public id and delete it
+    		String[] news = s.split("/");
+    		String name = news[news.length-1];
+    		String[] test = name.split("\\.");
+    		String publicId = test[0];
+    		cloudinaryService.deleteFile(publicId);
+    	}
+		cloudinaryService.uploadFile(file, tutorialId);
+        redirectAttributes.addFlashAttribute("updated", "tutorial video updated!");
+		return "redirect:/tutorial/all";
+	}
+    
+    @GetMapping("/deletevideo/{id}")
+	public String deleteVideo(@PathVariable("id") Long tutorialId, 
+			Model model,
+			HttpServletRequest request, RedirectAttributes redirectAttributes) {
+    	Tutorial tutorial = tutorialService.getTutorialById(tutorialId);
+    	if(tutorial.getVideoUrl() != null && !tutorial.getVideoUrl().isEmpty()) {
+    		
+    		String s = tutorial.getVideoUrl();  //String split to get public id and delete it
+    		String[] news = s.split("/");
+    		String name = news[news.length-1];
+    		String[] test = name.split("\\.");
+    		String publicId = test[0];
+    		cloudinaryService.deleteFile(publicId);
+    		cloudinaryService.deleteVideoUrl(tutorialId);
+    	}
+    	redirectAttributes.addFlashAttribute("deleted", "tutorial video deleted!");
+		return "redirect:/tutorial/all";
+	}
+    
 }

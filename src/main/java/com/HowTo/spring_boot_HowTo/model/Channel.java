@@ -8,6 +8,7 @@ import java.util.List;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -38,7 +39,7 @@ public class Channel implements Serializable{
 	@DateTimeFormat(pattern="yyyy-MM-dd")
 	private LocalDate creationDate;
 	
-	@OneToMany(mappedBy="createdByChannel")
+	@OneToMany(mappedBy="createdByChannel" , cascade = CascadeType.REMOVE)
 	private List<Tutorial> createdTutorials = new ArrayList<Tutorial>();
 	
 	@ManyToMany(mappedBy="subscribedChannels")

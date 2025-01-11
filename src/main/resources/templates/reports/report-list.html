@@ -29,15 +29,17 @@
 		<div class="container" id="registration">
 
 
-			<div th:unless="${categories.size() > 0}" style="width: 80%">
+			<div th:unless="${reports.size() > 0}" style="width: 80%">
 				<span>No reports found!</span>
 			</div>
 
 
-			<table class="table table-striped table-bordered" th:unless="${categories.size()<1}" style="width: 80%">
+			<table class="table table-striped table-bordered" th:unless="${reports.size()<1}" style="width: 80%">
 				<thead class="table-dark">
 					<tr>
 						<th> Id </th>
+						<th> User </th>
+						<th> Tutorial </th>
 						<th> Report Text</th>
 						<th> Actions </th>
 
@@ -45,8 +47,11 @@
 				</thead>
 
 				<tbody>
-					<tr th:each="element: ${categories}">
+					<tr th:each="element: ${reports}">
 						<td th:text="${element.reportId}"></td>
+						<td th:text="${element.reportUser.username}"></td>
+						<td th:if="${element.reportTutorial != null}" th:text="${element.reportTutorial.title}"></td>
+						<td th:unless="${element.reportTutorial != null}" ></td>
 						<td th:text="${element.reportText}"></td>
 						<td>
 							<a th:href="@{/report/delete/{id}(id=${element.reportId})}" class="btn btn-danger"><svg

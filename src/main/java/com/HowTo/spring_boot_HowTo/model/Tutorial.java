@@ -31,8 +31,6 @@ public class Tutorial implements Serializable {
 
 	private String contentText;
 
-	private byte[] contentVideo;
-
 	private Timestamp creationTime;
 
 	@ManyToOne
@@ -43,12 +41,16 @@ public class Tutorial implements Serializable {
 
 	private Long likes;
 	private Long dislikes;
-
-	@OneToMany(mappedBy = "commentTutorial") // Multiple Comments can be attached to one Tutorial
+	
+	@OneToMany(mappedBy = "commentTutorial"  , cascade = CascadeType.REMOVE)							//Multiple Comments can be attached to one Tutorial
 	private List<Comment> attachedComments = new ArrayList<Comment>();
-
+	
+	//Cloudinary
+	private String videoUrl;
+	
 	@OneToMany(mappedBy = "reportTutorial", cascade = CascadeType.REMOVE)
 	private List<Report> reports = new ArrayList<Report>();
+	
 
 	public Long getTutorialId() {
 		return tutorialId;
@@ -72,14 +74,6 @@ public class Tutorial implements Serializable {
 
 	public void setContentText(String contentText) {
 		this.contentText = contentText;
-	}
-
-	public byte[] getContentVideo() {
-		return contentVideo;
-	}
-
-	public void setContentVideo(byte[] contentVideo) {
-		this.contentVideo = contentVideo;
 	}
 
 	public Long getLikes() {
@@ -145,6 +139,14 @@ public class Tutorial implements Serializable {
 	public Channel getCreatedByChannel() {
 		return createdByChannel;
 
+	}
+	
+	//Cloudinary
+	public String getVideoUrl() {
+		return videoUrl;
+	}
+	public void setVideoUrl(String videoUrl) {
+		this.videoUrl = videoUrl;
 	}
 
 	public Category getTutorialCategory() {
