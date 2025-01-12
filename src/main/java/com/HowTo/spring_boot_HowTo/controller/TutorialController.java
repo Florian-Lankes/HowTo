@@ -43,7 +43,7 @@ public class TutorialController {
 	
 	private TutorialServiceI tutorialService;
 	private CloudinaryServiceI cloudinaryService;
-private CategoryServiceI categoryService;
+	private CategoryServiceI categoryService;
 	
 	public TutorialController(TutorialServiceI tutorialService, CategoryServiceI categoryService, CloudinaryServiceI cloudinaryService) {
 		super();
@@ -123,7 +123,7 @@ private CategoryServiceI categoryService;
 	}
 	
 	@GetMapping("/all")
-	public String showChannelList(Model model) {
+	public String showTutorialList(Model model) {
 		
     	List<Tutorial> AllTutorials = tutorialService.getAllTutorials();
 		model.addAttribute("tutorials", AllTutorials);

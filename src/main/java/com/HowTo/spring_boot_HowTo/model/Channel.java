@@ -8,15 +8,14 @@ import java.util.List;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 @Entity
@@ -39,6 +38,7 @@ public class Channel implements Serializable{
 	@DateTimeFormat(pattern="yyyy-MM-dd")
 	private LocalDate creationDate;
 	
+	@JsonManagedReference(value = "tutorial-channel")
 	@OneToMany(mappedBy="createdByChannel" , cascade = CascadeType.REMOVE)
 	private List<Tutorial> createdTutorials = new ArrayList<Tutorial>();
 	

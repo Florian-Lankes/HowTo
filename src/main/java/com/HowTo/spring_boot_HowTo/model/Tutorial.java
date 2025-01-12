@@ -5,7 +5,8 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -33,27 +34,35 @@ public class Tutorial implements Serializable {
 
 	private Timestamp creationTime;
 
+	private Long likes;
+	private Long dislikes;
+
+	@JsonBackReference(value = "tutorial-channel")
 	@ManyToOne
 	private Channel createdByChannel;
 
+	@JsonBackReference(value = "tutorial-category")
 	@ManyToOne
 	private Category tutorialCategory;
 
-	private Long likes;
-	private Long dislikes;
-	
+	@JsonManagedReference(value = "tutorial-watchlater")
+	@OneToMany(mappedBy = "watchLaterTutorial", cascade = CascadeType.REMOVE)
+	private List<WatchLater> watchLaters = new ArrayList<WatchLater>();
+
+	@JsonManagedReference(value = "tutorial-history")
 	@OneToMany(mappedBy = "historyTutorial", cascade = CascadeType.REMOVE)
 	private List<History> historys = new ArrayList<History>();
-	
-	@OneToMany(mappedBy = "commentTutorial"  , cascade = CascadeType.REMOVE)							//Multiple Comments can be attached to one Tutorial
+
+	@JsonManagedReference(value = "tutorial-comment")
+	@OneToMany(mappedBy = "commentTutorial", cascade = CascadeType.REMOVE) // Multiple Comments can be attached to one																// Tutorial
 	private List<Comment> attachedComments = new ArrayList<Comment>();
-	
-	//Cloudinary
+
+	// Cloudinary
 	private String videoUrl;
-	
+
+	@JsonManagedReference(value = "tutorial-report")
 	@OneToMany(mappedBy = "reportTutorial", cascade = CascadeType.REMOVE)
 	private List<Report> reports = new ArrayList<Report>();
-	
 
 	public Long getTutorialId() {
 		return tutorialId;
@@ -94,11 +103,15 @@ public class Tutorial implements Serializable {
 	public void setDislikes(Long dislikes) {
 		this.dislikes = dislikes;
 	}
-	
+
+	public void addWatchLater(WatchLater watchLater) {
+		watchLaters.add(watchLater);
+	}
+
 	public void addHistory(History history) {
 		historys.add(history);
 	}
-	
+
 	public void addAttachedComment(Comment comment) {
 		if (!attachedComments.contains(comment)) {
 			attachedComments.add(comment);
@@ -114,7 +127,7 @@ public class Tutorial implements Serializable {
 	public List<Comment> getAttachedComments() {
 		return Collections.unmodifiableList(attachedComments);
 	}
-	
+
 	public void addReport(Report report) {
 		if (!reports.contains(report)) {
 			reports.add(report);
@@ -147,11 +160,12 @@ public class Tutorial implements Serializable {
 		return createdByChannel;
 
 	}
-	
-	//Cloudinary
+
+	// Cloudinary
 	public String getVideoUrl() {
 		return videoUrl;
 	}
+
 	public void setVideoUrl(String videoUrl) {
 		this.videoUrl = videoUrl;
 	}

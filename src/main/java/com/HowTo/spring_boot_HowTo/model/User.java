@@ -23,12 +23,26 @@ import java.util.List;
 import org.jboss.aerogear.security.otp.api.Base32;
 import org.springframework.format.annotation.DateTimeFormat;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 @Entity
 //@Table(name = "`user`")
 public class User implements Serializable {
 
 	// evtl. Gender add
 	private static final long serialVersionUID = 1L;
+	@NotBlank(message = "password is mandatory")
+	@Size(min = 0, message = "{jakarta.validation.constraints.Size}")
+	private String password;
+
+	private boolean enabled;
+
+	public User() {
+		super();
+		this.enabled = false;
+		this.setSecret(Base32.random());
+
+	}
 
 	@Id
 	@Column(unique = true, nullable = false)
@@ -46,46 +60,37 @@ public class User implements Serializable {
 
 	@DateTimeFormat(pattern = "yyyy-MM-dd")
 	private LocalDate birthDate;
-	
+
 	private boolean isUsing2FA;
-    private String secret;
-	
+	private String secret;
+
 	@ManyToMany(fetch = FetchType.EAGER)
 	@JoinTable(name = "userrole", joinColumns = @JoinColumn(name = "iduser"), inverseJoinColumns = @JoinColumn(name = "idrole"))
 	private List<Role> roles = new ArrayList<Role>();
 
 	@ManyToMany(cascade = CascadeType.ALL) // user is in groups
 	private List<Group> joinedgroups = new ArrayList<Group>();
-	
-	@OneToMany(mappedBy = "groupOwner" , cascade = CascadeType.REMOVE)						//user can be the owner of many groups
+
+	@JsonManagedReference(value = "user-group")
+	@OneToMany(mappedBy = "groupOwner", cascade = CascadeType.REMOVE) // user can be the owner of many groups
 	private List<Group> ownedgroups = new ArrayList<Group>();
 
-
-	@NotBlank(message = "password is mandatory")
-	@Size(min = 0, message = "{jakarta.validation.constraints.Size}")
-	private String password;
-
-	private boolean enabled;
-	
-	@OneToMany(mappedBy = "commentOwner", cascade = CascadeType.REMOVE)							//user can be the owner of many comments
+	@JsonManagedReference(value = "user-comment")
+	@OneToMany(mappedBy = "commentOwner", cascade = CascadeType.REMOVE) // user can be the owner of many comments
 	private List<Comment> ownedComments = new ArrayList<Comment>();
-	//private boolean isAdmin;
-	
+	// private boolean isAdmin;
+
+	@JsonManagedReference(value = "user-history")
 	@OneToMany(mappedBy = "historyOwner", cascade = CascadeType.REMOVE)
 	private List<History> history = new ArrayList<History>();
 	// private boolean isCreator;
-	
-	@OneToMany(mappedBy = "reportUser",cascade = CascadeType.REMOVE)
+
+	@JsonManagedReference(value = "user-report")
+	@OneToMany(mappedBy = "reportUser", cascade = CascadeType.REMOVE)
 	private List<Report> reports = new ArrayList<Report>();
-	
 
-	 public User() {
-	        super();
-	        this.enabled = false;
-	        this.setSecret(Base32.random());
-
-	    }
-	@OneToMany(mappedBy = "watchLaterOwner"  , cascade = CascadeType.REMOVE)
+	@JsonManagedReference(value = "user-watchlater")
+	@OneToMany(mappedBy = "watchLaterOwner", cascade = CascadeType.REMOVE)
 	private List<WatchLater> watchLater = new ArrayList<WatchLater>();
 
 	@ManyToMany
@@ -263,15 +268,19 @@ public class User implements Serializable {
 	public List<Channel> getSubscribedChannels() {
 		return Collections.unmodifiableList(subscribedChannels);
 	}
+
 	public boolean isUsing2FA() {
 		return isUsing2FA;
 	}
+
 	public void setUsing2FA(boolean isUsing2FA) {
 		this.isUsing2FA = isUsing2FA;
 	}
+
 	public String getSecret() {
 		return secret;
 	}
+
 	public void setSecret(String secret) {
 		this.secret = secret;
 	}

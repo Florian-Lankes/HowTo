@@ -2,6 +2,8 @@ package com.HowTo.spring_boot_HowTo.model;
 
 import java.io.Serializable;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -16,9 +18,11 @@ public class Report implements Serializable {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long reportId;
 	
+	@JsonBackReference(value = "user-report")
 	@ManyToOne
 	private User reportUser;
 	
+	@JsonBackReference(value = "tutorial-report")
 	@ManyToOne
 	private Tutorial reportTutorial;
 	

@@ -7,7 +7,7 @@ import java.util.List;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
-
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -40,6 +40,7 @@ public class Group implements Serializable{
 	@ManyToMany(mappedBy = "joinedgroups")
 	private List<User> users = new ArrayList<User>();
 	
+	@JsonBackReference(value = "user-group")
 	@ManyToOne()
 	private User groupOwner;
 	

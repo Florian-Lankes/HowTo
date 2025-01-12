@@ -3,7 +3,7 @@ package com.HowTo.spring_boot_HowTo.model;
 import java.io.Serializable;
 import java.sql.Timestamp;
 
-import jakarta.persistence.CascadeType;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -11,20 +11,22 @@ import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
 
 @Entity
-public class History implements Serializable{
-	
-private static final long serialVersionUID = 1L;
-	
+public class History implements Serializable {
+
+	private static final long serialVersionUID = 1L;
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long historyId;
-	
+
+	@JsonBackReference(value = "tutorial-history")
 	@ManyToOne
 	private Tutorial historyTutorial;
 	
+	@JsonBackReference(value = "user-history")
 	@ManyToOne
 	private User historyOwner;
-	
+
 	private Timestamp creationTime;
 
 	public Long getHistoryId() {
