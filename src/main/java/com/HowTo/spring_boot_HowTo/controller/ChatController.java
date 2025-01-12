@@ -85,7 +85,6 @@ public class ChatController {
 		// message.setMessageType(MessageType.JOIN);//
 		headerAccessor.getSessionAttributes().put("messageOwner", message.getMessageOwner());
 
-		List<Message> oldMessages = messageService.getMessagesByMessageGroup(group);
 		messageService.saveMessage(message);
 		messageTemplate.convertAndSend("/topic/group/" + group.getGroupId(), message);
 
@@ -111,9 +110,11 @@ public class ChatController {
 
 		String userJson = objectMapper.writeValueAsString(user);
 		String groupJson = objectMapper.writeValueAsString(group);
-
+		//List<Message> oldMessages = messageService.getMessagesByMessageGroup(group);
+		
 		model.addAttribute("userJson", userJson);
 		model.addAttribute("groupJson", groupJson);
+		//model.addAttribute("oldMessages", oldMessages);
 
 		// model.addAttribute("user", user);
 		// model.addAttribute("username", user.getUsername());

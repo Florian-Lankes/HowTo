@@ -66,7 +66,6 @@ function onConnected() {
 			   messageGroup: group
 	       };
     stompClient.send("/app/chat.addUser", {}, JSON.stringify(joinMessage));
-	
     connectingElement.classList.add('hidden');
 	console.log("4");
 }
@@ -140,7 +139,53 @@ function onMessageReceived(payload) {
 }
 
 // new
+window.addEventListener('load', function() { 
+	console.log("Event listener triggered");
+	loadOldMessages(); 
+}); 
 
+function loadOldMessages() { 
+	console.log("FETCH OLD Messages")
+    fetch('/chat/messages/' + group.groupId) 
+        .then(response => {
+			console.log("Response status:", response.status);
+			return response.json();
+		}) 
+        .then(messages => { 
+			console.log("Fetched messages:", messages);
+            for (const message of messages) { 
+                renderMessage(message); 
+            } 
+        }) 
+        .catch(error => { 
+            console.error('Error fetching old messages:', error); 
+        }); 
+} 
+
+function renderMessage(message) { 
+    var messageElement = document.createElement('li'); 
+    if (message.messageType === 'JOIN') { 
+        messageElement.classList.add('event-message'); 
+        //message.content = message.messageOwner.username + ' joined!'; 
+		message.content = 'User joined!';
+    } else if (message.messageType === 'LEAVE') { 
+        messageElement.classList.add('event-message'); 
+		message.content = 'User left!';
+        //message.content = message.messageOwner.username + ' left!'; 
+    } else { 
+        messageElement.classList.add('chat-message'); 
+        var usernameElement = document.createElement('span'); 
+        var usernameText = document.createTextNode("Username"); 
+        usernameElement.appendChild(usernameText); 
+        messageElement.appendChild(usernameElement); 
+    } 
+    var textElement = document.createElement('p'); 
+    var messageText = document.createTextNode(message.content); 
+    textElement.appendChild(messageText); 
+    messageElement.appendChild(textElement); 
+    messageArea.appendChild(messageElement); 
+    messageArea.scrollTop = messageArea.scrollHeight;
+}
 // new
 
 
