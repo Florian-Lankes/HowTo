@@ -87,7 +87,7 @@ public class User implements Serializable{
 	        this.setSecret(Base32.random());
 
 	    }
-	@OneToMany(mappedBy = "watchLaterOwner"  , cascade = CascadeType.REMOVE)
+	@OneToMany(mappedBy = "watchLaterOwner", cascade = CascadeType.REMOVE)
 	private List<WatchLater> watchLater = new ArrayList<WatchLater>();
 	
 	@ManyToMany

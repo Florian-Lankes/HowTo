@@ -2,11 +2,13 @@ package com.HowTo.spring_boot_HowTo.service.impl;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
+import org.jboss.aerogear.security.otp.api.Base32;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -85,6 +87,40 @@ public class UserService implements UserServiceI {
 		user.setRoles(Collections.singletonList(roleRepository.findByDescription("USER")));
 		return userRepository.save(user);
 	}
+	
+
+	@Override
+	public User saveO2authUser(String email, String name) {
+		// TODO Auto-generated method stub
+		User user = new User();
+		  if (usernameExists(name)) {
+			  User u = userRepository.findUserByUsername(name).get();
+			  User w = userRepository.findUserByEmail(email).get();
+			  String userEmail1 = u.getEmail();
+			  String userEmail2 = w.getEmail();
+			  if (userEmail1 == userEmail2){
+				  System.out.println("test");
+				  return w;
+			  }else {
+				  throw new UserAlreadyExistException("There is an account with that username: "
+			              + user.getUsername());
+			  }
+	        }
+		  if (emailExists(user.getEmail())) {
+	            throw new UserAlreadyExistException("There is an account with that email address: "
+	              + user.getEmail());
+	        }
+		user.setEmail(email);
+		user.setUsername(name);
+		user.setEnabled(true);
+		user.setPassword(name);
+		user.setBirthDate(LocalDate.of(2020, 1, 20));
+		user.setPassword(passwordEncoder.encode(user.getPassword()));
+		user.setRoles(Collections.singletonList(roleRepository.findByDescription("USER")));
+		userRepository.save(user);
+		return user;
+	}
+	
 	
   @Override
     public VerificationToken getVerificationToken(final String VerificationToken) {

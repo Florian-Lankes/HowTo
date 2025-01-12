@@ -33,4 +33,6 @@ public interface UserServiceI {
 	
 	String generateQRUrl(User user) throws UnsupportedEncodingException;
 
+	User saveO2authUser(String email, String name);
+
 }
