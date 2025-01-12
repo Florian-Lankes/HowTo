@@ -4,14 +4,12 @@ import java.time.LocalDate;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.JoinTable;
-import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -34,9 +32,11 @@ public class Comment {
 	@DateTimeFormat(pattern="yyyy-MM-dd")
 	private LocalDate creationDate;
 	
+	@JsonBackReference(value = "user-comment")
 	@ManyToOne
 	private User commentOwner;
 	
+	@JsonBackReference(value = "tutorial-comment")
 	@ManyToOne
 	private Tutorial commentTutorial;
 

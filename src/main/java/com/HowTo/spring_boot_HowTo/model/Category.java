@@ -4,7 +4,8 @@ import java.io.Serializable;
 import java.util.Collections;
 import java.util.List;
 
-import jakarta.persistence.CascadeType;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -26,9 +27,11 @@ private static final long serialVersionUID = 1L;
 	@Size(min = 5, max = 50, message = "{jakarta.validation.constraints.Size}")
 	private String categoryName;
 	
+	@JsonManagedReference(value = "tutorial-category")
 	@OneToMany(mappedBy="tutorialCategory")
 	private List<Tutorial> tutorials;
 	
+	@JsonManagedReference(value = "advertisement-category")
 	@OneToMany(mappedBy="advertisementCategory")
 	private List<Advertisement> advertisements ;
 	

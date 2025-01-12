@@ -3,6 +3,7 @@ package com.HowTo.spring_boot_HowTo.model;
 import java.io.Serializable;
 import java.sql.Timestamp;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -25,6 +26,7 @@ public class Advertisement implements Serializable{
 	//@NotBlank
 	private String name;
 	
+	@JsonBackReference(value = "advertisement-category")
 	@ManyToOne
 	private Category advertisementCategory;
 	
