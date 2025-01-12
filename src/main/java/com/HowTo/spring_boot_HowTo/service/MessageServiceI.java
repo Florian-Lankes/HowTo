@@ -6,7 +6,7 @@ import com.HowTo.spring_boot_HowTo.model.Message;
 
 public interface MessageServiceI {
 
-	public Message sendMessage(Message message);
+	public Message saveMessage(Message message);
 	
-	public List<Message> getMessagesByGroupId(Long groupId);
+	//public List<Message> getMessagesByGroupId(Long groupId);
 }

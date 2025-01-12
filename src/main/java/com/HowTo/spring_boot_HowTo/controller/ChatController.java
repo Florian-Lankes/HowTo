@@ -21,6 +21,7 @@ import com.HowTo.spring_boot_HowTo.model.Message;
 import com.HowTo.spring_boot_HowTo.model.MessageType;
 import com.HowTo.spring_boot_HowTo.model.User;
 import com.HowTo.spring_boot_HowTo.service.GroupServiceI;
+import com.HowTo.spring_boot_HowTo.service.MessageServiceI;
 import com.HowTo.spring_boot_HowTo.service.UserServiceI;
 import com.fasterxml.jackson.core.JsonProcessingException; 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -34,11 +35,13 @@ public class ChatController {
 	
 	private GroupServiceI groupService;
 	private final ObjectMapper objectMapper;
+	private MessageServiceI messageService;
 	
-	public ChatController(UserServiceI userService, GroupServiceI groupService, ObjectMapper objectMapper) {
+	public ChatController(UserServiceI userService, GroupServiceI groupService, MessageServiceI messageService, ObjectMapper objectMapper) {
         super();
         this.userService = userService;
         this.groupService = groupService;
+        this.messageService = messageService;
         this.objectMapper = objectMapper;
     }
 	
@@ -54,7 +57,10 @@ public class ChatController {
 	
 	@MessageMapping("/chat.sendMessage") 
 	@SendTo("/topic/public") // TODO maybe for groups is need /topic/group
-	public Message sendMessage(@Payload Message message) { 
+	public Message sendMessage(@Payload Message message, SimpMessageHeaderAccessor headerAccessor) { 
+		System.out.println("Received sendMessage: " + message.getMessageOwner().getUsername());
+		
+		messageService.saveMessage(message);
 		return message;  // Send message to all subscribers of "/topic/group" 
 	} 
 	
@@ -64,12 +70,16 @@ public class ChatController {
 		//System.out.println(headerAccessor.getNativeHeader("userId").get(0));
 		//long userId = Long.parseLong(headerAccessor.getNativeHeader("userId").get(0), 10);
 		System.out.println("Received addUser: " + message);
+		User user = message.getMessageOwner(); 
+		Group group = message.getMessageGroup(); 
+		headerAccessor.getSessionAttributes().put("user", user); 
+		headerAccessor.getSessionAttributes().put("group", group);
 		//message.setMessageOwner(userService.getUserById(userId));
 		//message.setMessageType(MessageType.JOIN);//
 		headerAccessor.getSessionAttributes().put("messageOwner", message.getMessageOwner());
 		
-		User userString = message.getMessageOwner();
-		System.out.println(userString);
+		messageService.saveMessage(message);
+		
 		return message; 
 	}
 	

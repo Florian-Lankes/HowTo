@@ -83,6 +83,7 @@ function onError(error) {
 function sendMessage(event) {
 	console.log("sendMessage");
     var messageContent = messageInput.value.trim();
+	console.log("messageContent: " + messageContent)
     if(messageContent && stompClient) {
         var chatMessage = {
 			// messageId = -1, TODO maybe
@@ -101,7 +102,7 @@ function sendMessage(event) {
 function onMessageReceived(payload) {
 	console.log("onMessageReceived");
     var message = JSON.parse(payload.body);
-
+	console.log("message payload: " + payload);
     var messageElement = document.createElement('li');
 
     if(message.messageType === 'JOIN') {
@@ -115,15 +116,15 @@ function onMessageReceived(payload) {
     } else {
         messageElement.classList.add('chat-message');
 
-        var avatarElement = document.createElement('i');
-        var avatarText = document.createTextNode(message.sender[0]);
-        avatarElement.appendChild(avatarText);
-        avatarElement.style['background-color'] = '#2196F3'; // DELETED avatar color function
+        //var avatarElement = document.createElement('i');
+        //var avatarText = document.createTextNode(message.sender[0]);
+        //avatarElement.appendChild(avatarText);
+        //avatarElement.style['background-color'] = '#2196F3'; // DELETED avatar color function
 
-        messageElement.appendChild(avatarElement);
+        //messageElement.appendChild(avatarElement);
 
         var usernameElement = document.createElement('span');
-        var usernameText = document.createTextNode('message.sender'); // TODO message.sender
+        var usernameText = document.createTextNode('TEXTNODE'); // TODO message.sender
         usernameElement.appendChild(usernameText);
         messageElement.appendChild(usernameElement);
     }
