@@ -42,6 +42,9 @@ public class Tutorial implements Serializable {
 	private Long likes;
 	private Long dislikes;
 	
+	@OneToMany(mappedBy = "historyTutorial", cascade = CascadeType.REMOVE)
+	private List<History> historys = new ArrayList<History>();
+	
 	@OneToMany(mappedBy = "commentTutorial"  , cascade = CascadeType.REMOVE)							//Multiple Comments can be attached to one Tutorial
 	private List<Comment> attachedComments = new ArrayList<Comment>();
 	
@@ -91,7 +94,11 @@ public class Tutorial implements Serializable {
 	public void setDislikes(Long dislikes) {
 		this.dislikes = dislikes;
 	}
-
+	
+	public void addHistory(History history) {
+		historys.add(history);
+	}
+	
 	public void addAttachedComment(Comment comment) {
 		if (!attachedComments.contains(comment)) {
 			attachedComments.add(comment);
