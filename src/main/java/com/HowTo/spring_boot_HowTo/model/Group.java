@@ -54,11 +54,11 @@ public class Group implements Serializable{
 	private List<User> users = new ArrayList<User>();
 	
 	@OneToMany(mappedBy = "messageGroup")							//user can be the owner of many comments
-	@JsonManagedReference
+	@JsonManagedReference(value = "group-messages")
 	private List<Message> ownedMessagesGroup = new ArrayList<Message>();
 	
 	@ManyToOne()
-	@JsonBackReference
+	@JsonBackReference(value = "group-owner")
 	private User groupOwner;
 	
 	// maybe needs adjustments .... private ArrayList<String> messages = new ArrayList<String>();

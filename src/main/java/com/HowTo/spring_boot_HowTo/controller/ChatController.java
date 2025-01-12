@@ -63,7 +63,7 @@ public class ChatController {
 	public Message addUser(@Payload Message message, SimpMessageHeaderAccessor headerAccessor) {
 		//System.out.println(headerAccessor.getNativeHeader("userId").get(0));
 		//long userId = Long.parseLong(headerAccessor.getNativeHeader("userId").get(0), 10);
-		
+		System.out.println("Received addUser: " + message);
 		//message.setMessageOwner(userService.getUserById(userId));
 		//message.setMessageType(MessageType.JOIN);//
 		headerAccessor.getSessionAttributes().put("messageOwner", message.getMessageOwner());

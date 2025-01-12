@@ -30,6 +30,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
+
 @Entity
 //@Table(name = "`user`")
 //@JsonDeserialize(using = UserDeserializer.class)
@@ -98,7 +99,7 @@ public class User implements Serializable {
 	private List<WatchLater> watchLater = new ArrayList<WatchLater>();
 
 	@OneToMany(mappedBy = "messageOwner") // user can be the owner of many comments
-	@JsonManagedReference
+	@JsonManagedReference(value = "user-messages")
 	private List<Message> ownedMessagesUser = new ArrayList<Message>();
 	
 	@JsonIgnore
@@ -195,7 +196,7 @@ public class User implements Serializable {
 	}
 
 	public List<WatchLater> getWatchLater() {
-		return Collections.unmodifiableList(watchLater);
+		return new ArrayList<>(watchLater);
 	}
 
 	public void addToHistory(History h) {
@@ -211,7 +212,7 @@ public class User implements Serializable {
 	}
 
 	public List<History> getHistory() {
-		return Collections.unmodifiableList(history);
+		return new ArrayList<>(history);
 	}
 
 	public void addJoinedGroup(Group group) {
@@ -227,7 +228,7 @@ public class User implements Serializable {
 	}
 
 	public List<Group> getJoinedGroups() {
-		return Collections.unmodifiableList(joinedgroups);
+		return new ArrayList<>(joinedgroups);
 	}
 
 	public void addOwnedGroup(Group group) {
@@ -243,7 +244,7 @@ public class User implements Serializable {
 	}
 
 	public List<Group> getOwnedGroups() {
-		return Collections.unmodifiableList(ownedgroups);
+		return new ArrayList<>(ownedgroups);
 	}
 
 	public void addOwnedComment(Comment comment) {
@@ -259,7 +260,7 @@ public class User implements Serializable {
 	}
 
 	public List<Comment> getOwnedComments() {
-		return Collections.unmodifiableList(ownedComments);
+		return new ArrayList<>(ownedComments);
 	}
 
 	public void addSubscription(Channel channel) {
@@ -275,7 +276,11 @@ public class User implements Serializable {
 	}
 
 	public List<Channel> getSubscribedChannels() {
-		return Collections.unmodifiableList(subscribedChannels);
+		return new ArrayList<>(subscribedChannels);
+	}
+	
+	public List<Message> getOwnedMessagesUser() {
+		return ownedMessagesUser;
 	}
 }
 

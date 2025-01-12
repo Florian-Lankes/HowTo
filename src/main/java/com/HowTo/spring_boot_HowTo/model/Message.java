@@ -1,5 +1,6 @@
 package com.HowTo.spring_boot_HowTo.model;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
@@ -19,11 +20,13 @@ import lombok.Setter;
 @Entity
 //@Getter
 //@Setter
-//@Data
-//@Builder
-//@AllArgsConstructor
-//@NoArgsConstructor
-public class Message {
+@Data
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
+public class Message implements Serializable{
+
+	private static final long serialVersionUID = 1L;
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -33,14 +36,14 @@ public class Message {
 
 	private MessageType messageType;
 
-	//private LocalDateTime timestamp;
+	//private LocalDateTime timestamp;xyvx
 
 	@ManyToOne
-	@JsonBackReference
+	@JsonBackReference(value = "user-messages")
 	private User messageOwner;
 
 	@ManyToOne
-	@JsonBackReference
+	@JsonBackReference(value = "group-messages")
 	private Group messageGroup;
 
 	public String getContent() {
