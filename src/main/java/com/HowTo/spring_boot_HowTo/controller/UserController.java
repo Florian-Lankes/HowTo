@@ -27,10 +27,13 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.HowTo.spring_boot_HowTo.changepassword.OnChangePasswordEvent;
 import com.HowTo.spring_boot_HowTo.config.MyUserDetails;
+import com.HowTo.spring_boot_HowTo.model.Channel;
 import com.HowTo.spring_boot_HowTo.model.User;
 import com.HowTo.spring_boot_HowTo.model.VerificationToken;
 import com.HowTo.spring_boot_HowTo.registration.OnRegistrationCompleteEvent;
+import com.HowTo.spring_boot_HowTo.service.ChannelServiceI;
 import com.HowTo.spring_boot_HowTo.service.UserServiceI;
 import com.HowTo.spring_boot_HowTo.validator.UserAlreadyExistException;
 import com.HowTo.spring_boot_HowTo.validator.UserValidator;
@@ -46,15 +49,18 @@ public class UserController {
 
 	private UserServiceI userService;
 	
+	private ChannelServiceI channelService;
+	
 	@Autowired
     private ApplicationEventPublisher eventPublisher;
 
-	public UserController(UserServiceI userService) {
+	public UserController(UserServiceI userService, ChannelServiceI channelService) {
 		super();
 		this.userService = userService;
+		this.channelService = channelService;
 	}
 
-	@InitBinder
+	@InitBinder("user")
 	public void initBinder(WebDataBinder binder) {
 		binder.addValidators(new UserValidator());
 	}
@@ -111,7 +117,6 @@ public class UserController {
 		User user = userService.getUserById(id);
 		model.addAttribute("user", user);
 		request.getSession().setAttribute("userSession", user);
-
 		System.out.println("updating user id=" + id);
 		return "/users/user-update";
 	}
@@ -123,7 +128,6 @@ public class UserController {
 
 			return "/users/user-update";
 		}
-
 		userService.updateUser(user);
 		redirectAttributes.addFlashAttribute("updated", "user updated!");
 		return "redirect:/user/admin/all";
@@ -202,7 +206,7 @@ public class UserController {
 		System.out.println("In Function");
 		if (result.hasErrors()) {
 			System.out.println(result.getAllErrors().toString());
-			return "/";
+			return "/register";
 		}
 		
 		try {
@@ -220,6 +224,58 @@ public class UserController {
 		redirectAttributes.addFlashAttribute("added", "User added!");
 
 		return "redirect:/login";
+	}
+	
+	@GetMapping("/user/changemypassword")
+	public String changePassword(Model model, RedirectAttributes redirectAttributes, HttpServletRequest request) {
+		User user = userService.getUserById(getCurrentUserId());
+		String appUrl = request.getContextPath();
+		eventPublisher.publishEvent(new OnChangePasswordEvent(user, request.getLocale(),appUrl));
+		
+		redirectAttributes.addFlashAttribute("email", "E-Mail for password change has been sent");
+		return "redirect:/user/my";
+	}
+	
+	@GetMapping("/confirmPassword")
+	public String confirmpassword
+	  (WebRequest request, Model model, @RequestParam("token") String token) {
+	 
+	    // Locale locale = request.getLocale();
+	    
+	    VerificationToken verificationToken = userService.getVerificationToken(token);
+	    if (verificationToken == null) {
+//	        String message = messages.getMessage("auth.message.invalidToken", null, locale);
+//	        model.addAttribute("message", message);
+	        return "redirect:/badUser"; // ?lang="  + locale.getLanguage();
+	    }
+	    
+	    User user = verificationToken.getUser();
+	    Calendar cal = Calendar.getInstance();
+	    if ((verificationToken.getExpiryDate().getTime() - cal.getTime().getTime()) <= 0) {
+//	        String messageValue = messages.getMessage("auth.message.expired", null, locale);
+//	        model.addAttribute("message", messageValue);
+	        return "redirect:/badUser"; //?lang=" + locale.getLanguage();
+	    } 
+	    
+	    model.addAttribute("user", user);
+	    model.addAttribute("token", token);
+	    return "changepassword"; // + request.getLocale().getLanguage(); 
+	}
+	
+	@PostMapping("/user/passwordchanged")
+	public String passwordchanged(@Valid @ModelAttribute User user, @RequestParam("token") String token,  BindingResult result, Model model,
+	RedirectAttributes redirectAttributes) {
+		VerificationToken verificationToken = userService.getVerificationToken(token);
+		if (verificationToken == null) {
+	        return "redirect:/badUser";
+	    }
+		
+		User u = verificationToken.getUser();
+		User check = userService.getUserById(user.getUserId());
+		if(check.equals(u)) {
+		userService.changePassword(user);
+		}
+		return "redirect:/logout";
 	}
 	
 	@GetMapping("user/my/activate2fa")
@@ -252,7 +308,8 @@ public class UserController {
 	
 	@GetMapping("/logout")
 	public String logout() {
-		return "redirect:/login";
+		
+		return "redirect:/";
 }
 //
 //	@PostMapping("/login/process")
@@ -269,12 +326,11 @@ public class UserController {
 		User current_user = userService.getUserById(getCurrentUserId());
 		model.addAttribute("user", current_user);
 		
-		// IF USER: Get creator
-		// IF CREATOR: Show all subscribers
-		// IF CREATOR: Show all Uploaded videos
+		Channel my_channel = channelService.getChannelById(getCurrentUserId());
+		model.addAttribute("channel", my_channel);
 		
 		// Change password
-		// CHANGE username or channelname and discription
+		// Change channelname and discription
 		
 		
 		//Enable 2fa

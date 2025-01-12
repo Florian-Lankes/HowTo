@@ -47,7 +47,7 @@ public class ChannelService implements ChannelServiceI{
 		// TODO Auto-generated method stub
 		Channel c =  channelRepository.save(channel);
 		User user = userRepository.findById(userId).get();
-		List<Role> liste = new ArrayList<>();
+		List<Role> liste = user.getRoles();
 		liste.add(roleRepository.findByDescription("CREATOR"));
 		user.setRoles(liste);
 		userRepository.save(user);
@@ -71,6 +71,11 @@ public class ChannelService implements ChannelServiceI{
 	@Override
 	public void delete(Channel channel) {
 		// TODO Auto-generated method stub
+		User user = userRepository.findById(channel.getChannelId()).get();
+		List<Role> liste = user.getRoles();
+		liste.remove(roleRepository.findByDescription("CREATOR"));
+		user.setRoles(liste);
+		userRepository.save(user);
 		channelRepository.delete(channel);
 	}
 	

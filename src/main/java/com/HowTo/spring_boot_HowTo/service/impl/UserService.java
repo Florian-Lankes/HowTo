@@ -87,17 +87,20 @@ public class UserService implements UserServiceI {
 	}
 	
   @Override
-    public VerificationToken getVerificationToken(final String VerificationToken) {
+    public VerificationToken getVerificationToken( String VerificationToken) {
         return tokenRepository.findByToken(VerificationToken);
     }
   
   @Override
-  public void createVerificationTokenForUser(final User user, final String token) {
+  public void createVerificationTokenForUser(User user, String token) {
       VerificationToken myToken = new VerificationToken();
       myToken.setUser(user);
       myToken.setToken(token);
       myToken.setExpiryDate();
+      User u = userRepository.findById(user.getUserId()).get();
+      u.setVerificationToken(myToken);
       tokenRepository.save(myToken);
+      userRepository.save(u);
   }
 	
     @Override
@@ -120,7 +123,21 @@ public class UserService implements UserServiceI {
 
 	@Override
 	public User updateUser(User user) {
-		User local = userRepository.save(user);
+		// TODO Auto-generated method stub
+		User u = userRepository.findById(user.getUserId()).get();
+		//u.setPassword(passwordEncoder.encode(user.getPassword())); double hashes the password if not changed
+		u.setUsername(user.getUsername());
+		u.setBirthDate(user.getBirthDate());
+		u.setEmail(user.getEmail());
+		User local = userRepository.save(u);
+		return local;
+	}
+	
+	@Override
+	public User changePassword(User user) {
+		User u = userRepository.findById(user.getUserId()).get();
+		u.setPassword(passwordEncoder.encode(user.getPassword()));
+		User local = userRepository.save(u);
 		return local;
 	}
 
@@ -141,6 +158,12 @@ public class UserService implements UserServiceI {
 		// TODO Auto-generated method stub
 		return null;
 	}
+	
+	public boolean checkAdmin(User user) {
+		// TODO Auto-generated method stub
+		return user.getRoles().contains(roleRepository.findByDescription("ADMIN"));
+	}
+
 
 	private boolean emailExists(String email) {
 		return !userRepository.findUserByEmail(email).isEmpty();

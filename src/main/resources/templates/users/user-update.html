@@ -60,7 +60,7 @@
 					<div class="form-row">
 					    <div class="form-group col-md-6">
 					        <label for="password">Password</label>
-					        <input type="text" class="form-control" id="password" placeholder="Password"
+					        <input type="text" readonly class="form-control" id="password" placeholder="Password"
 					               th:field="*{password}" 
 					               th:classappend="${#fields.hasErrors('password')} ? 'is-invalid'" />
 					        <div class="invalid-feedback">
