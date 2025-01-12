@@ -50,11 +50,11 @@ public class UserService implements UserServiceI {
 		this.passwordEncoder = new BCryptPasswordEncoder();
 	};
 	
-//	@Override
-//	public List<User> getAllUsers() {
-//		// TODO Auto-generated method stub
-//		return userRepository.findAll();
-//	}
+	@Override
+	public List<User> getAllUsers() {
+		// TODO Auto-generated method stub
+		return userRepository.findAll();
+	}
 	
 		
 	@Override
@@ -120,7 +120,6 @@ public class UserService implements UserServiceI {
 
 	@Override
 	public User updateUser(User user) {
-		// TODO Auto-generated method stub
 		User local = userRepository.save(user);
 		return local;
 	}

@@ -10,12 +10,12 @@ import jakarta.persistence.Table;
 import java.io.Serializable;
 import java.util.Collection;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 
 @Entity
-@Table(name="authority")
+@Table(name = "authority")
 public class Authority implements Serializable {
 
-	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	/**
@@ -24,21 +24,21 @@ public class Authority implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Id
-	@GeneratedValue (strategy = GenerationType.IDENTITY)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long authorityId;
 	private String description;
 
-	 @ManyToMany(mappedBy = "authorities")
-	    private Collection<Role> roles;
-	    
-	       
-		public Collection<Role> getRoles() {
-			return roles;
-		}
+	@JsonBackReference(value="role-authority")
+	@ManyToMany(mappedBy = "authorities")
+	private Collection<Role> roles;
 
-		public void setRoles(Collection<Role> roles) {
-			this.roles = roles;
-		}
+	public Collection<Role> getRoles() {
+		return roles;
+	}
+
+	public void setRoles(Collection<Role> roles) {
+		this.roles = roles;
+	}
 
 	public Long getAuthorityId() {
 		return authorityId;
@@ -55,6 +55,5 @@ public class Authority implements Serializable {
 	public void setDescription(String description) {
 		this.description = description;
 	}
-	
-	
+
 }

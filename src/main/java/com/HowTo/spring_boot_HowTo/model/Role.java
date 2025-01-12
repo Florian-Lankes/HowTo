@@ -3,6 +3,10 @@ package com.HowTo.spring_boot_HowTo.model;
 import java.io.Serializable;
 import java.util.Collection;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
@@ -25,9 +29,11 @@ public class Role implements Serializable {
 
     private String description;
     
+    @JsonIgnore
     @ManyToMany(mappedBy = "roles")
     private Collection<User> users;
     
+    @JsonIgnore
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
         name = "roleauthority", 

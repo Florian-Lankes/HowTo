@@ -37,6 +37,7 @@ public class Group implements Serializable{
 	@DateTimeFormat(pattern="yyyy-MM-dd")
 	private LocalDate creationDate;
 	
+	@JsonBackReference(value = "user-joinedgroup")
 	@ManyToMany(mappedBy = "joinedgroups")
 	private List<User> users = new ArrayList<User>();
 	

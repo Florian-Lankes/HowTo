@@ -23,6 +23,7 @@ import java.util.List;
 import org.jboss.aerogear.security.otp.api.Base32;
 import org.springframework.format.annotation.DateTimeFormat;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 @Entity
@@ -63,11 +64,13 @@ public class User implements Serializable {
 
 	private boolean isUsing2FA;
 	private String secret;
-
+	
+	@JsonIgnore
 	@ManyToMany(fetch = FetchType.EAGER)
 	@JoinTable(name = "userrole", joinColumns = @JoinColumn(name = "iduser"), inverseJoinColumns = @JoinColumn(name = "idrole"))
 	private List<Role> roles = new ArrayList<Role>();
 
+	@JsonIgnore
 	@ManyToMany(cascade = CascadeType.ALL) // user is in groups
 	private List<Group> joinedgroups = new ArrayList<Group>();
 

@@ -162,7 +162,6 @@ public class UserController {
 	public String showUserRegisterForm(Model model, HttpServletRequest request) {
 
 		User userForm = new User();
-		userForm.setUserId((long) -1);
 		LocalDate date = LocalDate.now();
 		userForm.setBirthDate(date);
 
