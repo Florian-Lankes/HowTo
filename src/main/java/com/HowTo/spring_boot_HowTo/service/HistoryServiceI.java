@@ -16,3 +16,4 @@ public interface HistoryServiceI {
 	
 	void delete(History history);
 }
+

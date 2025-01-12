@@ -100,6 +100,10 @@ public class User implements Serializable {
 	@JsonManagedReference(value = "user-watchlater")
 	@OneToMany(mappedBy = "watchLaterOwner", cascade = CascadeType.REMOVE)
 	private List<WatchLater> watchLater = new ArrayList<WatchLater>();
+	
+	@JsonManagedReference(value="rating-user")
+	@OneToMany(mappedBy = "ratingUser", cascade = CascadeType.REMOVE)
+	private List<Rating> ratings = new ArrayList<Rating>();
 
 	@ManyToMany
 	private List<Channel> subscribedChannels = new ArrayList<Channel>();
@@ -272,9 +276,25 @@ public class User implements Serializable {
 			subscribedChannels.remove(channel);
 		}
 	}
-
+	
 	public List<Channel> getSubscribedChannels() {
 		return Collections.unmodifiableList(subscribedChannels);
+	}
+	
+	public void addRating(Rating rating) {
+		if (!ratings.contains(rating)) {
+			ratings.add(rating);
+		}
+	}
+
+	public void removeRating(Rating rating) {
+		if (ratings.contains(rating)) {
+			ratings.remove(rating);
+		}
+	}
+
+	public List<Rating> getRatings() {
+		return Collections.unmodifiableList(ratings);
 	}
 
 	public boolean isUsing2FA() {

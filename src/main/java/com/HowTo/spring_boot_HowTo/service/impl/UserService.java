@@ -2,7 +2,6 @@ package com.HowTo.spring_boot_HowTo.service.impl;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -45,7 +44,6 @@ public class UserService implements UserServiceI {
 	public static String QR_PREFIX = "https://qrcode.tec-it.com/API/QRCode?data=";
     public static String APP_NAME = "SpringRegistration";
 	
-	@Autowired
 	public UserService() {
 		this.passwordEncoder = new BCryptPasswordEncoder();
 	};

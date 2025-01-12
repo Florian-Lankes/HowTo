@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html layout:decorate="~{layout}">
+
+<head>
+	<meta charset="UTF-8" />
+</head>
+
+<body>
+	<section class="layout-content" layout:fragment="mybody">
+		<div class="">
+			<p>This is the Rating page</p>
+		</div>
+		<div class="container">
+			<label>Score</label>
+			<p th:text="${rating.ratingScore}"></p>
+			<label>Rating Text</label>
+			<p th:text="${rating.ratingText}"></p>
+		</div>
+		
+
+	</section>
+</body>
+
+</html>

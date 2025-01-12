@@ -56,7 +56,11 @@ public class Tutorial implements Serializable {
 	@JsonManagedReference(value = "tutorial-comment")
 	@OneToMany(mappedBy = "commentTutorial", cascade = CascadeType.REMOVE) // Multiple Comments can be attached to one																// Tutorial
 	private List<Comment> attachedComments = new ArrayList<Comment>();
-
+	
+	@JsonManagedReference(value="rating-tutorial")
+	@OneToMany(mappedBy = "ratingTutorial", cascade = CascadeType.REMOVE)
+	private List<Rating> ratings = new ArrayList<Rating>();
+	
 	// Cloudinary
 	private String videoUrl;
 
@@ -103,7 +107,23 @@ public class Tutorial implements Serializable {
 	public void setDislikes(Long dislikes) {
 		this.dislikes = dislikes;
 	}
+	
+	public void addRating(Rating rating) {
+		if (!ratings.contains(rating)) {
+			ratings.add(rating);
+		}
+	}
 
+	public void removeRating(Rating rating) {
+		if (ratings.contains(rating)) {
+			ratings.remove(rating);
+		}
+	}
+
+	public List<Rating> getRatings() {
+		return Collections.unmodifiableList(ratings);
+	}
+	
 	public void addWatchLater(WatchLater watchLater) {
 		watchLaters.add(watchLater);
 	}
