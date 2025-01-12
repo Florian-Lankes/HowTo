@@ -81,7 +81,10 @@ public class SecurityConfiguration {
 			)
 			.logout(logout -> logout 
 			.logoutUrl("/logout") 
+			.logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
 			.logoutSuccessUrl("/")
+			.invalidateHttpSession(true)
+            .clearAuthentication(true)
 			.deleteCookies("JSESSIONID")
 			.permitAll()
 			)
@@ -111,15 +114,25 @@ public class SecurityConfiguration {
 			.requestMatchers("/history/**").hasAuthority("VIEW")
 			.requestMatchers("/comment/**").hasAuthority("VIEW")
 			.requestMatchers("/watchLater/**").hasAuthority("VIEW")
+			.requestMatchers("/category/view/**").hasAuthority("VIEW")
+	        .requestMatchers("/category/all").hasAuthority("VIEW")
 			.requestMatchers("/user/my/**").hasAuthority("VIEW")
 			
 			.requestMatchers("/channel/delete/**").hasAuthority("CREATOR_RIGHTS")
 			.requestMatchers("/channel/update/**").hasAuthority("CREATOR_RIGHTS")
 			.requestMatchers("/tutorial/create").hasAuthority("CREATOR_RIGHTS")
 			.requestMatchers("/tutorial/upload").hasAuthority("CREATOR_RIGHTS")
+	        .requestMatchers("/tutorial/uploadvideo/**").hasAuthority("CREATOR_RIGHTS")
+	        .requestMatchers("/tutorial/deletevideo/**").hasAuthority("CREATOR_RIGHTS")
 			.requestMatchers("/tutorial/update/**").hasAuthority("CREATOR_RIGHTS")
 			.requestMatchers("/tutorial/delete/**").hasAuthority("CREATOR_RIGHTS")
+			
 			.requestMatchers("/admin/**").hasAuthority("ADMIN_RIGHTS")
+	        .requestMatchers("/category/create").hasAuthority("ADMIN_RIGHTS")
+	        .requestMatchers("/category/delete/**").hasAuthority("ADMIN_RIGHTS")
+	        .requestMatchers("/category/update/**").hasAuthority("ADMIN_RIGHTS")
+	        .requestMatchers("/category/update").hasAuthority("ADMIN_RIGHTS")
+	        .requestMatchers("/advertisement/**").hasAuthority("ADMIN_RIGHTS")
 			.requestMatchers("/user/admin/**").hasAuthority("ADMIN_RIGHTS")
 			.anyRequest().authenticated()
 			);
@@ -128,6 +141,7 @@ public class SecurityConfiguration {
 			http.formLogin(Customizer.withDefaults());
 			http.httpBasic(Customizer.withDefaults()); 
 			return http.build(); } 
+
 
 	    @Bean
 	    public WebSecurityCustomizer webSecurityCustomizer() {

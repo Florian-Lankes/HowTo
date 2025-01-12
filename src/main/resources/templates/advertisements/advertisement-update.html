@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html layout:decorate="~{layout}">
+<head><meta charset="UTF-8" /></head>
+
+<body>
+	<section class="layout-content" layout:fragment="mybody">
+			
+
+	        <div class="container">
+	        
+	        	        
+	            <form th:action="@{/advertisement/update}" 
+	                  th:object="${advertisement}" method="POST">
+	                  
+	                
+					  <div class="form-row">
+	                     <div class="form-group">
+	                         <label >Name</label>
+	                         <input type="text" class="form-control" 
+	                                autofocus="autofocus" th:field="*{name}" placeholder="Name of Advertiser"
+	                                th:classappend="${#fields.hasErrors('name')} ? 'is-invalid'" />
+	                         <div class="invalid-feedback">
+	                             <span th:errors="*{name}"></span>
+	                         </div>
+	                     </div>	
+					  </div>   
+					  <div class="form-group">
+					  			<label >Category</label>
+					  			<select name="categorySelection" class="form-control">
+					  				<option th:each="element : ${categories}" th:value="${element.categoryId}" th:if="${advertisement.advertisementCategory != null}" th:selected="${element.categoryId} == ${advertisement.advertisementCategory.categoryId}" th:text="${element.categoryName}"></option>
+									<option th:each="element : ${categories}" th:value="${element.categoryId}" th:unless="${advertisement.advertisementCategory != null}" th:text="${element.categoryName}"></option>
+					  			</select>
+					  		 </div>
+	                  
+					  <input type="hidden"  th:field="*{creationTime}"/>
+					  <input type="hidden"  th:field="*{advertisementId}"/>
+					  <input type="hidden"  th:field="*{videoUrl}"/>
+					  
+
+					<button type="submit" class="btn btn-primary btn-sm">Update Advertisement</button>
+	            </form>
+	        </div>
+
+		
+	</section>		
+</body>
+</html>

@@ -35,4 +35,8 @@ public interface UserServiceI {
 
 	User saveO2authUser(String email, String name);
 
+	boolean checkAdmin(User user);
+	
+	User changePassword(User user);
+
 }

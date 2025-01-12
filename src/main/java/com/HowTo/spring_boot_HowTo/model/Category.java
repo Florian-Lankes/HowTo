@@ -4,7 +4,8 @@ import java.io.Serializable;
 import java.util.Collections;
 import java.util.List;
 
-import jakarta.persistence.CascadeType;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -26,8 +27,13 @@ private static final long serialVersionUID = 1L;
 	@Size(min = 5, max = 50, message = "{jakarta.validation.constraints.Size}")
 	private String categoryName;
 	
+	@JsonManagedReference(value = "tutorial-category")
 	@OneToMany(mappedBy="tutorialCategory")
 	private List<Tutorial> tutorials;
+	
+	@JsonManagedReference(value = "advertisement-category")
+	@OneToMany(mappedBy="advertisementCategory")
+	private List<Advertisement> advertisements ;
 	
 	public Long getCategoryId() {
 		return categoryId;
@@ -61,6 +67,20 @@ private static final long serialVersionUID = 1L;
 		return Collections.unmodifiableList(tutorials);
 	}
 	
+	public void addAdvertisements(Advertisement a) {
+		if(!advertisements.contains(a)) {
+			advertisements.add(a);
+		}
+	}
 	
+	public void removeAdvertisements(Advertisement a) {
+		if(advertisements.contains(a)) {
+			advertisements.remove(a);
+		}
+	}
+	
+	public List<Advertisement> getAdvertisements(){
+		return Collections.unmodifiableList(advertisements);
+	}
 	
 }

@@ -15,7 +15,7 @@
 			<table class="table table-striped table-bordered" style="width: 80%">
 				<thead class="table-dark">
 					<tr>
-						<th>View</th>
+						<th>View Tutorials</th>
 					</tr>
 				</thead>
 
@@ -28,6 +28,23 @@
 					</tr>
 				</tbody>
 			</table>
+			
+			<table class="table table-striped table-bordered" style="width: 80%">
+							<thead class="table-dark">
+								<tr>
+									<th>View Advertisments</th>
+								</tr>
+							</thead>
+
+							<tbody>
+								<tr th:each="element : ${category.advertisements}">
+									<td> <a class="card" style="max-width: 18rem; min-height: 10rem;"
+											th:href="@{/advertisement/view/{id}(id = ${element.advertisementId})}">
+											<span th:text="${element.name}"> </a>
+									</td>
+								</tr>
+							</tbody>
+						</table>
 		</div>
 
 

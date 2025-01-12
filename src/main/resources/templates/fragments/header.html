@@ -38,6 +38,9 @@
 							<a class="nav-link" href="/history/my">History</a>
 						</li>
 						<li class="nav-item">
+							<a class="nav-link" href="/advertisement/all">Advertisements</a>
+						</li>
+						<li class="nav-item">
 							<a class="nav-link" href="/watchLater/my">WatchLater</a>
 						</li>
 						<li class="nav-item">
@@ -45,6 +48,9 @@
 						</li>
 						<li sec:authorize="hasAuthority('ADMIN_RIGHTS')" class="nav-item">
 							<a class="nav-link" href="/category/all">Categories</a>
+						</li>
+						<li sec:authorize="hasAuthority('ADMIN_RIGHTS')" class="nav-item">
+							<a class="nav-link" href="/report/all">Reports</a>
 						</li>
 						<li class="nav-item">
 							<a class="nav-link" href="/user/my">My HowTo</a>

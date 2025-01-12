@@ -2,6 +2,7 @@
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.springframework.data.domain.Page;
@@ -106,7 +107,7 @@ public class ChannelController {
     	channelService.saveChannel(channel, getCurrentUserId());
         redirectAttributes.addFlashAttribute("created", "Channel created!");
         
-        return "redirect:/channel/all";
+        return "redirect:/logout";
     }
     
 	@GetMapping(value = {"", "/all"})
@@ -143,20 +144,42 @@ public class ChannelController {
     
     @GetMapping("/delete/{channelId}")
     public String deleteChannel(@PathVariable("channelId") long channelId, Model model, RedirectAttributes redirectAttributes) {
+    	User u = userService.getUserById(getCurrentUserId());
+    	boolean admin= userService.checkAdmin(u);
+    	System.out.println(admin);
+    	if(channelId  !=getCurrentUserId() && !admin) {
+    		System.out.println("Not Admin or Channelowner");
+    		redirectAttributes.addFlashAttribute("failed", "not owner!!");
+    		return "redirect:/home";
+    	}
         Channel channel = channelService.getChannelById(channelId);               
         channelService.delete(channel);
         redirectAttributes.addFlashAttribute("deleted", "Channel deleted!");
+        
+        if(admin) {
         return "redirect:/channel/all";
+        }
+        else {
+        	return "redirect:/logout";
+        }
     }
 	
     @GetMapping("/update/{channelId}")
 	public String showUpdateChannelForm(@PathVariable("channelId") Long channelId, 
 			Model model,
-			HttpServletRequest request) {
+			HttpServletRequest request, RedirectAttributes redirectAttributes) {
+    	User u = userService.getUserById(getCurrentUserId());
+    	boolean admin= userService.checkAdmin(u);
+    	System.out.println(admin);
+    	if(channelId  !=getCurrentUserId() && !admin) {
+    		System.out.println("Not Admin or Channelowner");
+    		redirectAttributes.addFlashAttribute("failed", "not owner!!");
+    		return "redirect:/home";
+    	}
 	 	Channel channel = channelService.getChannelById(channelId); 
     	model.addAttribute("channel", channel);
 		request.getSession().setAttribute("channelSession", channel);
-		
+		 
 		System.out.println("updating channel id="+ channelId);
 		return "/channels/channel-update";
 	}

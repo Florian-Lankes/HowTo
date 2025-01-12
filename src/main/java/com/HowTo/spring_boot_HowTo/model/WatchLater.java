@@ -1,6 +1,8 @@
 package com.HowTo.spring_boot_HowTo.model;
 
 import java.io.Serializable;
+
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -16,9 +18,11 @@ private static final long serialVersionUID = 1L;
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long watchLaterId;
 	
+	@JsonBackReference(value = "tutorial-watchlater")
 	@ManyToOne
 	private Tutorial watchLaterTutorial;
 	
+	@JsonBackReference(value = "user-watchlater")
 	@ManyToOne
 	private User watchLaterOwner;
 	

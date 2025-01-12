@@ -41,6 +41,7 @@ public class WatchLaterService implements WatchLaterServiceI{
             if(!watchLaterList.contains(watchLater)) {
             	watchLater.setWatchLaterOwner(user);
             	watchLater.setWatchLaterTutorial(tutorial);
+            	tutorial.addWatchLater(watchLater);
                 user.addToWatchLater(watchLater);
                 watchLaterRepository.save(watchLater);
             }

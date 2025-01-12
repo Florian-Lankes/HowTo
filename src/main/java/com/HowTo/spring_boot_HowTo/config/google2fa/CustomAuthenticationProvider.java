@@ -33,13 +33,13 @@ public class CustomAuthenticationProvider extends DaoAuthenticationProvider {
     public Authentication authenticate(Authentication auth) throws AuthenticationException {
     	Optional<User> optionalUser = userRepository.findUserByUsername(auth.getName());
     	System.out.println(optionalUser);
-    	System.out.println("test1.1");
     	if (optionalUser.isEmpty()) {
-    		System.out.println("test1.2");
     		throw new BadCredentialsException("Invalid username or password");
     		}
     	User user = optionalUser.get();
-    	System.out.println("test1.3");
+    	if(!user.isEnabled()) {
+    		throw new BadCredentialsException("user is not enabled. Please verify via E-Mail");
+    	}
         // to verify verification code
         if (user.isUsing2FA()) {
             final String verificationCode = ((CustomWebAuthenticationDetails) auth.getDetails()).getVerificationCode();
@@ -47,7 +47,6 @@ public class CustomAuthenticationProvider extends DaoAuthenticationProvider {
             if (!isValidLong(verificationCode) || !totp.verify(verificationCode)) {
                 throw new BadCredentialsException("Invalid verification code");
             }
-
         }
         System.out.println("test1.4");
         System.out.println("Proceeding with super.authenticate()");

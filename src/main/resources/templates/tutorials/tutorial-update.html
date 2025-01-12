@@ -29,8 +29,10 @@
 						<label>Kategorie</label>
 						<select name="categorySelection" class="form-control">
 							<option th:each="element : ${categories}" th:value="${element.categoryId}"
-								th:text="${element.categoryName}" th:selected="${element.categoryId} == ${tutorial.tutorialCategory.categoryId}"></option>
-						</select>
+								th:text="${element.categoryName}" th:if="${tutorial.tutorialCategory != null}"
+								th:selected="${element.categoryId} == ${tutorial.tutorialCategory.categoryId}"></option>
+							<option th:each="element : ${categories}" th:value="${element.categoryId}"
+								th:text="${element.categoryName}" th:unless="${tutorial.tutorialCategory != null}"></option>
 					</div>
 				</div>
 				<div class="form-row">
@@ -51,7 +53,7 @@
 				<input type="hidden" th:field="*{tutorialId}" />
 				<input type="hidden" th:field="*{creationTime}" />
 				<input type="hidden" th:field="*{createdByChannel}" />
-				<input type="hidden"  th:field="*{videoUrl}"/>
+				<input type="hidden" th:field="*{videoUrl}" />
 
 				<button type="submit" class="btn btn-primary btn-sm">Update</button>
 			</form>

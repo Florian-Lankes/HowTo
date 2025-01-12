@@ -12,21 +12,68 @@
 			<div class="content"> <strong>Title:</strong>
 				<p th:text="${tutorial.title}"></p>
 			</div>
+			<a class="btn btn-info" th:href="@{/report/tutorial/{id}(id = ${tutorial.tutorialId})}">REPORT</a>
 			<div class="content"> <strong>Content Text:</strong>
 				<p th:text="${tutorial.contentText}"></p>
 			</div>
 			<div class="content"> <strong>Creation Time:</strong>
 				<p th:text="${tutorial.creationTime}"></p>
 			</div>
+			<div class="content" th:if="${tutorial.tutorialCategory != null}"> <strong>Category:</strong>
+								<p th:text="${tutorial.tutorialCategory.categoryName}"></p>
+							</div>
+			<div class="container" th:if="${advertisement} != null"> 
 			<div class="content" th:unless="${#strings.isEmpty(tutorial.videoUrl)}"> 
-				<video width="640" height="360" controls>
-				  <source th:src="@{${tutorial.videoUrl}}" type="video/mp4">
-				Your browser does not support the video tag.
-				</video>
-						</div>
+							<video width="640" height="360" th:src="@{${advertisement}}"  id="myvideo" type="video/mp4" autoplay>
+							Your browser does not support the video tag.
+							</video>
+									</div>
 			<div class="content" th:if="${#strings.isEmpty(tutorial.videoUrl)}"> 
-								<p>No Video uploaded yet!</p>
-												</div>		
+									<p>No Video uploaded yet!</p>
+						</div>	
+			<div class="content" th:unless="${#strings.isEmpty(tutorial.videoUrl)}" > 
+										<h3 id="adwarning">Advertisement</h3>
+												</div>	
+						<!--js to swap videos for ad-->
+			<script th:inline="javascript">
+				var myvid = document.getElementById('myvideo');
+				var warning = document.getElementById('adwarning');
+				var myvids = [
+				  		[[${advertisement}]],
+				  		[[${tutorial.videoUrl}]]
+				  ];
+				var activeVideo = 0;
+			    myvid.addEventListener('ended',myHandler,false);
+			    function myHandler(e) {
+					if (adwarning.innerText === "Advertisement"){
+						adwarning.innerText = ""
+					} else{
+						adwarning.innerText = "Advertisement"
+					}
+					if (myvid.hasAttribute("controls")) {
+					     myvid.removeAttribute("controls")   
+					  } else {
+					     myvid.setAttribute("controls","controls")   
+					  }
+					activeVideo = (++activeVideo) % myvids.length;
+					myvid.src = myvids[activeVideo];
+					myvid.play();
+			    }
+			</script>
+			</div> 
+			
+			<div class="container" th:unless="${advertisement} != null"> 
+			<div class="content" th:unless="${#strings.isEmpty(tutorial.videoUrl)}"> 
+									<video width="640" height="360" th:src="@{${tutorial.videoUrl}}" controls  id="myvideo" type="video/mp4" autoplay>
+									Your browser does not support the video tag.
+									</video>
+											</div>
+					<div class="content" th:if="${#strings.isEmpty(tutorial.videoUrl)}"> 
+											<p>No Video uploaded yet!</p>
+								</div>	
+					</div> 
+			
+				
 			<form th:action="@{/tutorial/uploadvideo/{id}(id=${tutorial.tutorialId})}" method="POST" enctype="multipart/form-data">
 				<input type="file" id="video" name="video" accept="video/mp4" />
 				<button type="submit" class="btn btn-primary btn-sm">Upload Video</button>
