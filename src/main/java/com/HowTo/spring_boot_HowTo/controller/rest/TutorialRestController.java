@@ -1,9 +1,13 @@
 package com.HowTo.spring_boot_HowTo.controller.rest;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.Link;
+import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -32,61 +36,12 @@ public class TutorialRestController {
 		this.tutorialService = tutorialService;
 	}
 
-	@PutMapping("/{id}")
-	public ResponseEntity<?> updateTutorial(@PathVariable("id") Long tutorialId,
-			@Valid @RequestBody Tutorial tutorial,BindingResult result, @RequestParam("categoryId") Long categoryId) {
-		
-		
-		if(result.hasErrors()) {
-			return new ResponseEntity<>(result.getAllErrors(), HttpStatus.BAD_REQUEST);
-		}
-		
-		Tutorial oldTutorial = tutorialService.getTutorialById(tutorialId);
-		
-		if (oldTutorial == null) {
-			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-		}
-		if(tutorial.getContentText()!=null ) {
-			oldTutorial.setContentText(tutorial.getContentText());
-		}
-		if(tutorial.getVideoUrl() != null) {
-			oldTutorial.setVideoUrl(tutorial.getVideoUrl());
-		}
-		if(tutorial.getTitle()!=null) {
-			oldTutorial.setTitle(tutorial.getTitle());
-		}
-		
-		Tutorial updatedTutorial = tutorialService.updateTutorial(oldTutorial, categoryId);
-		EntityModel<Tutorial> entityModel = EntityModel.of(updatedTutorial);
-		return ResponseEntity.ok(entityModel);
-
-	}
-
-	@GetMapping("/")
-	public ResponseEntity<List<Tutorial>> getAllTutorials() {
-		List<Tutorial> allTutorials = tutorialService.getAllTutorials();
-		return ResponseEntity.ok(allTutorials);
-	}
-
-	@GetMapping("/{id}")
-	public ResponseEntity<EntityModel<Tutorial>> getOneTutorial(@PathVariable("id") Long tutorialId) {
-		Tutorial tutorial = tutorialService.getTutorialById(tutorialId);
-		if (tutorial == null) {
-
-			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-		}
-		EntityModel<Tutorial> entityModel = EntityModel.of(tutorial);
-
-		System.out.println(tutorial);
-		return new ResponseEntity<>(entityModel, HttpStatus.OK);
-	}
-
 	@PostMapping(value = "/", consumes = "application/json")
 	public ResponseEntity<?> postTutorial(@Valid @RequestBody Tutorial tutorial, BindingResult result,
 			@RequestParam("categoryId") Long categoryId, @RequestParam("channelId") Long channelId) {
-		
-		if(result.hasErrors()) {
-			return new ResponseEntity<>(result.getAllErrors() ,HttpStatus.BAD_REQUEST);
+
+		if (result.hasErrors()) {
+			return new ResponseEntity<>(result.getAllErrors(), HttpStatus.BAD_REQUEST);
 		}
 		Timestamp currentTimestamp = new Timestamp(System.currentTimeMillis());
 		tutorial.setCreationTime(currentTimestamp);
@@ -94,13 +49,86 @@ public class TutorialRestController {
 		tutorial.setDislikes((long) 0);
 		Tutorial savedTutorial = tutorialService.saveTutorial(tutorial, channelId, categoryId);
 		EntityModel<Tutorial> entityModel = EntityModel.of(savedTutorial);
-		
-		return ResponseEntity.ok(entityModel);
+		Link tutorialLink = WebMvcLinkBuilder.linkTo(
+				WebMvcLinkBuilder.methodOn(TutorialRestController.class).getOneTutorial(savedTutorial.getTutorialId()))
+				.withSelfRel();
+		entityModel.add(tutorialLink);
+
+		return new ResponseEntity<>(entityModel, HttpStatus.CREATED);
 	}
-	@DeleteMapping("/{id}")
-	public ResponseEntity<?> deleteTutorial(@PathVariable("id") Long tutorialId){
+
+	@PutMapping("/{id}")
+	public ResponseEntity<?> updateTutorial(@PathVariable("id") Long tutorialId, @Valid @RequestBody Tutorial tutorial,
+			BindingResult result, @RequestParam("categoryId") Long categoryId) {
+
+		if (result.hasErrors()) {
+			return new ResponseEntity<>(result.getAllErrors(), HttpStatus.BAD_REQUEST);
+		}
+
+		Tutorial oldTutorial = tutorialService.getTutorialById(tutorialId);
+
+		if (oldTutorial == null) {
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+		}
+		if (tutorial.getContentText() != null) {
+			oldTutorial.setContentText(tutorial.getContentText());
+		}
+		if (tutorial.getVideoUrl() != null) {
+			oldTutorial.setVideoUrl(tutorial.getVideoUrl());
+		}
+		if (tutorial.getTitle() != null) {
+			oldTutorial.setTitle(tutorial.getTitle());
+		}
+
+		Tutorial updatedTutorial = tutorialService.updateTutorial(oldTutorial, categoryId);
+		EntityModel<Tutorial> entityModel = EntityModel.of(updatedTutorial);
+		Link tutorialLink = WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(TutorialRestController.class)
+				.getOneTutorial(updatedTutorial.getTutorialId())).withSelfRel();
+		entityModel.add(tutorialLink);
+		return new ResponseEntity<>(entityModel, HttpStatus.OK);
+
+	}
+
+	@GetMapping("/")
+	public ResponseEntity<?> getAllTutorials() {
+		List<Tutorial> allTutorials = tutorialService.getAllTutorials();
+		if (allTutorials.isEmpty()) {
+			return ResponseEntity.noContent().build();
+		}
+		List<EntityModel<Tutorial>> tutorialModels = new ArrayList();
+		for (Tutorial tutorial : allTutorials) {
+			EntityModel<Tutorial> entityModel = EntityModel.of(tutorial);
+			Link tutorialLink = WebMvcLinkBuilder.linkTo(
+					WebMvcLinkBuilder.methodOn(TutorialRestController.class).getOneTutorial(tutorial.getTutorialId()))
+					.withSelfRel();
+			entityModel.add(tutorialLink);
+			tutorialModels.add(entityModel);
+		}
+		Link listLink = WebMvcLinkBuilder
+				.linkTo(WebMvcLinkBuilder.methodOn(TutorialRestController.class).getAllTutorials()).withSelfRel();
+
+		return new ResponseEntity<>(CollectionModel.of(tutorialModels, listLink), HttpStatus.OK);
+	}
+
+	@GetMapping("/{id}")
+	public ResponseEntity<EntityModel<Tutorial>> getOneTutorial(@PathVariable("id") Long tutorialId) {
 		Tutorial tutorial = tutorialService.getTutorialById(tutorialId);
-		if(tutorial==null) {
+		if (tutorial == null) {
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+		}
+		EntityModel<Tutorial> entityModel = EntityModel.of(tutorial);
+		Link tutorialLink = WebMvcLinkBuilder
+				.linkTo(WebMvcLinkBuilder.methodOn(TutorialRestController.class).getOneTutorial(tutorialId))
+				.withSelfRel();
+		entityModel.add(tutorialLink);
+
+		return new ResponseEntity<>(entityModel, HttpStatus.OK);
+	}
+
+	@DeleteMapping("/{id}")
+	public ResponseEntity<?> deleteTutorial(@PathVariable("id") Long tutorialId) {
+		Tutorial tutorial = tutorialService.getTutorialById(tutorialId);
+		if (tutorial == null) {
 			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 		}
 		tutorialService.delete(tutorial);
