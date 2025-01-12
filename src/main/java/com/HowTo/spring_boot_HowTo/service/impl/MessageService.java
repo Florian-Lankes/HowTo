@@ -26,6 +26,12 @@ public class MessageService implements MessageServiceI {
 		return messageRepository.save(message);
 	}
 
+	@Override
+	public List<Message> getMessagesByMessageGroup(Group messageGroup) {
+		// TODO Auto-generated method stub
+		return messageRepository.getMessagesByMessageGroup(messageGroup);
+	}
+
 //	@Override
 //	public List<Message> getMessagesByGroupId(Long groupId) {
 //		if(groupId == null) {

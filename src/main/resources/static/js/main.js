@@ -55,7 +55,7 @@ function onConnected() {
 	console.log("onConnected");
     // Subscribe to the Public Topic 
 	// TODO change to private group topic
-    stompClient.subscribe('/topic/public', onMessageReceived);
+    stompClient.subscribe('/topic/group/' + group.groupId, onMessageReceived);
 
     // Tell your username to the server
 	var joinMessage = {
@@ -107,11 +107,11 @@ function onMessageReceived(payload) {
 
     if(message.messageType === 'JOIN') {
         messageElement.classList.add('event-message');
-        //message.content = message.sender + ' joined!'; TODO need to change responsive
+        //message.content = message.messageOwner.username + ' joined!'; // TODO need to change responsive
 		message.content = 'User joined!';
     } else if (message.messageType === 'LEAVE') {
         messageElement.classList.add('event-message');
-        // message.content = message.sender + ' left!'; TODO need to change responsive
+        //message.content = message.messageOwner.username + ' left!'; //TODO need to change responsive
 		message.content = 'User left!';
     } else {
         messageElement.classList.add('chat-message');
@@ -138,6 +138,13 @@ function onMessageReceived(payload) {
     messageArea.appendChild(messageElement);
     messageArea.scrollTop = messageArea.scrollHeight;
 }
+
+// new
+
+// new
+
+
+
 
 usernameForm.addEventListener('submit', connect, true)
 messageForm.addEventListener('submit', sendMessage, true)
