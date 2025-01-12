@@ -7,6 +7,9 @@ import java.util.List;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -17,8 +20,16 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Entity
+@Data 
+@Builder
+@AllArgsConstructor 
+@NoArgsConstructor
 public class Group implements Serializable{
 
 	private static final long serialVersionUID = 1L;
@@ -39,13 +50,15 @@ public class Group implements Serializable{
 	private LocalDate creationDate;
 	
 	@ManyToMany(mappedBy = "joinedgroups")
+	@JsonIgnore
 	private List<User> users = new ArrayList<User>();
 	
 	@OneToMany(mappedBy = "messageGroup")							//user can be the owner of many comments
+	@JsonManagedReference
 	private List<Message> ownedMessagesGroup = new ArrayList<Message>();
 	
-	
 	@ManyToOne()
+	@JsonBackReference
 	private User groupOwner;
 	
 	// maybe needs adjustments .... private ArrayList<String> messages = new ArrayList<String>();

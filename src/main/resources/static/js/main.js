@@ -7,24 +7,36 @@ var messageForm = document.querySelector('#messageForm');
 var messageInput = document.querySelector('#message');
 var messageArea = document.querySelector('#messageArea');
 var connectingElement = document.querySelector('.connecting');
+// TODO maybe add user, group query here
 
 var stompClient = null;
 var username = null;
-var userId = null;
+//let userJson = document.getElementById('userJson').value; 
+//let groupJson = document.getElementById('groupJson').value;
+
+//let user = JSON.parse(userJson); 
+//let group = JSON.parse(groupJson);
 
 var colors = [
     '#2196F3', '#32c787', '#00BCD4', '#ff5652',
     '#ffc107', '#ff85af', '#FF9800', '#39bbb0'
 ];
 
+
+
 function connect(event) {
 	console.log("connect");
-    username = document.querySelector('#name').value.trim();
-	let user = JSON.parse(document.getElementById('user').value);
-	console.log(username);
-	console.log("-----");
-	console.log(user);
-    if(username) {
+	
+    //username = document.querySelector('#name').value.trim();
+	// Take the json string and make it into an json object
+	//user = JSON.parse(document.getElementById('user').value); 
+	//user = /*[[${user}]]*/ {};
+	//group = JSON.parse(document.getElementById('group').value);	
+	console.log("User from hidden input:", user); 
+	console.log("Group from hidden input:", group);
+	
+    if(user) {
+		// Change view
         usernamePage.classList.add('hidden');
         chatPage.classList.remove('hidden');
 
@@ -41,14 +53,19 @@ function connect(event) {
 
 function onConnected() {
 	console.log("onConnected");
-    // Subscribe to the Public Topic
+    // Subscribe to the Public Topic 
+	// TODO change to private group topic
     stompClient.subscribe('/topic/public', onMessageReceived);
 
     // Tell your username to the server
-    stompClient.send("/app/chat.addUser",
-        {}, //"userId":userId, "messageType": "JOIN"
-        JSON.stringify({messageOwner: user, type: 'JOIN', content: username})
-    )
+	var joinMessage = {
+			// messageId = -1, TODO maybe
+			   content: "",
+			   messageType: 'JOIN',
+			   messageOwner: user,
+			   messageGroup: group
+	       };
+    stompClient.send("/app/chat.addUser", {}, JSON.stringify(joinMessage));
 	
     connectingElement.classList.add('hidden');
 	console.log("4");
@@ -68,9 +85,11 @@ function sendMessage(event) {
     var messageContent = messageInput.value.trim();
     if(messageContent && stompClient) {
         var chatMessage = {
-            sender: username,
-            content: messageInput.value,
-            type: 'CHAT'
+			// messageId = -1, TODO maybe
+			   content: messageContent,
+			   messageType: 'CHAT',
+			   messageOwner: user,
+			   messageGroup: group
         };
         stompClient.send("/app/chat.sendMessage", {}, JSON.stringify(chatMessage));
         messageInput.value = '';
@@ -85,24 +104,26 @@ function onMessageReceived(payload) {
 
     var messageElement = document.createElement('li');
 
-    if(message.type === 'JOIN') {
+    if(message.messageType === 'JOIN') {
         messageElement.classList.add('event-message');
-        message.content = message.sender + ' joined!';
-    } else if (message.type === 'LEAVE') {
+        //message.content = message.sender + ' joined!'; TODO need to change responsive
+		message.content = 'User joined!';
+    } else if (message.messageType === 'LEAVE') {
         messageElement.classList.add('event-message');
-        message.content = message.sender + ' left!';
+        // message.content = message.sender + ' left!'; TODO need to change responsive
+		message.content = 'User left!';
     } else {
         messageElement.classList.add('chat-message');
 
         var avatarElement = document.createElement('i');
         var avatarText = document.createTextNode(message.sender[0]);
         avatarElement.appendChild(avatarText);
-        avatarElement.style['background-color'] = getAvatarColor(message.sender);
+        avatarElement.style['background-color'] = '#2196F3'; // DELETED avatar color function
 
         messageElement.appendChild(avatarElement);
 
         var usernameElement = document.createElement('span');
-        var usernameText = document.createTextNode(message.sender);
+        var usernameText = document.createTextNode('message.sender'); // TODO message.sender
         usernameElement.appendChild(usernameText);
         messageElement.appendChild(usernameElement);
     }
@@ -115,17 +136,6 @@ function onMessageReceived(payload) {
 
     messageArea.appendChild(messageElement);
     messageArea.scrollTop = messageArea.scrollHeight;
-}
-
-
-function getAvatarColor(messageSender) {
-	console.log("getAvatarColor");
-    var hash = 0;
-    for (var i = 0; i < messageSender.length; i++) {
-        hash = 31 * hash + messageSender.charCodeAt(i);
-    }
-    var index = Math.abs(hash % colors.length);
-    return colors[index];
 }
 
 usernameForm.addEventListener('submit', connect, true)

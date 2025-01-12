@@ -2,6 +2,8 @@ package com.HowTo.spring_boot_HowTo.model;
 
 import java.time.LocalDateTime;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -31,12 +33,14 @@ public class Message {
 
 	private MessageType messageType;
 
-	 private LocalDateTime timestamp;
+	//private LocalDateTime timestamp;
 
 	@ManyToOne
+	@JsonBackReference
 	private User messageOwner;
 
 	@ManyToOne
+	@JsonBackReference
 	private Group messageGroup;
 
 	public String getContent() {
@@ -47,13 +51,13 @@ public class Message {
 		this.content = content;
 	}
 
-	public LocalDateTime getTimestamp() {
-		return timestamp;
-	}
-
-	public void setTimestamp(LocalDateTime timestamp) {
-		this.timestamp = timestamp;
-	}
+//	public LocalDateTime getTimestamp() {
+//		return timestamp;
+//	}
+//
+//	public void setTimestamp(LocalDateTime timestamp) {
+//		this.timestamp = timestamp;
+//	}
 
 	public User getMessageOwner() {
 		return messageOwner;
@@ -85,7 +89,7 @@ public class Message {
 		this.messageId = builder.messageId;
 		this.content = builder.content;
 		this.messageType = builder.messageType;
-		this.timestamp = builder.timestamp;
+		//this.timestamp = builder.timestamp;
 		this.messageOwner = builder.messageOwner;
 		this.messageGroup = builder.messageGroup;
 	}
@@ -95,7 +99,7 @@ public class Message {
 		private Long messageId;
 		private String content;
 		private MessageType messageType;
-		private LocalDateTime timestamp;
+		//private LocalDateTime timestamp;
 		private User messageOwner;
 		private Group messageGroup;
 
@@ -114,10 +118,10 @@ public class Message {
 			return this;
 		}
 
-		public Builder timestamp(LocalDateTime timestamp) {
-			this.timestamp = timestamp;
-			return this;
-		}
+//		public Builder timestamp(LocalDateTime timestamp) {
+//			this.timestamp = timestamp;
+//			return this;
+//		}
 
 		public Builder messageOwner(User messageOwner) {
 			this.messageOwner = messageOwner;

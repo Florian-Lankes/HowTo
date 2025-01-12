@@ -30,6 +30,7 @@ public class WebSocketEventListener {
 		StompHeaderAccessor headerAccessor = StompHeaderAccessor.wrap(event.getMessage());
 		User user = (User) headerAccessor.getSessionAttributes().get("user");
 		Group group = (Group) headerAccessor.getSessionAttributes().get("group");
+		System.out.println("IN EVENT LISTENER");
 		if (user != null) {
 			logger.info("User disconnected: {}", user.getUsername());
 			var message = new Message.Builder()

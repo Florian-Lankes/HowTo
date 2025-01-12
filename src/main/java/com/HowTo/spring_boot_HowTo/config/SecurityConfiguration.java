@@ -93,6 +93,7 @@ public class SecurityConfiguration {
 	    	.requestMatchers(new AntPathRequestMatcher("/comment/**")).hasAuthority("VIEW")
     		.requestMatchers(new AntPathRequestMatcher("/watchLater/**")).hasAuthority("VIEW")
     		.requestMatchers(new AntPathRequestMatcher("/user/my")).hasAuthority("VIEW")
+    		.requestMatchers(new AntPathRequestMatcher("/chat/**")).hasAuthority("VIEW")
     		.requestMatchers(new AntPathRequestMatcher("/chat")).hasAuthority("VIEW");
 
 	    	

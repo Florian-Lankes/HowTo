@@ -12,6 +12,10 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import jakarta.persistence.JoinColumn;
 
 import java.io.Serializable;
@@ -22,11 +26,17 @@ import java.util.List;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 @Entity
 //@Table(name = "`user`")
 //@JsonDeserialize(using = UserDeserializer.class)
+@Data 
+@Builder 
+@AllArgsConstructor 
+@NoArgsConstructor
 public class User implements Serializable {
 
 	// evtl. Gender add
@@ -51,12 +61,15 @@ public class User implements Serializable {
 
 	@ManyToMany(fetch = FetchType.EAGER)
 	@JoinTable(name = "userrole", joinColumns = @JoinColumn(name = "iduser"), inverseJoinColumns = @JoinColumn(name = "idrole"))
+	@JsonIgnore
 	private List<Role> roles = new ArrayList<Role>();
 
 	@ManyToMany(cascade = CascadeType.ALL) // user is in groups
+	@JsonIgnore
 	private List<Group> joinedgroups = new ArrayList<Group>();
 
 	@OneToMany(mappedBy = "groupOwner") // user can be the owner of many groups
+	@JsonIgnore
 	private List<Group> ownedgroups = new ArrayList<Group>();
 
 	@NotBlank(message = "password is mandatory")
@@ -66,10 +79,12 @@ public class User implements Serializable {
 	private boolean enabled;
 
 	@OneToMany(mappedBy = "commentOwner") // user can be the owner of many comments
+	@JsonIgnore
 	private List<Comment> ownedComments = new ArrayList<Comment>();
 	// private boolean isAdmin;
 
 	@OneToMany(mappedBy = "historyOwner")
+	@JsonIgnore
 	private List<History> history = new ArrayList<History>();
 	// private boolean isCreator;
 
@@ -79,11 +94,14 @@ public class User implements Serializable {
 	}
 
 	@OneToMany(mappedBy = "watchLaterOwner")
+	@JsonIgnore
 	private List<WatchLater> watchLater = new ArrayList<WatchLater>();
 
 	@OneToMany(mappedBy = "messageOwner") // user can be the owner of many comments
+	@JsonManagedReference
 	private List<Message> ownedMessagesUser = new ArrayList<Message>();
-
+	
+	@JsonIgnore
 	@ManyToMany
 	private List<Channel> subscribedChannels = new ArrayList<Channel>();
 
