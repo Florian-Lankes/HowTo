@@ -4,6 +4,7 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -49,6 +50,9 @@ public class User implements Serializable {
 	
 	private boolean isUsing2FA;
     private String secret;
+        
+    @OneToOne(mappedBy="user")
+    private VerificationToken verificationToken;
 	
 	@ManyToMany(fetch = FetchType.EAGER)
 	@JoinTable(name = "userrole", joinColumns = @JoinColumn(name = "iduser"), inverseJoinColumns = @JoinColumn(name = "idrole"))
@@ -291,5 +295,13 @@ public class User implements Serializable {
 	public List<Report> getReports() {
 		return Collections.unmodifiableList(reports);
 	}
+	
+	public VerificationToken getVerificationToken() {
+		return verificationToken;
+	}
 
+	public void setVerificationToken(VerificationToken verificationToken) {
+		this.verificationToken = verificationToken;
+	}
+	
 }

@@ -7,9 +7,9 @@
 
 <body>
 	<section class="layout-content" layout:fragment="mybody">
-		<div class="">
-			<p>This is the channel page</p>
-		</div>
+		<div class="content"> 
+			<strong>This is the channel page</strong>
+			</div>
 		<form th:action="@{/channel/subscribe}" th:object="${channel}" method="POST">
 			<input type="text" readonly class="form-control" id="channelname" th:field="*{channelname}" />
 			<input type="hidden" id="description" th:field="*{description}" />
@@ -17,14 +17,23 @@
 			<input type="hidden" readonly id="channelId" th:field="*{channelId}" />
 			<button type="submit" class="btn btn- btn-success">Subscribe</button>
 		</form>
-		
-		<a class="btn btn-info" th:href="@{/report/user/{id}(id = ${channel.channelId})}">REPORT</a>
+
 
 		<form th:action="@{/channel/unsubscribe}" th:object="${channel}" method="POST">
 			<input type="hidden" readonly id="channelId" th:field="*{channelId}" />
 			<button type="submit" class="btn btn-danger btn-sm">Unsubscribe</button>
 		</form>
-		<a class="btn btn-info" th:href="@{/channel/subscriberlist/{id}(id = ${channel.channelId})}">Subscriber</a>
+		
+		<a class="btn btn-danger" th:href="@{/report/user/{id}(id = ${channel.channelId})}">REPORT</a>
+		
+		<a class="btn btn-info" th:href="@{/channel/subscriberlist/{id}(id = ${channel.channelId})}">Subscriber List</a>
+		
+		<div class="content"> 
+			<strong>Tutorials:</strong>
+			</div>
+			<div class="content" th:if="${tutorials.size()<= 0}"> 
+						<strong>No Tutorials created yet!</strong>
+						</div>
 		<div th:each="element : ${tutorials}">
 			<p>
 				<a class="btn btn-info"
@@ -32,7 +41,7 @@
 						th:text="${element.tutorialId}"> </a>
 		</div>
 
-
+		
 	</section>
 </body>
 

@@ -37,6 +37,9 @@ public class CustomAuthenticationProvider extends DaoAuthenticationProvider {
     		throw new BadCredentialsException("Invalid username or password");
     		}
     	User user = optionalUser.get();
+    	if(!user.isEnabled()) {
+    		throw new BadCredentialsException("user is not enabled. Please verify via E-Mail");
+    	}
         // to verify verification code
         if (user.isUsing2FA()) {
             final String verificationCode = ((CustomWebAuthenticationDetails) auth.getDetails()).getVerificationCode();
@@ -44,7 +47,6 @@ public class CustomAuthenticationProvider extends DaoAuthenticationProvider {
             if (!isValidLong(verificationCode) || !totp.verify(verificationCode)) {
                 throw new BadCredentialsException("Invalid verification code");
             }
-
         }
         final Authentication result = super.authenticate(auth);
         return new UsernamePasswordAuthenticationToken(user, result.getCredentials(), result.getAuthorities());

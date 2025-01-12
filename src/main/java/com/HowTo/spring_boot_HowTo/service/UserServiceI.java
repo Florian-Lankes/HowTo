@@ -32,5 +32,8 @@ public interface UserServiceI {
 	void createVerificationTokenForUser(User user, String token);
 	
 	String generateQRUrl(User user) throws UnsupportedEncodingException;
-
+	
+	boolean checkAdmin(User user);
+	
+	User changePassword(User user);
 }
