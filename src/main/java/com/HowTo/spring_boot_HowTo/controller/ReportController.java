@@ -58,7 +58,7 @@ public class ReportController {
 	}
 
 	@GetMapping("/delete/{id}")
-	public String deleteReport(@PathVariable("id") Long reportId, Model model, RedirectAttributes redirectAttributes) {
+	public String deleteReport(@PathVariable("id") Long reportId, RedirectAttributes redirectAttributes) {
 		Report report = reportService.getReportById(reportId);
 		reportService.delete(report);
 		redirectAttributes.addFlashAttribute("deleted", "Report deleted!");

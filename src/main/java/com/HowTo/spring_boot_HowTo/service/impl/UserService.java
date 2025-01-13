@@ -47,16 +47,15 @@ public class UserService implements UserServiceI {
 	public static String QR_PREFIX = "https://qrcode.tec-it.com/API/QRCode?data=";
     public static String APP_NAME = "SpringRegistration";
 	
-	@Autowired
 	public UserService() {
 		this.passwordEncoder = new BCryptPasswordEncoder();
 	};
 	
-//	@Override
-//	public List<User> getAllUsers() {
-//		// TODO Auto-generated method stub
-//		return userRepository.findAll();
-//	}
+	@Override
+	public List<User> getAllUsers() {
+		// TODO Auto-generated method stub
+		return userRepository.findAll();
+	}
 	
 		
 	@Override

@@ -12,6 +12,7 @@
 			<div class="content"> <strong>Title:</strong>
 				<p th:text="${tutorial.title}"></p>
 			</div>
+			<a class="btn btn-info" th:href="@{/rating/tutorial/{tutorialId}(tutorialId = ${tutorial.tutorialId})}">RATE</a>
 			<a class="btn btn-info" th:href="@{/report/tutorial/{id}(id = ${tutorial.tutorialId})}">REPORT</a>
 			<div class="content"> <strong>Content Text:</strong>
 				<p th:text="${tutorial.contentText}"></p>

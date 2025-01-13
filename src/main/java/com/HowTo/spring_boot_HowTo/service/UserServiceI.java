@@ -10,6 +10,8 @@ import com.HowTo.spring_boot_HowTo.model.User;
 import com.HowTo.spring_boot_HowTo.model.VerificationToken;
 
 public interface UserServiceI {
+	
+	List<User> getAllUsers();
 
 	Page<User> getAllUsers(String username, Pageable pageable);
 	

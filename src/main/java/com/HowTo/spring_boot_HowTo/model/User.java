@@ -24,6 +24,7 @@ import java.util.List;
 import org.jboss.aerogear.security.otp.api.Base32;
 import org.springframework.format.annotation.DateTimeFormat;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 @Entity
@@ -69,10 +70,12 @@ public class User implements Serializable {
     @OneToOne(mappedBy="user")
     private VerificationToken verificationToken;
 
+    @JsonIgnore
 	@ManyToMany(fetch = FetchType.EAGER)
 	@JoinTable(name = "userrole", joinColumns = @JoinColumn(name = "iduser"), inverseJoinColumns = @JoinColumn(name = "idrole"))
 	private List<Role> roles = new ArrayList<Role>();
 
+	@JsonIgnore
 	@ManyToMany(cascade = CascadeType.ALL) // user is in groups
 	private List<Group> joinedgroups = new ArrayList<Group>();
 
@@ -97,6 +100,10 @@ public class User implements Serializable {
 	@JsonManagedReference(value = "user-watchlater")
 	@OneToMany(mappedBy = "watchLaterOwner", cascade = CascadeType.REMOVE)
 	private List<WatchLater> watchLater = new ArrayList<WatchLater>();
+	
+	@JsonManagedReference(value="rating-user")
+	@OneToMany(mappedBy = "ratingUser", cascade = CascadeType.REMOVE)
+	private List<Rating> ratings = new ArrayList<Rating>();
 
 	@ManyToMany
 	private List<Channel> subscribedChannels = new ArrayList<Channel>();
@@ -269,9 +276,25 @@ public class User implements Serializable {
 			subscribedChannels.remove(channel);
 		}
 	}
-
+	
 	public List<Channel> getSubscribedChannels() {
 		return Collections.unmodifiableList(subscribedChannels);
+	}
+	
+	public void addRating(Rating rating) {
+		if (!ratings.contains(rating)) {
+			ratings.add(rating);
+		}
+	}
+
+	public void removeRating(Rating rating) {
+		if (ratings.contains(rating)) {
+			ratings.remove(rating);
+		}
+	}
+
+	public List<Rating> getRatings() {
+		return Collections.unmodifiableList(ratings);
 	}
 
 	public boolean isUsing2FA() {
