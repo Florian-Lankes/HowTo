@@ -26,23 +26,24 @@
 						<form th:action="@{/login}" method='POST'>
 							<div class="form-group">
 								<label for="name">Nutzer Name</label>
-								<input placeholder="username" class="form-control" type='text' name='username'
+								<input placeholder="Mein Nutzername" class="form-control" type='text' name='username'
 									value='' />
 							</div>
 							<div class="form-group">
 								<label for="password">Password</label>
-								<input placeholder="password" class="form-control" type='password' name='password' />
+								<input placeholder="********" class="form-control" type='password' name='password' />
 							</div>
 							<div class="form-group">
 								<label>Google Authenticator</label>
-								<input placeholder="Google Authenticator Code"class="form-control" type='text' name='code' />
+								<input placeholder="063243" class="form-control" type='text' name='code' />
 							</div>
-							<input class="btn btn-primary btn-block" name="submit" type="submit" th:value="submit" />
-							<div th:if="${param.error}" class="alert alert-error" style="color:#FF0000">Invalid username or password or 2FA.</div>
+							<input class="btn btn-primary btn-block" name="submit" type="submit" th:value="Einloggen" />
+							<div th:if="${param.error}" class="alert alert-error" style="color:#FF0000">Invalid username
+								or password or 2FA.</div>
 
 						</form>
 						<div class="text-center mt-3">
-							<a href="/">Register</a>
+							<a href="/register">Registrieren</a>
 						</div>
 					</div>
 				</div>
@@ -52,9 +53,13 @@
 				</div>
 
 				<div class="text-center">
-					<button class="btn btn-outline-primary btn-block">
-						Sign In with Google
-					</button>
+
+					<p th:each="url : ${urls}">
+						<a class="btn btn-outline-primary btn-block" th:text="${url.key}" th:href="${url.value}">
+
+						</a>
+					</p>
+
 				</div>
 			</div>
 		</div>
