@@ -7,6 +7,8 @@ import java.sql.Timestamp;
 import java.util.List;
 import java.util.Random;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -24,15 +26,17 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.HowTo.spring_boot_HowTo.model.Advertisement;
 import com.HowTo.spring_boot_HowTo.model.Category;
+import com.HowTo.spring_boot_HowTo.model.Channel;
 import com.HowTo.spring_boot_HowTo.model.Comment;
-
 import com.HowTo.spring_boot_HowTo.config.MyUserDetails;
 
 import com.HowTo.spring_boot_HowTo.model.Tutorial;
 import com.HowTo.spring_boot_HowTo.model.User;
 import com.HowTo.spring_boot_HowTo.service.CloudinaryServiceI;
 import com.HowTo.spring_boot_HowTo.service.CategoryServiceI;
+import com.HowTo.spring_boot_HowTo.service.ChannelServiceI;
 import com.HowTo.spring_boot_HowTo.service.TutorialServiceI;
+import com.HowTo.spring_boot_HowTo.subscribemsg.OnInformSubscriberEvent;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
@@ -41,15 +45,20 @@ import jakarta.validation.Valid;
 @RequestMapping("/tutorial")
 public class TutorialController {
 	
+	@Autowired
+    private ApplicationEventPublisher eventPublisher;
+	
 	private TutorialServiceI tutorialService;
 	private CloudinaryServiceI cloudinaryService;
 	private CategoryServiceI categoryService;
+	private ChannelServiceI channelService;
 	
-	public TutorialController(TutorialServiceI tutorialService, CategoryServiceI categoryService, CloudinaryServiceI cloudinaryService) {
+	public TutorialController(TutorialServiceI tutorialService, CategoryServiceI categoryService, CloudinaryServiceI cloudinaryService, ChannelServiceI channelService) {
 		super();
 		this.tutorialService = tutorialService;
 		this.categoryService = categoryService;
 		this.cloudinaryService = cloudinaryService;
+		this.channelService = channelService;
 
 	}
 	
@@ -157,6 +166,13 @@ public class TutorialController {
     		return "/tutorials/tutorial-create";
         }
 		tutorialService.saveTutorial(tutorial, getCurrentUserId(), categoryId);
+		Channel c = channelService.getChannelById(getCurrentUserId());
+		List<User> subscribedUsers = c.getSubscribedFromUserList();
+		
+		for (User u : subscribedUsers) {
+			eventPublisher.publishEvent(new OnInformSubscriberEvent(u, c.getChannelname()));
+		}
+		
 		redirectAttributes.addFlashAttribute("created", "Tutorial created!");
 		
 		return "redirect:/tutorial/all";
