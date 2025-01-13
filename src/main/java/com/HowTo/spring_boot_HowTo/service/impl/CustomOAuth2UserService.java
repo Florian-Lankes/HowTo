@@ -1,5 +1,6 @@
 package com.HowTo.spring_boot_HowTo.service.impl;
 
+import org.jboss.aerogear.security.otp.api.Base32;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
@@ -21,7 +22,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         	name =  oAuth2User.getAttribute("login");
         }
         if(email == null) {
-        	email =  oAuth2User.getAttribute("login");
+//        	email = "placeholdermail" + Base32.random() + "@mail.com";
         }
         userService.saveO2authUser(email, name);
         return oAuth2User;

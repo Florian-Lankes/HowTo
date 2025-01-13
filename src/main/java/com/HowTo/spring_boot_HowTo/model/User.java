@@ -42,6 +42,7 @@ public class User implements Serializable {
 	public User() {
 		super();
 		this.enabled = false;
+		this.setUsingOauth(false);
 		this.setSecret(Base32.random());
 
 	}
@@ -66,6 +67,8 @@ public class User implements Serializable {
 	private boolean isUsing2FA;
 
     private String secret;
+     
+    private boolean isUsingOauth;
         
     @OneToOne(mappedBy="user")
     private VerificationToken verificationToken;
@@ -335,6 +338,14 @@ public class User implements Serializable {
 
 	public void setVerificationToken(VerificationToken verificationToken) {
 		this.verificationToken = verificationToken;
+	}
+
+	public boolean isUsingOauth() {
+		return isUsingOauth;
+	}
+
+	public void setUsingOauth(boolean isUsingOauth) {
+		this.isUsingOauth = isUsingOauth;
 	}
 	
 }

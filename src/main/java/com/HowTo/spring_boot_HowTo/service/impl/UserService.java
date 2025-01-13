@@ -92,7 +92,7 @@ public class UserService implements UserServiceI {
 	public User saveO2authUser(String email, String name) {
 		// TODO Auto-generated method stub
 		User user = new User();
-		  if (usernameExists(name)) {
+		  if (usernameExists(name) & emailExists(email)) {
 			  User u = userRepository.findUserByUsername(name).get();
 			  User w = userRepository.findUserByEmail(email).get();
 			  String userEmail1 = u.getEmail();
@@ -105,19 +105,30 @@ public class UserService implements UserServiceI {
 			              + user.getUsername());
 			  }
 	        }
-		  if (emailExists(user.getEmail())) {
-	            throw new UserAlreadyExistException("There is an account with that email address: "
-	              + user.getEmail());
-	        }
-		user.setEmail(email);
-		user.setUsername(name);
-		user.setEnabled(true);
-		user.setPassword(name);
-		user.setBirthDate(LocalDate.of(2020, 1, 20));
-		user.setPassword(passwordEncoder.encode(user.getPassword()));
-		user.setRoles(Collections.singletonList(roleRepository.findByDescription("USER")));
-		userRepository.save(user);
-		return user;
+		  if (!emailExists(user.getEmail())) {
+				user.setEmail(email);
+				user.setUsername(name);
+				user.setEnabled(true);
+				user.setUsingOauth(true);
+				user.setPassword(name);
+				user.setBirthDate(LocalDate.of(2020, 1, 20));
+				user.setPassword(passwordEncoder.encode(user.getPassword()));
+				user.setRoles(Collections.singletonList(roleRepository.findByDescription("USER")));
+				userRepository.save(user);
+				return user;
+		  }else {
+			  throw new UserAlreadyExistException("There is an account with that username: "
+		              + user.getUsername());
+		  }
+//		user.setEmail(email);
+//		user.setUsername(name);
+//		user.setEnabled(true);
+//		user.setPassword(name);
+//		user.setBirthDate(LocalDate.of(2020, 1, 20));
+//		user.setPassword(passwordEncoder.encode(user.getPassword()));
+//		user.setRoles(Collections.singletonList(roleRepository.findByDescription("USER")));
+//		userRepository.save(user);
+//		return user;
 	}
 	
 	
