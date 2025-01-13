@@ -95,8 +95,10 @@ public class ChatController {
 	@ResponseBody
 	public List<Message> getOldMessages(@PathVariable Long groupId) {
 		Group group = groupService.getGroupById(groupId);
-		System.out.println("getOldMessages working:");
-		return messageService.getMessagesByMessageGroup(group);
+		System.out.println("getOldMessages working: " + groupId);
+		List<Message> liste = messageService.getMessagesByMessageGroup(group);
+		System.out.println("Liste: " + liste);
+		return liste;
 	}
 
 	@GetMapping("/chat/{id}") // @PathVariable("id") Long groupId ,
