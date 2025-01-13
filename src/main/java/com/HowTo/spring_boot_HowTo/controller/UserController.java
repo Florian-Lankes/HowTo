@@ -1,20 +1,28 @@
 package com.HowTo.spring_boot_HowTo.controller;
 
 import java.io.UnsupportedEncodingException;
+import java.nio.file.spi.FileSystemProvider;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
+import org.jboss.aerogear.security.otp.api.Base32;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.core.ResolvableType;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -24,11 +32,13 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.HowTo.spring_boot_HowTo.changepassword.OnChangePasswordEvent;
 import com.HowTo.spring_boot_HowTo.config.MyUserDetails;
+import com.HowTo.spring_boot_HowTo.config.google2fa.CustomAuthenticationProvider;
 import com.HowTo.spring_boot_HowTo.model.Channel;
 import com.HowTo.spring_boot_HowTo.model.User;
 import com.HowTo.spring_boot_HowTo.model.VerificationToken;
@@ -37,15 +47,28 @@ import com.HowTo.spring_boot_HowTo.service.ChannelServiceI;
 import com.HowTo.spring_boot_HowTo.service.UserServiceI;
 import com.HowTo.spring_boot_HowTo.validator.UserAlreadyExistException;
 import com.HowTo.spring_boot_HowTo.validator.UserValidator;
+import com.cloudinary.utils.StringUtils;
 
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
+import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService;
+import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
+import org.springframework.security.oauth2.client.registration.ClientRegistration;
+import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
+import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 
 @Controller
 public class UserController {
+	
+	private static final String authorizationRequestBaseUri = "oauth2/authorization";
+    Map<String, String> oauth2AuthenticationUrls = new HashMap<>();
 
 	private UserServiceI userService;
 	
@@ -53,6 +76,14 @@ public class UserController {
 	
 	@Autowired
     private ApplicationEventPublisher eventPublisher;
+	
+	@Autowired
+    private ClientRegistrationRepository clientRegistrationRepository;
+	
+	@Autowired
+	private OAuth2AuthorizedClientService authorizedClientService;
+	@Autowired 
+	private CustomAuthenticationProvider customAuthenticationProvider;
 
 	public UserController(UserServiceI userService, ChannelServiceI channelService) {
 		super();
@@ -301,10 +332,72 @@ public class UserController {
 	}
 
 	@GetMapping("/login")
-	public String showLoginForm() {
+	public String showLoginForm(Model model) {
+		Iterable<ClientRegistration> clientRegistrations = null;
+        ResolvableType type = ResolvableType.forInstance(clientRegistrationRepository)
+            .as(Iterable.class);
+        if (type != ResolvableType.NONE && ClientRegistration.class.isAssignableFrom(type.resolveGenerics()[0])) {
+            clientRegistrations = (Iterable<ClientRegistration>) clientRegistrationRepository;
+        }
+
+        clientRegistrations.forEach(registration -> oauth2AuthenticationUrls.put(registration.getClientName(), authorizationRequestBaseUri + "/" + registration.getRegistrationId()));
+        model.addAttribute("urls", oauth2AuthenticationUrls);
 		
 		return "login";
 }
+	
+	@GetMapping("/loginSuccess")
+    public String getLoginInfo(HttpServletRequest request, Model model, OAuth2AuthenticationToken authentication2) {
+
+        OAuth2AuthorizedClient client = authorizedClientService.loadAuthorizedClient(authentication2.getAuthorizedClientRegistrationId(), authentication2.getName());
+
+        String userInfoEndpointUri = client.getClientRegistration()
+            .getProviderDetails()
+            .getUserInfoEndpoint()
+            .getUri();
+
+        if (!StringUtils.isEmpty(userInfoEndpointUri)) {
+            RestTemplate restTemplate = new RestTemplate();
+            HttpHeaders headers = new HttpHeaders();
+            headers.add(HttpHeaders.AUTHORIZATION, "Bearer " + client.getAccessToken()
+                .getTokenValue());
+
+            HttpEntity<String> entity = new HttpEntity<String>("", headers);
+
+            ResponseEntity<Map> response = restTemplate.exchange(userInfoEndpointUri, HttpMethod.GET, entity, Map.class);
+            Map userAttributes = response.getBody();
+            model.addAttribute("name", userAttributes.get("name"));
+            String userName;
+            if(userAttributes.get("name") == null) {
+            	userName = userAttributes.get("login").toString();
+            }else {
+            	userName = userAttributes.get("name").toString();
+            }
+            User u = userService.saveO2authUser(userAttributes.get("email").toString(), userName);
+            UsernamePasswordAuthenticationToken authRequest = new UsernamePasswordAuthenticationToken(u.getUsername(), u.getUsername());
+
+             //Authenticate the user
+            Authentication authentication = customAuthenticationProvider.authenticate(authRequest);
+            SecurityContext securityContext = SecurityContextHolder.getContext();
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+            securityContext.setAuthentication(authentication);
+
+            // Create a new session and add the security context.
+            HttpSession session = request.getSession(true);
+            session.setAttribute("SPRING_SECURITY_CONTEXT", securityContext);
+ 
+            
+
+        }
+        
+     // Überprüfe die Benutzerrollen Authentication   
+        
+//        
+//        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+//        System.out.println("User Authorities: " + auth.getAuthorities());
+
+        return "home";
+    }
 	
 	@GetMapping("/logout")
 	public String logout() {

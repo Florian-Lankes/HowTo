@@ -24,6 +24,7 @@ import org.springframework.security.config.Customizer;
 import com.HowTo.spring_boot_HowTo.config.google2fa.CustomAuthenticationProvider;
 import com.HowTo.spring_boot_HowTo.config.google2fa.CustomWebAuthenticationDetailsSource;
 import com.HowTo.spring_boot_HowTo.service.MyUserDetailService;
+import com.HowTo.spring_boot_HowTo.service.impl.CustomOAuth2UserService;
 
 
 @Configuration
@@ -35,6 +36,8 @@ public class SecurityConfiguration {
 	    MyUserDetailService userDetailsService;
 		@Autowired
 		CustomWebAuthenticationDetailsSource authenticationDetailsSource;
+		@Autowired
+		CustomOAuth2UserService customOAuth2UserService;
 
 		
 		@Bean public PasswordEncoder passwordEncoder() {
@@ -62,13 +65,19 @@ public class SecurityConfiguration {
 			.ignoringRequestMatchers(new AntPathRequestMatcher("/h2-console/**"))
 			.and()
 			.headers(headersConfigurer -> headersConfigurer.frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin))
-		//	.authenticationProvider(customAuthenticationProvider)
+			.authenticationProvider(customAuthenticationProvider())
 			.formLogin(formLogin -> formLogin 
 					.loginPage("/login") 
 					.authenticationDetailsSource(authenticationDetailsSource) 
 					.defaultSuccessUrl("/home", true) 
 					.failureUrl("/login?error=true") 
 					.permitAll()
+			)
+			.oauth2Login(oauth2 -> oauth2
+					.loginPage("/login")
+					.authenticationDetailsSource(authenticationDetailsSource) 
+					.defaultSuccessUrl("/loginSuccess", true) 
+					.failureUrl("/login?error=true") 
 			)
 			.logout(logout -> logout 
 			.logoutUrl("/logout") 
@@ -144,7 +153,7 @@ public class SecurityConfiguration {
         		AuthenticationConfiguration authenticationConfiguration) throws Exception {
             return authenticationConfiguration.getAuthenticationManager();
         }
-	    
+
 	
 //		@Bean
 //		public PasswordEncoder getPasswordEncoder() {

@@ -48,8 +48,17 @@ public class CustomAuthenticationProvider extends DaoAuthenticationProvider {
                 throw new BadCredentialsException("Invalid verification code");
             }
         }
-        final Authentication result = super.authenticate(auth);
-        return new UsernamePasswordAuthenticationToken(user, result.getCredentials(), result.getAuthorities());
+        System.out.println("test1.4");
+        System.out.println("Proceeding with super.authenticate()");
+        try { 
+        	final Authentication result = super.authenticate(auth);
+        	System.out.println("Super authentication successful");
+        	return new UsernamePasswordAuthenticationToken(user, result.getCredentials(), result.getAuthorities());
+        	} catch (Exception e) {
+        		e.printStackTrace();
+        		System.out.println("Authentication exception: " + e.getMessage());
+        		throw e; // Re-throw the exception to handle it in the controller }
+        }
     }
 
     private boolean isValidLong(String code) {
