@@ -43,8 +43,10 @@ label{padding-left:0 !important}
                  <span class="col-sm-8"><input placeholder="Google Authenticator Code"class="form-control" type='text' name='code' /></span>
                 
                 <br/><br/>
+
                  <input class="btn btn-primary" name="submit" type="submit" th:value="Submit" />
 				 <div th:if="${param.error}" class="alert alert-error" style="color:#FF0000">Invalid username or password or 2FA.</div>
+
             </form>
 			
 			<a th:href="@{/user/forgotmypassword}"  class="btn btn-danger btn-sm mb-3">			<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-question-circle" viewBox="0 0 16 16">

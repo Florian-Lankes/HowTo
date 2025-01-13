@@ -10,26 +10,19 @@
 
 		<nav class="navbar navbar-expand-lg bg-primary" data-bs-theme="dark">
 			<div class="container-fluid">
-				<a class="navbar-brand" href="#">Navbar</a>
-				<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarColor01"
-					aria-controls="navbarColor01" aria-expanded="false" aria-label="Toggle navigation">
-					<span class="navbar-toggler-icon"></span>
-				</button>
-				<div class="collapse navbar-collapse" id="navbarColor01">
+				<a class="navbar-brand" href="/login_register">HowTo</a>
 					<ul class="navbar-nav me-auto">
 						<li class="nav-item">
-							<a class="nav-link active" href="/home">Home
-								<span class="visually-hidden">(current)</span>
-							</a>
+							<a class="nav-link " href="/home">Startseite</a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link" href="/channel/subscribed">Abos</a>
 						</li>
 						<li sec:authorize="hasAuthority('ADMIN_RIGHTS')" class="nav-item">
 							<a class="nav-link" href="/user/admin/all">Users</a>
 						</li>
 						<li class="nav-item">
-							<a class="nav-link" href="/group/all">Group</a>
-						</li>
-						<li class="nav-item">
-							<a class="nav-link" href="/channel/all">Channel</a>
+							<a class="nav-link" href="/channel/all">Kanäle</a>
 						</li>
 						<li class="nav-item">
 							<a class="nav-link" href="/tutorial/all">Tutorial</a>
@@ -37,17 +30,18 @@
 						<li class="nav-item">
 							<a class="nav-link" href="/history/my">History</a>
 						</li>
-						<li class="nav-item">
+						<li sec:authorize="hasAuthority('ADMIN_RIGHTS')" class="nav-item">
 							<a class="nav-link" href="/advertisement/all">Advertisements</a>
 						</li>
 						<li class="nav-item">
 							<a class="nav-link" href="/watchLater/my">WatchLater</a>
 						</li>
-						<li class="nav-item">
+						<li sec:authorize="hasAuthority('ADMIN_RIGHTS')" class="nav-item">
 							<a class="nav-link" href="/rating/all">Rating</a>
 						</li>
+
 						<li class="nav-item">
-							<a class="nav-link" href="/channel/subscribed">Subscriptions</a>
+							<a class="nav-link" href="/group/all">Group</a>
 						</li>
 						<li sec:authorize="hasAuthority('ADMIN_RIGHTS')" class="nav-item">
 							<a class="nav-link" href="/category/all">Categories</a>
@@ -55,22 +49,17 @@
 						<li sec:authorize="hasAuthority('ADMIN_RIGHTS')" class="nav-item">
 							<a class="nav-link" href="/report/all">Reports</a>
 						</li>
-						<li class="nav-item">
-							<a class="nav-link" href="/user/my">My HowTo</a>
-						</li>
-						<li sec:authorize="hasAuthority('ADMIN_RIGHTS')" class="nav-item dropdown">
-							<a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button"
-								aria-haspopup="true" aria-expanded="false">Dropdown</a>
-							<div class="dropdown-menu">
-								<a class="dropdown-item" href="#">Action</a>
-								<a class="dropdown-item" href="#">Another action</a>
-								<a class="dropdown-item" href="#">Something else here</a>
-								<div class="dropdown-divider"></div>
-								<a class="dropdown-item" href="#">Separated link</a>
-							</div>
-						</li>
 					</ul>
-					<a class="btn btn-primary btn-md" th:href="@{/logout}" role="button">
+					<a class="btn btn-success btn-md m-1" href="/user/my">
+						<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+							class="bi bi-person-circle" viewBox="0 0 16 16">
+							<path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0" />
+							<path fill-rule="evenodd"
+								d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1" />
+						</svg>
+						<span>Mein Profil</span>
+					</a>
+					<a class="btn btn-danger btn-md" th:href="@{/logout}">
 						<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
 							class="bi bi-box-arrow-left" viewBox="0 0 16 16">
 							<path fill-rule="evenodd"
@@ -80,10 +69,6 @@
 						</svg>
 						<span>Logout</span>
 					</a>
-					<form class="d-flex">
-						<input class="form-control me-sm-2" type="search" placeholder="Search">
-						<button class="btn btn-secondary my-2 my-sm-0" type="submit">Search</button>
-					</form>
 				</div>
 			</div>
 		</nav>
