@@ -53,7 +53,7 @@ public class CategoryController {
 	}
 
 	@PostMapping("/create")
-	public String addCategory(@Valid @ModelAttribute Category category, Model model, BindingResult result) {
+	public String addCategory(@Valid @ModelAttribute Category category,BindingResult result, Model model ) {
 		if (result.hasErrors()) {
 			System.out.println(result.getAllErrors().toString());
 			return "categories/category-create";
