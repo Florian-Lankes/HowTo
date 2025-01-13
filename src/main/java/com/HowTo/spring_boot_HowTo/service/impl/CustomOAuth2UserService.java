@@ -17,6 +17,12 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         OAuth2User oAuth2User = super.loadUser(userRequest);
         String email = oAuth2User.getAttribute("email");
         String name = oAuth2User.getAttribute("name");
+        if(name == null) {
+        	name =  oAuth2User.getAttribute("login");
+        }
+        if(email == null) {
+        	email =  oAuth2User.getAttribute("login");
+        }
         userService.saveO2authUser(email, name);
         return oAuth2User;
     }

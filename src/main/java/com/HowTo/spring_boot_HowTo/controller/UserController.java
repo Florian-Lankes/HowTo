@@ -368,7 +368,13 @@ public class UserController {
             ResponseEntity<Map> response = restTemplate.exchange(userInfoEndpointUri, HttpMethod.GET, entity, Map.class);
             Map userAttributes = response.getBody();
             model.addAttribute("name", userAttributes.get("name"));
-            User u = userService.saveO2authUser(userAttributes.get("email").toString(), userAttributes.get("name").toString());
+            String userName;
+            if(userAttributes.get("name") == null) {
+            	userName = userAttributes.get("login").toString();
+            }else {
+            	userName = userAttributes.get("name").toString();
+            }
+            User u = userService.saveO2authUser(userAttributes.get("email").toString(), userName);
             UsernamePasswordAuthenticationToken authRequest = new UsernamePasswordAuthenticationToken(u.getUsername(), u.getUsername());
 
              //Authenticate the user
