@@ -9,6 +9,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.NoSuchElementException;
+import java.util.Optional;
 
 import org.jboss.aerogear.security.otp.api.Base32;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,6 +40,7 @@ import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.HowTo.spring_boot_HowTo.changepassword.OnChangePasswordEvent;
+import com.HowTo.spring_boot_HowTo.changepasswordloggedin.OnChangePasswordLoggedInEvent;
 import com.HowTo.spring_boot_HowTo.config.MyUserDetails;
 import com.HowTo.spring_boot_HowTo.config.google2fa.CustomAuthenticationProvider;
 import com.HowTo.spring_boot_HowTo.model.Channel;
@@ -204,7 +207,7 @@ public class UserController {
 		request.getSession().setAttribute("userSession", userForm);
 		model.addAttribute("user", userForm);
 
-		return "new_register";
+		return "register";
 	}
 
 	@GetMapping("/registrationConfirm")
@@ -237,9 +240,8 @@ public class UserController {
 		System.out.println("In Function");
 		if (result.hasErrors()) {
 			System.out.println(result.getAllErrors().toString());
-			return "/register";
+			return "register";
 		}
-
 		try {
 			User registered = userService.saveUser(user);
 			String appUrl = request.getContextPath();
@@ -250,7 +252,7 @@ public class UserController {
 		}
 		System.out.println(user);
 
-		redirectAttributes.addFlashAttribute("added", "User added!");
+		redirectAttributes.addFlashAttribute("added", "User added! Please confirm per E-mail");
 
 		return "redirect:/login";
 	}
@@ -258,16 +260,48 @@ public class UserController {
 	@GetMapping("/user/changemypassword")
 	public String changePassword(Model model, RedirectAttributes redirectAttributes, HttpServletRequest request) {
 		User user = userService.getUserById(getCurrentUserId());
-		String appUrl = request.getContextPath();
-		eventPublisher.publishEvent(new OnChangePasswordEvent(user, request.getLocale(), appUrl));
+		model.addAttribute("user", user);
+		return "changepassword";
+	}
 
-		redirectAttributes.addFlashAttribute("email", "E-Mail for password change has been sent");
-		return "redirect:/user/my";
+	@PostMapping("/user/passwordchanged")
+	public String passwordchanged(@Valid @ModelAttribute User user, BindingResult result, Model model,
+			RedirectAttributes redirectAttributes) {
+		userService.changePassword(user);
+		eventPublisher.publishEvent(new OnChangePasswordLoggedInEvent(user));
+		return "redirect:/login";
+	}
+
+	@GetMapping("/user/forgotmypassword")
+	public String forgotmyPassword(RedirectAttributes redirectAttributes, HttpServletRequest request) {
+
+		return "forgotpassword";
+	}
+
+	@PostMapping("/user/forgotmypassword")
+	public String forgotmyPasswordemail(@RequestParam("email") String email, Model model,
+			RedirectAttributes redirectAttributes, HttpServletRequest request) {
+		Optional<User> u = userService.getUserByEmail(email);
+		try {
+			User user = u.get();
+			if (!user.isEnabled()) {
+				redirectAttributes.addFlashAttribute("deleted", "Account with this E-Mail wasn't confirmed");
+				return "redirect:/login";
+			}
+			String appUrl = request.getContextPath();
+			eventPublisher.publishEvent(new OnChangePasswordEvent(user, request.getLocale(), appUrl));
+
+			redirectAttributes.addFlashAttribute("email", "E-Mail for password change has been sent");
+			return "redirect:/login";
+		} catch (NoSuchElementException e) {
+			redirectAttributes.addFlashAttribute("deleted", "No account with such E-Mail");
+			return "redirect:/login";
+		}
 	}
 
 	@GetMapping("/confirmPassword")
-	public String confirmpassword(WebRequest request, Model model, @RequestParam("token") String token) {
 
+	public String confirmpassword(WebRequest request, Model model, @RequestParam("token") String token) {
 		// Locale locale = request.getLocale();
 
 		VerificationToken verificationToken = userService.getVerificationToken(token);
@@ -287,11 +321,11 @@ public class UserController {
 
 		model.addAttribute("user", user);
 		model.addAttribute("token", token);
-		return "changepassword"; // + request.getLocale().getLanguage();
+		return "changeforgottenpassword"; // + request.getLocale().getLanguage();
 	}
 
-	@PostMapping("/user/passwordchanged")
-	public String passwordchanged(@Valid @ModelAttribute User user, @RequestParam("token") String token,
+	@PostMapping("/user/forgottenpasswordchanged")
+	public String forgottenpasswordchanged(@Valid @ModelAttribute User user, @RequestParam("token") String token,
 			BindingResult result, Model model, RedirectAttributes redirectAttributes) {
 		VerificationToken verificationToken = userService.getVerificationToken(token);
 		if (verificationToken == null) {
@@ -303,7 +337,7 @@ public class UserController {
 		if (check.equals(u)) {
 			userService.changePassword(user);
 		}
-		return "redirect:/logout";
+		return "redirect:/login";
 	}
 
 	@GetMapping("user/my/activate2fa")

@@ -97,6 +97,9 @@ public class SecurityConfiguration {
 			.requestMatchers("/register").permitAll()
 			.requestMatchers("/registrationConfirm").permitAll()
 			.requestMatchers("/").permitAll()
+			.requestMatchers("/user/forgotmypassword").permitAll()
+			.requestMatchers("/confirmPassword").permitAll()
+			.requestMatchers("/user/forgottenpasswordchanged").permitAll()
 			
 			.requestMatchers("/home").hasAuthority("VIEW")
 			.requestMatchers("/tutorial/all").hasAuthority("VIEW")

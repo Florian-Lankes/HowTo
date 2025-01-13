@@ -2,6 +2,7 @@ package com.HowTo.spring_boot_HowTo.service;
 
 import java.io.UnsupportedEncodingException;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -40,5 +41,7 @@ public interface UserServiceI {
 	boolean checkAdmin(User user);
 	
 	User changePassword(User user);
+	
+	Optional<User> getUserByEmail(String email);
 
 }

@@ -19,6 +19,7 @@
 				<div th:if="${message != null}" class="alert alert-info" th:utext="${message}">message</div>
 				<div th:if="${error != null}" class="alert alert-danger"
 					th:utext="${session[SPRING_SECURITY_LAST_EXCEPTION]}">error</div>
+				<div th:replace="~{fragments/alert::alert}"></div>
 
 				<div class="card">
 					<div class="card-body">
@@ -37,13 +38,18 @@
 								<label>Google Authenticator</label>
 								<input placeholder="063243" class="form-control" type='text' name='code' />
 							</div>
+							<div th:if="${param.error}" class="alert alert-error text-left p-0 " style="color:#FF0000">
+								Invalid username or password or 2FA.
+							</div>
 							<input class="btn btn-primary btn-block" name="submit" type="submit" th:value="Einloggen" />
-							<div th:if="${param.error}" class="alert alert-error" style="color:#FF0000">Invalid username
-								or password or 2FA.</div>
 
 						</form>
-						<div class="text-center mt-3">
+
+						<div class="btn btn-outline-secondary btn-block text-center mt-3">
 							<a href="/register">Registrieren</a>
+						</div>
+						<div class="text-left mt-3">
+							<a th:href="@{/user/forgotmypassword}">Passwort vergessen</a>
 						</div>
 					</div>
 				</div>

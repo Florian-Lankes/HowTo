@@ -33,9 +33,9 @@
 								<p th:text="${user.password}"></p>
 								<a th:href="@{/user/changemypassword}" class="btn btn-primary btn-sm mb-3">Change Password</a>
 							</div>
-							<div class="container" id="passwordchange"></div>	
+							<div class="container" id="passwordchange">
 	
-							<div th:replace="~{fragments/alert::alert}">
+							<div th:replace="~{fragments/alert::alert}"></div>	
 							</div>	
 				<div th:if="${#authentication.principal.using2FA}">
 					    You are using Two-step authentication 
