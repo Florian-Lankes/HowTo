@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -23,6 +25,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.HowTo.spring_boot_HowTo.OnInformChannelEvent.OnInformChannelEvent;
+import com.HowTo.spring_boot_HowTo.changepasswordloggedin.OnChangePasswordLoggedInEvent;
 import com.HowTo.spring_boot_HowTo.config.MyUserDetails;
 import com.HowTo.spring_boot_HowTo.model.Channel;
 import com.HowTo.spring_boot_HowTo.model.Group;
@@ -44,6 +48,8 @@ public class ChannelController {
 	
 	private UserServiceI userService;
 	
+	@Autowired
+    private ApplicationEventPublisher eventPublisher;
 	
 	public ChannelController(ChannelServiceI channelService, UserServiceI userService) {
 		super();
@@ -210,6 +216,10 @@ public class ChannelController {
 		RedirectAttributes redirectAttributes) {
     	
     	channelService.subscribeChannel(channel, getCurrentUserId());
+    	User u = userService.getUserById(channel.getChannelId());
+    	User current = userService.getUserById(getCurrentUserId());
+    	eventPublisher.publishEvent(new OnInformChannelEvent(u, current.getUsername()));
+    	
     	redirectAttributes.addFlashAttribute("subscribed", "subscribed!");
     	return "redirect:/channel/view/"+channel.getChannelId();
     }

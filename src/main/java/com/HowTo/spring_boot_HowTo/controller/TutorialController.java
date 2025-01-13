@@ -170,7 +170,7 @@ public class TutorialController {
 		List<User> subscribedUsers = c.getSubscribedFromUserList();
 		
 		for (User u : subscribedUsers) {
-			eventPublisher.publishEvent(new OnInformSubscriberEvent(u, c.getChannelname()));
+			eventPublisher.publishEvent(new OnInformSubscriberEvent(u, c.getChannelname(), tutorial.getTitle()));
 		}
 		
 		redirectAttributes.addFlashAttribute("created", "Tutorial created!");

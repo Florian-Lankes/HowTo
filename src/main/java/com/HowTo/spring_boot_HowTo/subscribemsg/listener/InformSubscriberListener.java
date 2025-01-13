@@ -34,12 +34,12 @@ public class InformSubscriberListener implements ApplicationListener<OnInformSub
         User user = service.getUserById(test.getUserId());
         
         String recipientAddress = user.getEmail();
-        String subject = "Video posted";
+        String subject = "New Tutorial";
         
         SimpleMailMessage email = new SimpleMailMessage();
         email.setTo(recipientAddress);
         email.setSubject(subject);
-        email.setText("New Video from: "+ event.getChannelname());
+        email.setText("New tutorial from: "+ event.getChannelname() + "-" + event.getTutorialtitle());
         mailSender.send(email);
     }
 }
