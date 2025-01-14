@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.BindingResult;
@@ -17,8 +18,13 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.HowTo.spring_boot_HowTo.config.MyUserDetails;
 import com.HowTo.spring_boot_HowTo.model.Group;
+import com.HowTo.spring_boot_HowTo.model.Message;
+import com.HowTo.spring_boot_HowTo.model.MessageDTO;
+import com.HowTo.spring_boot_HowTo.model.MessageDTOMapper;
+import com.HowTo.spring_boot_HowTo.model.MessageType;
 import com.HowTo.spring_boot_HowTo.model.User;
 import com.HowTo.spring_boot_HowTo.service.GroupServiceI;
+import com.HowTo.spring_boot_HowTo.service.MessageServiceI;
 import com.HowTo.spring_boot_HowTo.service.UserServiceI;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -31,11 +37,16 @@ public class GroupController {
 	
 	private GroupServiceI groupService;
 	private UserServiceI userService;
+	private MessageServiceI messageService;
+	private final SimpMessageSendingOperations messageTemplate;
 	
-	public GroupController(GroupServiceI groupService, UserServiceI userService) {
+	public GroupController(GroupServiceI groupService, UserServiceI userService, MessageServiceI messageService, 
+			SimpMessageSendingOperations messageTemplate) {
 		super();
 		this.groupService = groupService;
 		this.userService = userService;
+		this.messageService = messageService;
+		this.messageTemplate = messageTemplate;
 	}
 	
 	private Long getCurrentUserId() {
@@ -173,9 +184,22 @@ public class GroupController {
       			BindingResult results,
       			Model model, 
       			RedirectAttributes redirectAttributes) {
-      		 
+      		
+    		List<Group> joinedgroups = userService.getUserById(getCurrentUserId()).getJoinedGroups();
+    		Group realgroup = groupService.getGroupById(group.getGroupId());
+      		if(!joinedgroups.contains(realgroup)) { // User already in group
+      			Message joinMessage = new Message();
+          		joinMessage.setContent("");
+          		joinMessage.setMessageType(MessageType.JOIN);
+          		joinMessage.setMessageGroup(group);
+          		joinMessage.setMessageOwner(userService.getUserById(getCurrentUserId()));
+          		messageService.saveMessage(joinMessage);
+          		MessageDTO joinMessageDTO = MessageDTOMapper.toMessageDTO(joinMessage);
+          		messageTemplate.convertAndSend("/topic/group/" + group.getGroupId(), joinMessageDTO);	
+      		}
+      		
       		groupService.joinGroup(group, getCurrentUserId());
-              redirectAttributes.addFlashAttribute("joined", "group joined!");
+            redirectAttributes.addFlashAttribute("joined", "group joined!");
       		return "redirect:/group/all";
        }
        
@@ -184,7 +208,20 @@ public class GroupController {
      			BindingResult results,
      			Model model, 
      			RedirectAttributes redirectAttributes) {
-     		 
+    	   
+     		List<Group> joinedgroups = userService.getUserById(getCurrentUserId()).getJoinedGroups();
+    		Group realgroup = groupService.getGroupById(group.getGroupId());
+     		if(joinedgroups.contains(realgroup)) {
+     			Message leaveMessage = new Message();
+         		leaveMessage.setContent("");
+         		leaveMessage.setMessageType(MessageType.LEAVE);
+         		leaveMessage.setMessageGroup(group);
+         		leaveMessage.setMessageOwner(userService.getUserById(getCurrentUserId()));
+          		messageService.saveMessage(leaveMessage);
+          		MessageDTO leaveMessageDTO = MessageDTOMapper.toMessageDTO(leaveMessage);
+          		messageTemplate.convertAndSend("/topic/group/" + group.getGroupId(), leaveMessageDTO);	
+     		}
+     		
      		groupService.leaveGroup(group, getCurrentUserId());
              redirectAttributes.addFlashAttribute("left", "group left!");
      		return "redirect:/group/all";

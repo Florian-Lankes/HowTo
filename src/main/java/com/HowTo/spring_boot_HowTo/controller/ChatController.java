@@ -69,7 +69,7 @@ public class ChatController {
 		messageTemplate.convertAndSend("/topic/group/" + message.getMessageGroup().getGroupId(), messageDTO);
 	}
 
-	@MessageMapping("/chat.addUser")
+	@MessageMapping("/chat.UserOnline")
 	public void addUser(@Payload MessageDTO messageDTO, SimpMessageHeaderAccessor headerAccessor) {
 		System.out.println("Received addUser: " + messageDTO);
 		Message message = MessageDTOMapper.toMessage(messageDTO);
