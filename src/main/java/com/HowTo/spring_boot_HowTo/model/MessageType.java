@@ -5,5 +5,6 @@ public enum MessageType {
 	CHAT,
 	JOIN,
 	LEAVE,
-	INCHAT
+	INCHAT,
+	CREATE
 }

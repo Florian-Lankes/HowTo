@@ -22,6 +22,7 @@ function connect(event) {
 
 function onConnected() {
     stompClient.subscribe('/topic/group/' + group.groupId, onMessageReceived);
+	//JOIN MESSAGE NOT USED RIGHT NOW
 	var joinMessage = {
 			   content: "", 
 			   messageType: 'INCHAT', 
@@ -98,6 +99,9 @@ function renderMessage(message) {
 		//SHOW THAT USER ONLINE
 		console.log("Display user online")
 		return
+	} else if (message.messageType === 'CREATE') { 
+		messageElement.classList.add('event-message'); 
+		message.content = message.username + ' created the Group!'; 
 	} else { 
         messageElement.classList.add('chat-message'); 
 		

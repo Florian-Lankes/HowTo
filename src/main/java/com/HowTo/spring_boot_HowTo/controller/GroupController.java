@@ -79,8 +79,6 @@ public class GroupController {
     		BindingResult result, 
     		Model model,
     		RedirectAttributes redirectAttributes) {
-
-    	
     	if (result.hasErrors()) {
     		System.out.println(result.getAllErrors().toString());
             return "/groups/group-create";
@@ -91,6 +89,16 @@ public class GroupController {
     	System.out.println(r.getGroupId());
         redirectAttributes.addFlashAttribute("created", "Group created!");
         groupService.joinGroup(r, getCurrentUserId()); //doenst wanna join the group after creating
+        
+        Message createMessage = new Message();
+  		createMessage.setContent("");
+  		createMessage.setMessageType(MessageType.CREATE);
+  		createMessage.setMessageGroup(r);
+  		createMessage.setMessageOwner(userService.getUserById(getCurrentUserId()));
+  		messageService.saveMessage(createMessage);
+  		MessageDTO createMessageDTO = MessageDTOMapper.toMessageDTO(createMessage);
+  		messageTemplate.convertAndSend("/topic/group/" + group.getGroupId(), createMessageDTO);
+        
         redirectAttributes.addFlashAttribute("joined", "Group joined!");
         
         

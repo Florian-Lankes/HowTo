@@ -63,15 +63,14 @@ public class ChatController {
 	@MessageMapping("/chat.sendMessage")
 	// @SendTo("/topic/public")
 	public void sendMessage(@Payload MessageDTO messageDTO) {
-		System.out.println("Received sendMessage: " + messageDTO.getUsername());
 		Message message = MessageDTOMapper.toMessage(messageDTO); // MessageDTO to Message
 		messageService.saveMessage(message);
 		messageTemplate.convertAndSend("/topic/group/" + message.getMessageGroup().getGroupId(), messageDTO);
 	}
 
+	//NOT USED RIGHT NOW
 	@MessageMapping("/chat.UserOnline")
 	public void addUser(@Payload MessageDTO messageDTO, SimpMessageHeaderAccessor headerAccessor) {
-		System.out.println("Received addUser: " + messageDTO);
 		Message message = MessageDTOMapper.toMessage(messageDTO);
 		User user = message.getMessageOwner();
 		Group group = message.getMessageGroup();
@@ -86,12 +85,9 @@ public class ChatController {
 	@ResponseBody
 	public List<MessageDTO> getOldMessages(@PathVariable Long groupId) {
 		Group group = groupService.getGroupById(groupId);
-		System.out.println("getOldMessages working: " + groupId);
 		List<Message> messagesList = messageService.getMessagesByMessageGroup(group);
-		System.out.println("Liste: " + messagesList);
 		List<MessageDTO> messagesListDTO = messagesList.stream().map(MessageDTOMapper::toMessageDTO)
 				.collect(Collectors.toList());
-		System.out.println("Liste: " + messagesListDTO);
 		return messagesListDTO;
 	}
 
@@ -100,9 +96,7 @@ public class ChatController {
 			throws JsonProcessingException {
 		User user = userService.getUserById(getCurrentUserId());
 		//List<Group> userGroups = user.getJoinedGroups();
-		System.out.println("user: " + user);
 		Group group = groupService.getGroupById(groupId);
-		System.out.println("group: " + group);
 		String userJson = objectMapper.writeValueAsString(user);
 		String groupJson = objectMapper.writeValueAsString(group);
 		//String userGroupsJson = objectMapper.writeValueAsString(userGroups);
