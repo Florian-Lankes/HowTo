@@ -432,14 +432,6 @@ public class UserController {
 
 		return "redirect:/";
 	}
-//
-//	@PostMapping("/login/process")
-//	public String processLogin(@RequestParam String user, @RequestParam String password) {
-//		// TODO: process POST request
-//		System.out.println(user);
-//		System.out.println(password);
-//		return "/home";
-//	}
 
 	@GetMapping("/user/my")
 	public String showUserProfile(Model model, RedirectAttributes redirectAttributes) {
