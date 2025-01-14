@@ -140,7 +140,9 @@ public class GroupController {
 			model.addAttribute("message", e.getMessage());
 		}
 		List<Group> joinedGroups = userService.getUserById(getCurrentUserId()).getJoinedGroups();
-				
+		List<Group> ownedGroups = userService.getUserById(getCurrentUserId()).getOwnedGroups();
+			
+		model.addAttribute("ownedGroups", ownedGroups);
 		model.addAttribute("joinedGroups", joinedGroups);
 		return "/groups/group-list";
 	}
@@ -162,8 +164,8 @@ public class GroupController {
     @GetMapping("/update/{id}")
    	public String showUpdateGroupForm(@PathVariable("id") Long id, 
    			Model model,
-   			HttpServletRequest request,
    			RedirectAttributes redirectAttributes) {
+    	
    	 	Group group = groupService.getGroupById(id); 
    	 	if(group.getGroupOwner().getUserId() != getCurrentUserId()) {
    	 		System.out.println("wrong user!");
@@ -172,19 +174,15 @@ public class GroupController {
    	 		return "redirect:/group/all";
    	 	}
        	model.addAttribute("group", group);
-   		request.getSession().setAttribute("groupSession", group);
-   		
-   		System.out.println("updating group id="+ id);
    		return "/groups/group-update";
    	}
        
        
-       @PostMapping("/update")
+    @PostMapping("/update")
    	public String updateGroup(@Valid @ModelAttribute Group group,
    			BindingResult results,
    			Model model, 
    			RedirectAttributes redirectAttributes) {
-   		
     	   if(group.getGroupOwner().getUserId() != getCurrentUserId()) {
       	 		System.out.println("wrong user!");
       	 		
@@ -202,63 +200,61 @@ public class GroupController {
    		
    	}
        
-       @GetMapping("/detail/{id}")
-      	public String showDetailGroup(@PathVariable("id") Long id, 
-      			Model model,
-      			HttpServletRequest request,
-      			RedirectAttributes redirectAttributes) {
-      	 	Group group = groupService.getGroupById(id); 
-          	model.addAttribute("group", group);
-      		request.getSession().setAttribute("groupSession", group);
-      		
-      		System.out.println("detail of group id="+ id);
-      		return "/groups/group-detail";
-      	}
+//       @GetMapping("/detail/{id}")
+//      	public String showDetailGroup(@PathVariable("id") Long id, 
+//      			Model model,
+//      			HttpServletRequest request,
+//      			RedirectAttributes redirectAttributes) {
+//      	 	Group group = groupService.getGroupById(id); 
+//          	model.addAttribute("group", group);
+//      		request.getSession().setAttribute("groupSession", group);
+//      		
+//      		System.out.println("detail of group id="+ id);
+//      		return "/groups/group-detail";
+//      	}
        
-       @PostMapping("/join")
-      	public String joinGroup(@Valid @ModelAttribute Group group,
-      			BindingResult results,
+       @GetMapping("/join/{id}")
+      	public String joinGroup(@PathVariable("id") Long id,
       			Model model, 
       			RedirectAttributes redirectAttributes) {
       		
     		List<Group> joinedgroups = userService.getUserById(getCurrentUserId()).getJoinedGroups();
-    		Group realgroup = groupService.getGroupById(group.getGroupId());
+    		Group realgroup = groupService.getGroupById(id);
       		if(!joinedgroups.contains(realgroup)) { // User already in group
       			Message joinMessage = new Message();
           		joinMessage.setContent("");
           		joinMessage.setMessageType(MessageType.JOIN);
-          		joinMessage.setMessageGroup(group);
+          		joinMessage.setMessageGroup(realgroup);
           		joinMessage.setMessageOwner(userService.getUserById(getCurrentUserId()));
           		messageService.saveMessage(joinMessage);
           		MessageDTO joinMessageDTO = MessageDTOMapper.toMessageDTO(joinMessage);
-          		messageTemplate.convertAndSend("/topic/group/" + group.getGroupId(), joinMessageDTO);	
+          		messageTemplate.convertAndSend("/topic/group/" + realgroup.getGroupId(), joinMessageDTO);	
       		}
       		
-      		groupService.joinGroup(group, getCurrentUserId());
+      		groupService.joinGroup(realgroup, getCurrentUserId());
             redirectAttributes.addFlashAttribute("joined", "group joined!");
       		return "redirect:/group/all";
        }
        
-       @PostMapping("/leave")
-     	public String leaveGroup(@Valid @ModelAttribute Group group,
-     			BindingResult results,
+       @GetMapping("/leave/{id}")
+     	public String leaveGroup(@PathVariable("id") Long id,
      			Model model, 
      			RedirectAttributes redirectAttributes) {
     	   
      		List<Group> joinedgroups = userService.getUserById(getCurrentUserId()).getJoinedGroups();
-    		Group realgroup = groupService.getGroupById(group.getGroupId());
+    		Group realgroup = groupService.getGroupById(id);
      		if(joinedgroups.contains(realgroup)) {
      			Message leaveMessage = new Message();
          		leaveMessage.setContent("");
          		leaveMessage.setMessageType(MessageType.LEAVE);
-         		leaveMessage.setMessageGroup(group);
+         		leaveMessage.setMessageGroup(realgroup);
          		leaveMessage.setMessageOwner(userService.getUserById(getCurrentUserId()));
           		messageService.saveMessage(leaveMessage);
           		MessageDTO leaveMessageDTO = MessageDTOMapper.toMessageDTO(leaveMessage);
-          		messageTemplate.convertAndSend("/topic/group/" + group.getGroupId(), leaveMessageDTO);	
+          		messageTemplate.convertAndSend("/topic/group/" + realgroup.getGroupId(), leaveMessageDTO);	
      		}
      		
-     		groupService.leaveGroup(group, getCurrentUserId());
+     		groupService.leaveGroup(realgroup, getCurrentUserId());
              redirectAttributes.addFlashAttribute("left", "group left!");
      		return "redirect:/group/all";
       }
