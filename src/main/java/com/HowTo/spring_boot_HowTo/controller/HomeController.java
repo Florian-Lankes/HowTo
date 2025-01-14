@@ -34,7 +34,7 @@ public class HomeController {
 	@GetMapping("/home")
 	public String HowToView(Model model, @RequestParam(required = false) String keyword,
 			@RequestParam(required = false, defaultValue = "1") int page, @RequestParam(required = false,
-			defaultValue = "5") int size) {
+			defaultValue = "6") int size) {
 		
 	try {
 			

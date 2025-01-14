@@ -8,58 +8,64 @@
 <body>
 	<section class="layout-content mt-2" layout:fragment="mybody">
 		<div class="container d-flex flex-wrap ">
+			<div class="me-2 btn btn-primary">
+				<a th:href="@{/home}" class="text-white text-decoration-none">
+					<span th:text="Alle"></span>
+				</a>
+			</div>
 			<div class="me-2 btn btn-secondary" th:each="element : ${category}">
-				<a th:href="@{/category/view/{id}(id=${element.categoryId})}" class="text-white text-decoration-none"> <span
-						th:text="${element.categoryName}"></span>
+				<a th:href="@{/category/view/{id}(id=${element.categoryId})}" class="text-white text-decoration-none">
+					<span th:text="${element.categoryName}"></span>
 				</a>
 			</div>
 		</div>
-		
-		<div>
-
 
 		<div class="container mt-4">
 			<div class="row">
-				<div class="col-md-4 mb-4" th:each="element : ${tutorial}"> <a class="card text-center text-decoration-none"
+				<div class="col-md-4 mb-4" th:each="element : ${tutorial}"> <a class="card text-decoration-none"
 						th:href="@{/history/track/{tutorialid}(tutorialid=${element.tutorialId})}">
+						<video th:unless="${#strings.isEmpty(element.videoUrl)}" th:src="${element.videoUrl}"
+							class="card-img-top"></video>
 						<div class="card-body">
 							<h5 class="card-title " th:text="${element.Title}"></h5>
+							<p class="card-text" th:text="${element.contentText}"></p>
 						</div>
 					</a>
 				</div>
 			</div>
 		</div>
-		
-		<!-- 4th part : the paginator component -->
-						<nav aria-label="Pagination" th:if="${totalPages > 0}">
-							<ul class="pagination justify-content-center">
-								<li class="page-item" th:classappend="${currentPage == 1} ? 'disabled'">
-									<a th:replace="~{fragments/paging :: paging(1, '<<', 'First Page', 'home')}"></a>
 
-								</li>
-								<li class="page-item font-weight-bold" th:classappend="${currentPage == 1} ? 'disabled'">
-									<a th:replace="~{fragments/paging :: paging(${currentPage - 1}, 'Prev', 'Previous Page', 'home')}"></a>
-								</li>
-								<li class="page-item disabled" th:if="${currentPage - 2 > 1}">
-									<a class="page-link" href="#">...</a>
-								</li>
-								<li class="page-item" th:classappend="${page == currentPage} ? 'active'" th:each="page : ${#numbers.sequence(currentPage > 2 ? currentPage - 2 : 1, currentPage + 2 < totalPages ?
+		<!-- 4th part : the paginator component -->
+		<nav aria-label="Pagination" th:if="${totalPages > 0}">
+			<ul class="pagination justify-content-center">
+				<li class="page-item" th:classappend="${currentPage == 1} ? 'disabled'">
+					<a th:replace="~{fragments/paging :: paging(1, '<<', 'First Page', 'home')}"></a>
+
+				</li>
+				<li class="page-item font-weight-bold" th:classappend="${currentPage == 1} ? 'disabled'">
+					<a
+						th:replace="~{fragments/paging :: paging(${currentPage - 1}, 'Prev', 'Previous Page', 'home')}"></a>
+				</li>
+				<li class="page-item disabled" th:if="${currentPage - 2 > 1}">
+					<a class="page-link" href="#">...</a>
+				</li>
+				<li class="page-item" th:classappend="${page == currentPage} ? 'active'" th:each="page : ${#numbers.sequence(currentPage > 2 ? currentPage - 2 : 1, currentPage + 2 < totalPages ?
 					 				currentPage + 2 : totalPages)}">
-									<a th:replace="~{fragments/paging :: paging(${page}, ${page}, 'Page ' + ${page}, 'home')}"></a>
-								</li>
-								<li class="page-item disabled" th:if="${currentPage + 2 < totalPages}">
-									<a class="page-link" href="#">...</a>
-								</li>
-								<li class="page-item font-weight-bold" th:classappend="${currentPage == totalPages} ? 'disabled'">
-									<a th:replace="~{fragments/paging :: paging(${currentPage + 1},'Next', 'Next Page', 'home')}"></a>
-								</li>
-								<li class="page-item" th:classappend="${currentPage == totalPages} ? 'disabled'">
-									<a th:replace="~{fragments/paging :: paging(${totalPages}, '>>', 'Last Page', 'home')}"></a>
-								</li>
-							</ul>
-						</nav>
-						<br><br>
-		
+					<a th:replace="~{fragments/paging :: paging(${page}, ${page}, 'Page ' + ${page}, 'home')}"></a>
+				</li>
+				<li class="page-item disabled" th:if="${currentPage + 2 < totalPages}">
+					<a class="page-link" href="#">...</a>
+				</li>
+				<li class="page-item font-weight-bold" th:classappend="${currentPage == totalPages} ? 'disabled'">
+					<a th:replace="~{fragments/paging :: paging(${currentPage + 1},'Next', 'Next Page', 'home')}"></a>
+				</li>
+				<li class="page-item" th:classappend="${currentPage == totalPages} ? 'disabled'">
+					<a th:replace="~{fragments/paging :: paging(${totalPages}, '>>', 'Last Page', 'home')}"></a>
+				</li>
+			</ul>
+		</nav>
+
+
 	</section>
 </body>
 
