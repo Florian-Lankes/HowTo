@@ -22,9 +22,10 @@ function connect(event) {
 
 function onConnected() {
     stompClient.subscribe('/topic/group/' + group.groupId, onMessageReceived);
+	//JOIN MESSAGE NOT USED RIGHT NOW
 	var joinMessage = {
 			   content: "", 
-			   messageType: 'JOIN', 
+			   messageType: 'INCHAT', 
 			   messageOwnerId: user.userId, 
 			   username: user.username, 
 			   email: user.email, 
@@ -34,7 +35,7 @@ function onConnected() {
 			   description: group.description, 
 			   creationDate: group.creationDate
 	       };
-    stompClient.send("/app/chat.addUser", {}, JSON.stringify(joinMessage));
+    stompClient.send("/app/chat.UserOnline", {}, JSON.stringify(joinMessage));
     connectingElement.classList.add('hidden');
 	if (group && group.name) { 
 		groupName.textContent = group.name; 
@@ -90,11 +91,18 @@ function renderMessage(message) {
     var messageElement = document.createElement('li'); 
     if (message.messageType === 'JOIN') { 
         messageElement.classList.add('event-message'); 
-        message.content = message.username + ' is now active in chat!'; 
+        message.content = message.username + ' joined the Group!'; 
     } else if (message.messageType === 'LEAVE') { 
         messageElement.classList.add('event-message'); 
-        message.content = message.username + ' left!'; 
-    } else { 
+        message.content = message.username + ' left the Group!'; 
+    } else if (message.messageType === 'INCHAT') { 
+		//SHOW THAT USER ONLINE
+		console.log("Display user online")
+		return
+	} else if (message.messageType === 'CREATE') { 
+		messageElement.classList.add('event-message'); 
+		message.content = message.username + ' created the Group!'; 
+	} else { 
         messageElement.classList.add('chat-message'); 
 		
 		var avatarElement = document.createElement('i');
