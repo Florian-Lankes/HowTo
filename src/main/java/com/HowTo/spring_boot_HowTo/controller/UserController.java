@@ -431,7 +431,7 @@ public class UserController {
 //        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 //        System.out.println("User Authorities: " + auth.getAuthorities());
 
-		return "home";
+		return "redirect:/home";
 	}
 
 	@GetMapping("/logout")
