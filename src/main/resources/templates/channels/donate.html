@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html layout:decorate="~{layout}">
+<head><meta charset="UTF-8" />	
+	
+	<script type="text/javascript">
+
+			$(document).ready(function () {
+
+				window.setTimeout(function () {
+					$(".alert").fadeTo(1000, 0).slideUp(1000, function () {
+						$(this).remove();
+					});
+				}, 5000);
+
+			});
+		</script></head>
+
+<body>
+	<section class="layout-content" layout:fragment="mybody">
+		<div class="container">
+			<h1>Wallet</h1>
+			<div class="content"> <strong>Amount</strong>
+				<p th:text="${senderWallet.amount}"></p>
+			</div>
+			<div clss="content"> <strong>WalletPlan</strong>
+				<p th:text="${senderWallet.walletPlan}"></p>
+			</div>
+		</div>
+		
+		<form th:action="@{/wallet/donate}" th:object="${transaction}" method="POST">
+									  
+			<div> 
+				<label for="amount">Betrag:</label> 
+				<input type="number" id="transactionAmount" th:field="*{transactionAmount}" th:max="${senderWallet.amount}" required /> 
+				<input type="hidden" id="transactionSender" th:field="*{transactionSender}"/>
+				<input type="hidden" id="transactionReceiver" th:field="*{transactionReceiver}"/>
+               	<button type="submit" class="btn btn-primary btn-sm">Donate</button>
+			</div>
+			
+			
+		</form>
+	</section>		
+</body>
+</html>

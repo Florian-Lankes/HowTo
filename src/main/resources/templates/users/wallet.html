@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html layout:decorate="~{layout}">
+<head><meta charset="UTF-8" />	
+	
+	<script type="text/javascript">
+
+			$(document).ready(function () {
+
+				window.setTimeout(function () {
+					$(".alert").fadeTo(1000, 0).slideUp(1000, function () {
+						$(this).remove();
+					});
+				}, 5000);
+
+			});
+		</script></head>
+
+<body>
+	<section class="layout-content" layout:fragment="mybody">
+		<div class="container">
+			<h1>Wallet</h1>
+			<div class="content"> <strong>Amount</strong>
+				<p th:text="${wallet.amount}"></p>
+			</div>
+			<div class="content"> <strong>WalletPlan</strong>
+				<p th:text="${wallet.walletPlan}"></p>
+			</div>
+			<a class="btn btn-info" th:href="@{/wallet/upgrade}" th:if="${wallet.walletPlan.benefit != 0.7}">Upgrade WalletPlan</a>
+			<div th:replace="~{fragments/alert::alert}">
+			</div>
+			<table>
+				<thead> 
+					<tr> 
+						<th>ID</th> 
+						<th>Sender</th> 
+						<th>Amount</th> 
+					</tr> 
+				</thead>
+				<tbody>
+					<tr th:each="element: ${transactionsReceived}">
+						<td th:text="${element.transactionId}"></td>
+						<td th:text = "${element.transactionSender.walletOwner.username}"></td>
+						<td th:text = "${element.transactionAmount}"></td>
+					</tr>
+				</tbody>
+			</table>
+			<table>
+				<thead> 
+					<tr> 
+						<th>ID</th> 
+						<th>Receiver</th> 
+						<th>Amount</th> 
+					</tr> 
+				</thead>
+				<tbody>
+					<tr th:each="element: ${transactionsSend}">
+						<td th:text="${element.transactionId}"></td>
+						<td th:text = "${element.transactionReceiver.walletOwner.username}"></td>
+						<td th:text = "${element.transactionAmount}"></td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</section>		
+</body>
+</html>

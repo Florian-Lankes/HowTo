@@ -5,6 +5,7 @@ import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
+import jakarta.persistence.PrimaryKeyJoinColumn;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -72,6 +73,10 @@ public class User implements Serializable {
         
     @OneToOne(mappedBy="user")
     private VerificationToken verificationToken;
+    
+    @PrimaryKeyJoinColumn
+    @OneToOne(mappedBy = "walletOwner", cascade = CascadeType.REMOVE)
+    private Wallet wallet;
 
     @JsonIgnore
 	@ManyToMany(fetch = FetchType.EAGER)
@@ -347,5 +352,14 @@ public class User implements Serializable {
 	public void setUsingOauth(boolean isUsingOauth) {
 		this.isUsingOauth = isUsingOauth;
 	}
+
+	public Wallet getWallet() {
+		return wallet;
+	}
+
+	public void setWallet(Wallet wallet) {
+		this.wallet = wallet;
+	}
+	
 	
 }
