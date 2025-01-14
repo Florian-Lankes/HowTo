@@ -31,14 +31,4 @@ public class MessageService implements MessageServiceI {
 		// TODO Auto-generated method stub
 		return messageRepository.getMessagesByMessageGroup(messageGroup);
 	}
-
-//	@Override
-//	public List<Message> getMessagesByGroupId(Long groupId) {
-//		if(groupId == null) {
-//			System.out.println("groupId in MessageService == null self written Do Delete later ----<><><><>");
-//		}
-//		Group group = groupRepository.getReferenceById(groupId);
-//		return messageRepository.findByMessageGroup(group);
-//	}
-
 }

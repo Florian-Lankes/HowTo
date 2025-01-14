@@ -1,14 +1,11 @@
 package com.HowTo.spring_boot_HowTo.controller;
 
-import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
-import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.security.core.Authentication;
@@ -24,7 +21,6 @@ import com.HowTo.spring_boot_HowTo.model.Group;
 import com.HowTo.spring_boot_HowTo.model.Message;
 import com.HowTo.spring_boot_HowTo.model.MessageDTO;
 import com.HowTo.spring_boot_HowTo.model.MessageDTOMapper;
-import com.HowTo.spring_boot_HowTo.model.MessageType;
 import com.HowTo.spring_boot_HowTo.model.User;
 import com.HowTo.spring_boot_HowTo.service.GroupServiceI;
 import com.HowTo.spring_boot_HowTo.service.MessageServiceI;
@@ -66,36 +62,25 @@ public class ChatController {
 	}
 
 	@MessageMapping("/chat.sendMessage")
-	// @SendTo("/topic/public") // TODO maybe for groups is need /topic/group
+	// @SendTo("/topic/public")
 	public void sendMessage(@Payload MessageDTO messageDTO) {
 		System.out.println("Received sendMessage: " + messageDTO.getUsername());
-		// MessageDTO to Message
-		Message message = MessageDTOMapper.toMessage(messageDTO);
+		Message message = MessageDTOMapper.toMessage(messageDTO); // MessageDTO to Message
 		messageService.saveMessage(message);
 		messageTemplate.convertAndSend("/topic/group/" + message.getMessageGroup().getGroupId(), messageDTO);
-		// return message; // Send message to all subscribers of "/topic/group"
 	}
 
 	@MessageMapping("/chat.addUser")
-	// @SendTo("/topic/public") // TODO maybe for groups is need /topic/group
 	public void addUser(@Payload MessageDTO messageDTO, SimpMessageHeaderAccessor headerAccessor) {
-		// System.out.println(headerAccessor.getNativeHeader("userId").get(0));
-		// long userId = Long.parseLong(headerAccessor.getNativeHeader("userId").get(0),
-		// 10);
 		System.out.println("Received addUser: " + messageDTO);
 		Message message = MessageDTOMapper.toMessage(messageDTO);
 		User user = message.getMessageOwner();
 		Group group = message.getMessageGroup();
 		headerAccessor.getSessionAttributes().put("user", user);
 		headerAccessor.getSessionAttributes().put("group", group);
-		// message.setMessageOwner(userService.getUserById(userId));
-		// message.setMessageType(MessageType.JOIN);//
 		headerAccessor.getSessionAttributes().put("messageOwner", message.getMessageOwner());
-
 		messageService.saveMessage(message);
 		messageTemplate.convertAndSend("/topic/group/" + group.getGroupId(), messageDTO);
-
-		// return message;
 	}
 
 	@GetMapping("/chat/messages/{groupId}")
@@ -105,33 +90,34 @@ public class ChatController {
 		System.out.println("getOldMessages working: " + groupId);
 		List<Message> messagesList = messageService.getMessagesByMessageGroup(group);
 		System.out.println("Liste: " + messagesList);
-		List<MessageDTO> messagesListDTO = messagesList.stream().map(MessageDTOMapper::toMessageDTO).collect(Collectors.toList());
+		List<MessageDTO> messagesListDTO = messagesList.stream().map(MessageDTOMapper::toMessageDTO)
+				.collect(Collectors.toList());
 		System.out.println("Liste: " + messagesListDTO);
 		return messagesListDTO;
 	}
 
-	@GetMapping("/chat/{id}") // @PathVariable("id") Long groupId ,
+	@GetMapping("/chat/{id}")
 	public String showUserRegisterForm(@PathVariable("id") Long groupId, Model model, HttpServletRequest request)
 			throws JsonProcessingException {
 		User user = userService.getUserById(getCurrentUserId());
 		System.out.println("user: " + user);
 		Group group = groupService.getGroupById(groupId);
 		System.out.println("group: " + group);
-		// Group group = groupService.getGroupById(groupId);
-
 		String userJson = objectMapper.writeValueAsString(user);
 		String groupJson = objectMapper.writeValueAsString(group);
-		// List<Message> oldMessages = messageService.getMessagesByMessageGroup(group);
-
 		model.addAttribute("userJson", userJson);
 		model.addAttribute("groupJson", groupJson);
-		// model.addAttribute("oldMessages", oldMessages);
-
-		// model.addAttribute("user", user);
-		// model.addAttribute("username", user.getUsername());
-
-		// model.addAttribute("group", group);
 		return "/chat/chat";
 	}
+
+//	public void broadcastLeaveEvent(Long userId, Long groupId) {
+//		MessageDTO leaveMessage = new MessageDTO();
+//		//Construct new MessageDTO for leave message
+//		leaveMessage.setMessageType(MessageType.LEAVE);
+//		leaveMessage.setUsername(username);
+//		leaveMessage.setMessageGroupId(groupId);
+//		// ...
+//		messagingTemplate.convertAndSend("/topic/group/" + groupId, leaveMessage);
+//	}
 
 }

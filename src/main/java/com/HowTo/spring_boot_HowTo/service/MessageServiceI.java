@@ -9,7 +9,5 @@ public interface MessageServiceI {
 
 	public Message saveMessage(Message message);
 	
-	//public List<Message> getMessagesByGroupId(Long groupId);
-	
 	public List<Message> getMessagesByMessageGroup(Group messageGroup);
 }
