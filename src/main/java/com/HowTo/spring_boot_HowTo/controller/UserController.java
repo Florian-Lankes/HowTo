@@ -46,9 +46,11 @@ import com.HowTo.spring_boot_HowTo.config.google2fa.CustomAuthenticationProvider
 import com.HowTo.spring_boot_HowTo.model.Channel;
 import com.HowTo.spring_boot_HowTo.model.User;
 import com.HowTo.spring_boot_HowTo.model.VerificationToken;
+import com.HowTo.spring_boot_HowTo.model.Wallet;
 import com.HowTo.spring_boot_HowTo.registration.OnRegistrationCompleteEvent;
 import com.HowTo.spring_boot_HowTo.service.ChannelServiceI;
 import com.HowTo.spring_boot_HowTo.service.UserServiceI;
+import com.HowTo.spring_boot_HowTo.service.WalletServiceI;
 import com.HowTo.spring_boot_HowTo.validator.UserAlreadyExistException;
 import com.HowTo.spring_boot_HowTo.validator.UserValidator;
 import com.cloudinary.utils.StringUtils;
@@ -77,7 +79,9 @@ public class UserController {
 	private UserServiceI userService;
 
 	private ChannelServiceI channelService;
-
+	
+	private WalletServiceI walletService;
+	
 	@Autowired
 	private ApplicationEventPublisher eventPublisher;
 
@@ -88,11 +92,14 @@ public class UserController {
 	private OAuth2AuthorizedClientService authorizedClientService;
 	@Autowired
 	private CustomAuthenticationProvider customAuthenticationProvider;
+	
 
-	public UserController(UserServiceI userService, ChannelServiceI channelService) {
+
+	public UserController(UserServiceI userService, ChannelServiceI channelService, WalletServiceI walletService) {
 		super();
 		this.userService = userService;
 		this.channelService = channelService;
+		this.walletService = walletService;
 	}
 
 	@InitBinder("user")
@@ -432,14 +439,6 @@ public class UserController {
 
 		return "redirect:/";
 	}
-//
-//	@PostMapping("/login/process")
-//	public String processLogin(@RequestParam String user, @RequestParam String password) {
-//		// TODO: process POST request
-//		System.out.println(user);
-//		System.out.println(password);
-//		return "/home";
-//	}
 
 	@GetMapping("/user/my")
 	public String showUserProfile(Model model, RedirectAttributes redirectAttributes) {
@@ -449,6 +448,13 @@ public class UserController {
 
 		Channel my_channel = channelService.getChannelById(getCurrentUserId());
 		model.addAttribute("channel", my_channel);
+		
+		Wallet wallet = walletService.getWalletById(getCurrentUserId());
+		
+		model.addAttribute("wallet", wallet);
+		
+		
+		
 
 		// Change password
 		// Change channelname and discription

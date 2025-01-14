@@ -4,11 +4,15 @@ package com.HowTo.spring_boot_HowTo.controller;
 import java.time.LocalDate;
 import java.io.File;
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -132,10 +136,33 @@ public class TutorialController {
 	}
 	
 	@GetMapping("/all")
-	public String showTutorialList(Model model) {
-		
-    	List<Tutorial> AllTutorials = tutorialService.getAllTutorials();
-		model.addAttribute("tutorials", AllTutorials);
+	public String showTutorialList(Model model, @RequestParam(required = false) String keyword,
+			@RequestParam(required = false, defaultValue = "1") int page, @RequestParam(required = false,
+			defaultValue = "5") int size) {
+try {
+			
+			List<Tutorial> tutorials = new ArrayList<Tutorial>();
+
+			 //the first page is 1 for the channel, 0 for the database.
+			 Pageable paging = PageRequest.of(page - 1, size);
+			 Page<Tutorial> pageTutorial;
+			 //getting the page from the database….
+			 pageTutorial = tutorialService.getAllTutorials(keyword, paging);
+
+			 model.addAttribute("keyword", keyword);
+
+			 tutorials = pageTutorial.getContent();
+			 model.addAttribute("tutorials", tutorials);
+			 //here are the variables for the paginator in the channel-all view
+			 model.addAttribute("entitytype", "tutorial");
+			 model.addAttribute("currentPage", pageTutorial.getNumber() + 1);
+			 model.addAttribute("totalItems", pageTutorial.getTotalElements());
+			 model.addAttribute("totalPages", pageTutorial.getTotalPages());
+			 model.addAttribute("pageSize", size);
+			 
+		} catch (Exception e){
+			model.addAttribute("message", e.getMessage());
+		}
 				
 		return "tutorials/tutorial-list";
 	}

@@ -1,19 +1,18 @@
 package com.HowTo.spring_boot_HowTo.service.impl;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.HowTo.spring_boot_HowTo.model.Category;
 import com.HowTo.spring_boot_HowTo.model.Channel;
-import com.HowTo.spring_boot_HowTo.model.Group;
 import com.HowTo.spring_boot_HowTo.model.Tutorial;
 import com.HowTo.spring_boot_HowTo.repository.CategoryRepositoryI;
 import com.HowTo.spring_boot_HowTo.repository.ChannelRepositoryI;
-import com.HowTo.spring_boot_HowTo.repository.HistoryRepositoryI;
 import com.HowTo.spring_boot_HowTo.repository.TutorialRepositoryI;
 
 import com.HowTo.spring_boot_HowTo.service.TutorialServiceI;
@@ -34,6 +33,18 @@ public class TutorialService implements TutorialServiceI{
 	public List<Tutorial> getAllTutorials() {
 		// TODO Auto-generated method stub
 		return tutorialRepository.findAll();
+	}
+	
+	@Override
+	public Page<Tutorial> getAllTutorials(String title, Pageable pageable){
+		Page <Tutorial> pageTutorial;
+		if (title == null) {
+			pageTutorial = tutorialRepository.findAll(pageable);
+		 } else {
+			 pageTutorial = tutorialRepository.findByTitleContainingIgnoreCase(title, pageable);
+
+		 }
+		return pageTutorial;
 	}
 
 	@Override
