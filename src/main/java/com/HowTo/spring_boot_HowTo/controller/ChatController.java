@@ -34,7 +34,6 @@ import jakarta.servlet.http.HttpServletRequest;
 public class ChatController {
 
 	private UserServiceI userService;
-
 	private GroupServiceI groupService;
 	private final ObjectMapper objectMapper;
 	private MessageServiceI messageService;
@@ -100,13 +99,16 @@ public class ChatController {
 	public String showUserRegisterForm(@PathVariable("id") Long groupId, Model model, HttpServletRequest request)
 			throws JsonProcessingException {
 		User user = userService.getUserById(getCurrentUserId());
+		//List<Group> userGroups = user.getJoinedGroups();
 		System.out.println("user: " + user);
 		Group group = groupService.getGroupById(groupId);
 		System.out.println("group: " + group);
 		String userJson = objectMapper.writeValueAsString(user);
 		String groupJson = objectMapper.writeValueAsString(group);
+		//String userGroupsJson = objectMapper.writeValueAsString(userGroups);
 		model.addAttribute("userJson", userJson);
 		model.addAttribute("groupJson", groupJson);
+		//model.addAttribute("userGroupsJson", userGroupsJson);
 		return "/chat/chat";
 	}
 
