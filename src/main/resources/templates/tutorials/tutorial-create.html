@@ -14,7 +14,7 @@
 	                  
 	                
 					  <div class="form-row">
-	                     <div class="form-group col-md-6">
+	                     <div class="form-group">
 	                         <label >Title</label>
 	                         <input type="text" class="form-control" 
 	                                autofocus="autofocus" th:field="*{title}" placeholder="Mein RTL"
@@ -23,20 +23,29 @@
 	                             <span th:errors="*{title}"></span>
 	                         </div>
 	                     </div>
-						 	<div class="form-group">
+						 <div class="form-group">
+							<label >Kategorie</label>
+							<select name="categorySelection" class="form-control">
+								<option th:each="element : ${categories}" th:value="${element.categoryId}" th:text="${element.categoryName}"></option>
+							</select>
+						 </div>
+						 <div class="form-group">
  			  					<label>Beschreibung</label>
  			  					<textarea class="form-control" th:field="*{contentText}" th:classappend="${#fields.hasErrors('contentText')} ? 'is-invalid'" rows="3"></textarea>
- 			  				</div>
- 							<div class="invalid-feedback">
-                             	<span th:errors="*{contentText}"></span>
-                         	</div>		
-					  	</div>   
+								<div class="invalid-feedback">
+								      <span th:errors="*{contentText}"></span>
+								</div>	
+ 			  			</div>
+						
+ 								
+					  </div>   
 					  	
 	                  
 					  <input type="hidden"  th:field="*{creationTime}"/>
 					  <input type="hidden"  th:field="*{likes}"/>
 					  <input type="hidden"  th:field="*{dislikes}"/>
 					  <input type="hidden"  th:field="*{createdByChannel}"/>
+					  
 
 					<button type="submit" class="btn btn-primary btn-sm">Upload</button>
 	            </form>

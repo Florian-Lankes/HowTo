@@ -7,7 +7,7 @@ import java.util.List;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
-
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -38,13 +38,15 @@ public class Group implements Serializable{
 	@DateTimeFormat(pattern="yyyy-MM-dd")
 	private LocalDate creationDate;
 	
+	@JsonBackReference(value = "user-joinedgroup")
 	@ManyToMany(mappedBy = "joinedgroups")
 	private List<User> users = new ArrayList<User>();
 	
+
 	@OneToMany(mappedBy = "messageGroup")							//user can be the owner of many comments
 	private List<Message> ownedMessagesGroup = new ArrayList<Message>();
 	
-	
+	@JsonBackReference(value = "user-group")
 	@ManyToOne()
 	private User groupOwner;
 	

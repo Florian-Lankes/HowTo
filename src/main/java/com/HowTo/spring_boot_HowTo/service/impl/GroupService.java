@@ -31,14 +31,15 @@ public class GroupService implements GroupServiceI{
 		User user = userRepository.findById(UserId).get();
 		List<Group> ownedgroups = user.getOwnedGroups();
 		
-		
 		if(user != null && group != null && ownedgroups != null) {
 			if(!ownedgroups.contains(group)) {
 				group.setGroupOwner(user);
 				user.addOwnedGroup(group);
-				groupRepository.save(group);
+				Group r = 
+						groupRepository.save(group);
+				return r;
 			}
-		}
+		}			
 		return group;
 	}
 
@@ -59,11 +60,12 @@ public class GroupService implements GroupServiceI{
 	public Group joinGroup(Group group, Long UserId) {
 		User user = userRepository.findById(UserId).get();
 		List<Group> joinedgroups = user.getJoinedGroups();
+		Group realgroup = groupRepository.findById(group.getGroupId()).get();
 		
 		if(user != null && group != null && joinedgroups != null) {
-			if(!joinedgroups.contains(group)) {
-				user.addJoinedGroup(group);
-				group.addUser(user);
+			if(!joinedgroups.contains(realgroup)) {
+				user.addJoinedGroup(realgroup);
+				realgroup.addUser(user);
 				userRepository.save(user);
 			}
 		}
@@ -89,6 +91,12 @@ public class GroupService implements GroupServiceI{
 	@Override
 	public void delete(Group group) {
 		// TODO Auto-generated method stub
+		Group realgroup = groupRepository.findById(group.getGroupId()).get();
+		List<User> joineduser = realgroup.getUsers();
+		for(User e: joineduser) {
+			e.removeJoinedGroup(realgroup);
+			userRepository.save(e);
+		}
 		groupRepository.delete(group);
 	}
 	

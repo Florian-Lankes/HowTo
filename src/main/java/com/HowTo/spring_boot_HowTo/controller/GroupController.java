@@ -17,6 +17,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.HowTo.spring_boot_HowTo.config.MyUserDetails;
 import com.HowTo.spring_boot_HowTo.model.Group;
+import com.HowTo.spring_boot_HowTo.model.User;
 import com.HowTo.spring_boot_HowTo.service.GroupServiceI;
 
 
@@ -41,8 +42,8 @@ public class GroupController {
 				|| authentication.getPrincipal() instanceof String) {
 			throw new IllegalStateException("User is not authenticated");
 		}
-		MyUserDetails userDetails = (MyUserDetails) authentication.getPrincipal();
-		return userDetails.getId();
+		User user = (User) authentication.getPrincipal();
+		return user.getUserId();
 	}
 	
 	//CREATE
@@ -50,7 +51,7 @@ public class GroupController {
 	public String showGroupAdForm(Model model, HttpServletRequest request) {
 		
 		Group groupForm = new Group();
-		groupForm.setGroupId((long) -1); //TODO change dynamically after user authorization is implemented
+		//groupForm.setGroupId(null); //TODO change dynamically after user authorization is implemented
 		LocalDate date= LocalDate.now();
 		groupForm.setCreationDate(date);
 		
@@ -73,10 +74,12 @@ public class GroupController {
         }
 
     	
-    	groupService.saveGroup(group, getCurrentUserId());
+    	Group r= groupService.saveGroup(group, getCurrentUserId());
+    	System.out.println(r.getGroupId());
         redirectAttributes.addFlashAttribute("created", "Group created!");
-//        groupService.joinGroup(group, getCurrentUserId()); //doenst wanna join the group after creating
-//        redirectAttributes.addFlashAttribute("joined", "Group joined!");
+        groupService.joinGroup(r, getCurrentUserId()); //doenst wanna join the group after creating
+        redirectAttributes.addFlashAttribute("joined", "Group joined!");
+        
         
         return "redirect:/group/all";
     }

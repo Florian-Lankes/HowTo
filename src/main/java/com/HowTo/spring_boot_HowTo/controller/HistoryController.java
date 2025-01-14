@@ -36,8 +36,8 @@ public class HistoryController {
 				|| authentication.getPrincipal() instanceof String) {
 			throw new IllegalStateException("User is not authenticated");
 		}
-		MyUserDetails userDetails = (MyUserDetails) authentication.getPrincipal();
-		return userDetails.getId();
+		User user = (User) authentication.getPrincipal();
+		return user.getUserId();
 	}
 	
 	@GetMapping("/my")
@@ -45,7 +45,6 @@ public class HistoryController {
 		User user = userService.getUserById(getCurrentUserId());
 		model.addAttribute("history", user.getHistory() );
 		return "history";
-		
 	}
 	
 	@GetMapping("/track/{tutorialid}")

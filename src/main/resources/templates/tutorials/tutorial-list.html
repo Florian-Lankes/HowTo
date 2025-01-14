@@ -35,12 +35,17 @@
 				</div>
 			</div>
 			
-			<table class="table table-striped table-bordered" style="width: 80%">
+			<div th:unless="${tutorials.size() > 0}" style="width: 80%">
+			  			<span>No Tutorials shown at the Moment!</span>
+					</div>
+			
+			<table class="table table-striped table-bordered" style="width: 80%" th:if="${tutorials.size() > 0}">
 				<thead class="table-dark">
 					<tr>
 						<th> Id </th>
 						<th> Creator </th>
 						<th> Creation Time </th>
+						<th> Category</th>	
 						<th> Title</th>
 						<th> Content_text</th>
 						<th> Likes</th>
@@ -56,6 +61,8 @@
 						<td th:text="${element.tutorialId}"></td>
 						<td th:text = "${element.createdByChannel.channelId}"></td>
 						<td th:text = "${element.creationTime}"></td>
+						<td th:if="${element.tutorialCategory  != null}" th:text="${element.tutorialCategory.categoryName}"></td>
+						<td th:unless="${element.tutorialCategory  != null}"></td>
 						<td th:text="${element.title}"></td>
 						<td th:text="${element.contentText}"></td>
 						<td th:text="${element.likes}"></td>

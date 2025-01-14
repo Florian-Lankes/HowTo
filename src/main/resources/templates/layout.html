@@ -1,7 +1,6 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" 
-xmlns:th="http://www.thymeleaf.org" 
-xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" > 
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
 
 <head>
 	<title>Spring-Boot Basic</title>
@@ -19,53 +18,52 @@ xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" >
 </head>
 
 
-<body>
-	
-	<header>
-		<div  th:replace="~{fragments/header::header}">
-						
+<body class="bg-light">
+
+	<header class="bg-primary">
+		<div class="container">
+			<div th:replace="~{fragments/header::header}"></div>
 		</div>
-					
+
 	</header>
 
 
-	<div  class="layout-main" 	style="width: 90%; align-items: center;	padding-left:5%;" >
-				
-			
+
+	<div class="container">
 		<section layout:fragment="mybody">
-			<div> main content </div>							
-		</section>		
+			<div> main content </div>
+		</section>
+	</div> <!--div class="layout-main" -->
 
-			
-	</div>	<!--div class="layout-main" -->
-
-	<footer class="layout-footer">
-		<div  th:replace="~{fragments/footer::footer}">
-	
+	<footer class="bg-secondary">
+		<div class="container">
+			<div th:replace="~{fragments/footer::footer}"></div>
 		</div>
-	</footer> 
-	
+		
+	</footer>
+
 	<!-- Bootstrap core JavaScript
     ================================================== -->
 	<!-- Placed at the end of the document so the pages load faster -->
 	<script src="/webjars/jquery/jquery.min.js"></script>
 	<script src="/webjars/jquery-mask-plugin/dist/jquery.mask.min.js"></script>
-	<script	src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
 	<script src="/webjars/bootstrap/js/bootstrap.min.js"></script>
 	<script type="text/javascript">
-	    
-		$(function() {
+
+		$(function () {
 			$('[data-toggle="popover"]').popover();
 		});
-		
-		$(document).ready(function(){
-		    $(".navbar-toggle").click(function(){
-		        $(".sidebar").toggleClass("sidebar-open");
-		    })
+
+		$(document).ready(function () {
+			$(".navbar-toggle").click(function () {
+				$(".sidebar").toggleClass("sidebar-open");
+			})
 		});
 
 	</script>
-	
-	
+
+
 </body>
+
 </html>

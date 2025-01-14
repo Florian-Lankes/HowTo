@@ -2,8 +2,13 @@ package com.HowTo.spring_boot_HowTo.controller;
 
 
 import java.time.LocalDate;
+import java.io.File;
 import java.sql.Timestamp;
 import java.util.List;
+import java.util.Random;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -14,15 +19,24 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
+
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-
+import com.HowTo.spring_boot_HowTo.model.Advertisement;
+import com.HowTo.spring_boot_HowTo.model.Category;
+import com.HowTo.spring_boot_HowTo.model.Channel;
 import com.HowTo.spring_boot_HowTo.model.Comment;
-
 import com.HowTo.spring_boot_HowTo.config.MyUserDetails;
 
 import com.HowTo.spring_boot_HowTo.model.Tutorial;
+import com.HowTo.spring_boot_HowTo.model.User;
+import com.HowTo.spring_boot_HowTo.service.CloudinaryServiceI;
+import com.HowTo.spring_boot_HowTo.service.CategoryServiceI;
+import com.HowTo.spring_boot_HowTo.service.ChannelServiceI;
 import com.HowTo.spring_boot_HowTo.service.TutorialServiceI;
+import com.HowTo.spring_boot_HowTo.subscribemsg.OnInformSubscriberEvent;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
@@ -31,11 +45,21 @@ import jakarta.validation.Valid;
 @RequestMapping("/tutorial")
 public class TutorialController {
 	
-	private TutorialServiceI tutorialService;
+	@Autowired
+    private ApplicationEventPublisher eventPublisher;
 	
-	public TutorialController(TutorialServiceI tutorialService) {
+	private TutorialServiceI tutorialService;
+	private CloudinaryServiceI cloudinaryService;
+	private CategoryServiceI categoryService;
+	private ChannelServiceI channelService;
+	
+	public TutorialController(TutorialServiceI tutorialService, CategoryServiceI categoryService, CloudinaryServiceI cloudinaryService, ChannelServiceI channelService) {
 		super();
 		this.tutorialService = tutorialService;
+		this.categoryService = categoryService;
+		this.cloudinaryService = cloudinaryService;
+		this.channelService = channelService;
+
 	}
 	
 	
@@ -45,9 +69,10 @@ public class TutorialController {
 				|| authentication.getPrincipal() instanceof String) {
 			throw new IllegalStateException("User is not authenticated");
 		}
-		MyUserDetails userDetails = (MyUserDetails) authentication.getPrincipal();
-		return userDetails.getId();
+		User user = (User) authentication.getPrincipal();
+		return user.getUserId();
 	}
+	
 	
 	@GetMapping("/view/{id}")
 	public String getTutorialView(@PathVariable("id") Long id, Model model) {
@@ -59,7 +84,26 @@ public class TutorialController {
 		commentForm.setCommentId((long) -1); //TODO change dynamically after user authorization is implemented
 		LocalDate date= LocalDate.now();
 		commentForm.setCreationDate(date);
+		Category category = tutorial.getTutorialCategory();
 		
+		if(category != null) {
+			List<Advertisement> advertisements = category.getAdvertisements();
+			int size = advertisements.size();
+			if (size > 0) {
+				Random r = new Random();
+				int random = r.nextInt(size);
+			    Advertisement randomAd = advertisements.get(random);
+			    String advertisement = randomAd.getVideoUrl();
+			    model.addAttribute("advertisement", advertisement );
+			    // Use randomAd as needed
+			} else {
+			    // Handle case when the list is empty
+			    System.out.println("No advertisements available.");
+			}
+		}
+		else {
+			System.out.println("No category available.");
+		}
 		model.addAttribute("tutorial", tutorial );
 		model.addAttribute("comment", commentForm);
 		return "tutorials/tutorial";
@@ -71,7 +115,7 @@ public class TutorialController {
 			HttpServletRequest request) {
 	 	Tutorial tutorial = tutorialService.getTutorialById(id); 
 	 	tutorial.setLikes(tutorial.getLikes()+1);
-		tutorialService.updateTutorial(tutorial);
+		tutorialService.updateTutorial(tutorial, tutorial.getTutorialCategory().getCategoryId());
 
 		return "redirect:/tutorial/all";
 	}
@@ -82,13 +126,13 @@ public class TutorialController {
 			HttpServletRequest request) {
 	 	Tutorial tutorial = tutorialService.getTutorialById(id); 
 	 	tutorial.setDislikes(tutorial.getDislikes()+1);
-		tutorialService.updateTutorial(tutorial);
+		tutorialService.updateTutorial(tutorial, tutorial.getTutorialCategory().getCategoryId());
 		
 		return "redirect:/tutorial/all";
 	}
 	
 	@GetMapping("/all")
-	public String showChannelList(Model model) {
+	public String showTutorialList(Model model) {
 		
     	List<Tutorial> AllTutorials = tutorialService.getAllTutorials();
 		model.addAttribute("tutorials", AllTutorials);
@@ -97,28 +141,38 @@ public class TutorialController {
 	}
 	
 	@GetMapping("/create")
-	public String createTutorialView(Model model, HttpServletRequest request) {
+	public String createTutorialView(Model model) {
 		
 		Tutorial tutorial = new Tutorial();
-		tutorial.setTutorialId((long) -1); //TODO change dynamically after user authorization is implemented
 		tutorial.setLikes((long) 0);
 		tutorial.setDislikes((long) 0);
 		Timestamp currentTimestamp = new Timestamp(System.currentTimeMillis());
 		tutorial.setCreationTime(currentTimestamp);
+		List<Category> categories = categoryService.getAllCategorys();
 		model.addAttribute("tutorial", tutorial);
+		model.addAttribute("categories",categories);
 		
 		return "tutorials/tutorial-create";
 	}
-	
+	// 
 	@PostMapping("/upload")
-	public String uploadTutorial(@Valid @ModelAttribute Tutorial tutorial, 
+	public String uploadTutorial(@RequestParam("categorySelection") Long categoryId, @Valid @ModelAttribute Tutorial tutorial, 
 			BindingResult results, Model model, 
 			RedirectAttributes redirectAttributes ) {
 		if (results.hasErrors()) {
 			System.out.println(results.getAllErrors().toString());
+			List<Category> categories = categoryService.getAllCategorys();
+			model.addAttribute("categories",categories);
     		return "/tutorials/tutorial-create";
         }
-		tutorialService.saveTutorial(tutorial, getCurrentUserId());
+		tutorialService.saveTutorial(tutorial, getCurrentUserId(), categoryId);
+		Channel c = channelService.getChannelById(getCurrentUserId());
+		List<User> subscribedUsers = c.getSubscribedFromUserList();
+		
+		for (User u : subscribedUsers) {
+			eventPublisher.publishEvent(new OnInformSubscriberEvent(u, c.getChannelname(), tutorial.getTitle()));
+		}
+		
 		redirectAttributes.addFlashAttribute("created", "Tutorial created!");
 		
 		return "redirect:/tutorial/all";
@@ -126,7 +180,17 @@ public class TutorialController {
 	
 	@GetMapping("/delete/{id}")
     public String deleteTutorial(@PathVariable("id") Long tutorialId, Model model, RedirectAttributes redirectAttributes) {
-        Tutorial tutorial = tutorialService.getTutorialById(tutorialId);               
+        Tutorial tutorial = tutorialService.getTutorialById(tutorialId);     
+        if(tutorial != null &&tutorial.getVideoUrl() != null && !tutorial.getVideoUrl().isEmpty()) {
+    		
+    		String s = tutorial.getVideoUrl();  //String split to get public id and delete it
+    		String[] news = s.split("/");
+    		String name = news[news.length-1];
+    		String[] test = name.split("\\.");
+    		String publicId = test[0];
+    		cloudinaryService.deleteFile(publicId);
+    		cloudinaryService.deleteVideoUrl(tutorialId);
+    	}
         tutorialService.delete(tutorial);
         redirectAttributes.addFlashAttribute("deleted", "Tutorial deleted!");
         return "redirect:/tutorial/all";
@@ -138,15 +202,16 @@ public class TutorialController {
 			HttpServletRequest request) {
 	 	Tutorial tutorial = tutorialService.getTutorialById(tutorialId); 
     	model.addAttribute("tutorial", tutorial);
-    	//model.addAttribute("createdByChannel", tutorial.getCreatedByChannel());
-		
+    	List<Category> categories = categoryService.getAllCategorys();
+		model.addAttribute("categories",categories);
+
 		System.out.println("updating tutorial id="+ tutorialId);
 		return "/tutorials/tutorial-update";
 	}
     
     
     @PostMapping("/update")
-	public String updateTutorial(@Valid @ModelAttribute Tutorial tutorial, //@Valid @ModelAttribute Long channel,
+	public String updateTutorial(@Valid @ModelAttribute Tutorial tutorial, @RequestParam("categorySelection") Long categoryId,//@Valid @ModelAttribute Long channel,
 			BindingResult results,
 			Model model, 
 			RedirectAttributes redirectAttributes) {
@@ -155,9 +220,46 @@ public class TutorialController {
 			return "/tutorials/tutorial-update";
 		}
 		
-		tutorialService.updateTutorial(tutorial);
+		tutorialService.updateTutorial(tutorial, categoryId);
         redirectAttributes.addFlashAttribute("updated", "tutorial updated!");
 		return "redirect:/tutorial/all";
 	}
-	
+    
+    @PostMapping("/uploadvideo/{id}")
+	public String uploadVideo(@PathVariable("id") Long tutorialId, @RequestParam("video") MultipartFile file, RedirectAttributes redirectAttributes) {
+    	
+    	Tutorial tutorial = tutorialService.getTutorialById(tutorialId);
+    	if(tutorial.getVideoUrl() != null && !tutorial.getVideoUrl().isEmpty()) {
+    		
+    		String s = tutorial.getVideoUrl();  //String split to get public id and delete it
+    		String[] news = s.split("/");
+    		String name = news[news.length-1];
+    		String[] test = name.split("\\.");
+    		String publicId = test[0];
+    		cloudinaryService.deleteFile(publicId);
+    	}
+		cloudinaryService.uploadFile(file, tutorialId);
+        redirectAttributes.addFlashAttribute("updated", "tutorial video updated!");
+		return "redirect:/tutorial/all";
+	}
+    
+    @GetMapping("/deletevideo/{id}")
+	public String deleteVideo(@PathVariable("id") Long tutorialId, 
+			Model model,
+			HttpServletRequest request, RedirectAttributes redirectAttributes) {
+    	Tutorial tutorial = tutorialService.getTutorialById(tutorialId);
+    	if(tutorial.getVideoUrl() != null && !tutorial.getVideoUrl().isEmpty()) {
+    		
+    		String s = tutorial.getVideoUrl();  //String split to get public id and delete it
+    		String[] news = s.split("/");
+    		String name = news[news.length-1];
+    		String[] test = name.split("\\.");
+    		String publicId = test[0];
+    		cloudinaryService.deleteFile(publicId);
+    		cloudinaryService.deleteVideoUrl(tutorialId);
+    	}
+    	redirectAttributes.addFlashAttribute("deleted", "tutorial video deleted!");
+		return "redirect:/tutorial/all";
+	}
+    
 }

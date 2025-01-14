@@ -1,19 +1,30 @@
 package com.HowTo.spring_boot_HowTo.controller;
 
+import java.io.UnsupportedEncodingException;
+import java.nio.file.spi.FileSystemProvider;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
+import java.util.NoSuchElementException;
+import java.util.Optional;
 
+import org.jboss.aerogear.security.otp.api.Base32;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.core.ResolvableType;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -22,38 +33,69 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.HowTo.spring_boot_HowTo.changepassword.OnChangePasswordEvent;
+import com.HowTo.spring_boot_HowTo.changepasswordloggedin.OnChangePasswordLoggedInEvent;
 import com.HowTo.spring_boot_HowTo.config.MyUserDetails;
+import com.HowTo.spring_boot_HowTo.config.google2fa.CustomAuthenticationProvider;
+import com.HowTo.spring_boot_HowTo.model.Channel;
 import com.HowTo.spring_boot_HowTo.model.User;
 import com.HowTo.spring_boot_HowTo.model.VerificationToken;
 import com.HowTo.spring_boot_HowTo.registration.OnRegistrationCompleteEvent;
+import com.HowTo.spring_boot_HowTo.service.ChannelServiceI;
 import com.HowTo.spring_boot_HowTo.service.UserServiceI;
 import com.HowTo.spring_boot_HowTo.validator.UserAlreadyExistException;
 import com.HowTo.spring_boot_HowTo.validator.UserValidator;
+import com.cloudinary.utils.StringUtils;
 
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
+import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService;
+import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
+import org.springframework.security.oauth2.client.registration.ClientRegistration;
+import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
+import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 
 @Controller
 public class UserController {
 
-	private UserServiceI userService;
-	
-	@Autowired
-    private ApplicationEventPublisher eventPublisher;
+	private static final String authorizationRequestBaseUri = "oauth2/authorization";
+	Map<String, String> oauth2AuthenticationUrls = new HashMap<>();
 
-	public UserController(UserServiceI userService) {
+	private UserServiceI userService;
+
+	private ChannelServiceI channelService;
+
+	@Autowired
+	private ApplicationEventPublisher eventPublisher;
+
+	@Autowired
+	private ClientRegistrationRepository clientRegistrationRepository;
+
+	@Autowired
+	private OAuth2AuthorizedClientService authorizedClientService;
+	@Autowired
+	private CustomAuthenticationProvider customAuthenticationProvider;
+
+	public UserController(UserServiceI userService, ChannelServiceI channelService) {
 		super();
 		this.userService = userService;
+		this.channelService = channelService;
 	}
 
-	@InitBinder
+	@InitBinder("user")
 	public void initBinder(WebDataBinder binder) {
 		binder.addValidators(new UserValidator());
 	}
@@ -64,8 +106,8 @@ public class UserController {
 				|| authentication.getPrincipal() instanceof String) {
 			throw new IllegalStateException("User is not authenticated");
 		}
-		MyUserDetails userDetails = (MyUserDetails) authentication.getPrincipal();
-		return userDetails.getId();
+		User user = (User) authentication.getPrincipal();
+		return user.getUserId();
 	}
 
 	@GetMapping(value = { "/user/admin", "/user/admin/all" })
@@ -110,7 +152,6 @@ public class UserController {
 		User user = userService.getUserById(id);
 		model.addAttribute("user", user);
 		request.getSession().setAttribute("userSession", user);
-
 		System.out.println("updating user id=" + id);
 		return "/users/user-update";
 	}
@@ -122,7 +163,6 @@ public class UserController {
 
 			return "/users/user-update";
 		}
-
 		userService.updateUser(user);
 		redirectAttributes.addFlashAttribute("updated", "user updated!");
 		return "redirect:/user/admin/all";
@@ -157,75 +197,241 @@ public class UserController {
 		return "redirect:/user/admin/all";
 	}
 
-	@GetMapping("/")
+	@GetMapping("/register")
 	public String showUserRegisterForm(Model model, HttpServletRequest request) {
 
 		User userForm = new User();
-		userForm.setUserId((long) -1);
 		LocalDate date = LocalDate.now();
 		userForm.setBirthDate(date);
 
 		request.getSession().setAttribute("userSession", userForm);
 		model.addAttribute("user", userForm);
 
-		return "/register"; 
+		return "register";
 	}
-	
+
 	@GetMapping("/registrationConfirm")
-	public String confirmRegistration
-	  (WebRequest request, Model model, @RequestParam("token") String token) {
-	 
-	    // Locale locale = request.getLocale();
-	    
-	    VerificationToken verificationToken = userService.getVerificationToken(token);
-	    if (verificationToken == null) {
+	public String confirmRegistration(WebRequest request, Model model, @RequestParam("token") String token) {
+
+		// Locale locale = request.getLocale();
+
+		VerificationToken verificationToken = userService.getVerificationToken(token);
+		if (verificationToken == null) {
 //	        String message = messages.getMessage("auth.message.invalidToken", null, locale);
 //	        model.addAttribute("message", message);
-	        return "redirect:/badUser"; // ?lang="  + locale.getLanguage();
-	    }
-	    
-	    User user = verificationToken.getUser();
-	    Calendar cal = Calendar.getInstance();
-	    if ((verificationToken.getExpiryDate().getTime() - cal.getTime().getTime()) <= 0) {
+			return "redirect:/badUser"; // ?lang=" + locale.getLanguage();
+		}
+
+		User user = verificationToken.getUser();
+		Calendar cal = Calendar.getInstance();
+		if ((verificationToken.getExpiryDate().getTime() - cal.getTime().getTime()) <= 0) {
 //	        String messageValue = messages.getMessage("auth.message.expired", null, locale);
 //	        model.addAttribute("message", messageValue);
-	        return "redirect:/badUser"; //?lang=" + locale.getLanguage();
-	    } 
-	    user.setEnabled(true); 
-	    userService.saveRegisteredUser(user); 
-	    return "redirect:/login"; // + request.getLocale().getLanguage(); 
+			return "redirect:/badUser"; // ?lang=" + locale.getLanguage();
+		}
+		user.setEnabled(true);
+		userService.saveRegisteredUser(user);
+		return "redirect:/login"; // + request.getLocale().getLanguage();
 	}
 
 	@PostMapping("/register")
 	public String registerUser(@Valid @ModelAttribute User user, BindingResult result, Model model,
-			RedirectAttributes redirectAttributes, HttpServletRequest request){
+			RedirectAttributes redirectAttributes, HttpServletRequest request) {
 		System.out.println("In Function");
 		if (result.hasErrors()) {
 			System.out.println(result.getAllErrors().toString());
-			return "/";
+			return "register";
 		}
-		
 		try {
-	        User registered = userService.saveUser(user);
-	        String appUrl = request.getContextPath();
-	        eventPublisher.publishEvent(new OnRegistrationCompleteEvent(registered, 
-	          request.getLocale(), appUrl));
-	    } catch (UserAlreadyExistException uaeEx) {
-	    	redirectAttributes.addFlashAttribute("register", "An account for that username/email already exists.");
-	        return "redirect:/";
-	    }
+			User registered = userService.saveUser(user);
+			String appUrl = request.getContextPath();
+			eventPublisher.publishEvent(new OnRegistrationCompleteEvent(registered, request.getLocale(), appUrl));
+		} catch (UserAlreadyExistException uaeEx) {
+			redirectAttributes.addFlashAttribute("register", "An account for that username/email already exists.");
+			return "redirect:/";
+		}
 		System.out.println(user);
-		
-		
-		redirectAttributes.addFlashAttribute("added", "User added!");
+
+		redirectAttributes.addFlashAttribute("added", "User added! Please confirm per E-mail");
 
 		return "redirect:/login";
 	}
 
-//	@GetMapping("/login")
-//	public String showLoginForm() {
-//		return "login";
-//	}
+	@GetMapping("/user/changemypassword")
+	public String changePassword(Model model, RedirectAttributes redirectAttributes, HttpServletRequest request) {
+		User user = userService.getUserById(getCurrentUserId());
+		model.addAttribute("user", user);
+		return "changepassword";
+	}
+
+	@PostMapping("/user/passwordchanged")
+	public String passwordchanged(@Valid @ModelAttribute User user, BindingResult result, Model model,
+			RedirectAttributes redirectAttributes) {
+		userService.changePassword(user);
+		eventPublisher.publishEvent(new OnChangePasswordLoggedInEvent(user));
+		return "redirect:/login";
+	}
+
+	@GetMapping("/user/forgotmypassword")
+	public String forgotmyPassword(RedirectAttributes redirectAttributes, HttpServletRequest request) {
+
+		return "forgotpassword";
+	}
+
+	@PostMapping("/user/forgotmypassword")
+	public String forgotmyPasswordemail(@RequestParam("email") String email, Model model,
+			RedirectAttributes redirectAttributes, HttpServletRequest request) {
+		Optional<User> u = userService.getUserByEmail(email);
+		try {
+			User user = u.get();
+			if (!user.isEnabled()) {
+				redirectAttributes.addFlashAttribute("deleted", "Account with this E-Mail wasn't confirmed");
+				return "redirect:/login";
+			}
+			String appUrl = request.getContextPath();
+			eventPublisher.publishEvent(new OnChangePasswordEvent(user, request.getLocale(), appUrl));
+
+			redirectAttributes.addFlashAttribute("email", "E-Mail for password change has been sent");
+			return "redirect:/login";
+		} catch (NoSuchElementException e) {
+			redirectAttributes.addFlashAttribute("deleted", "No account with such E-Mail");
+			return "redirect:/login";
+		}
+	}
+
+	@GetMapping("/confirmPassword")
+
+	public String confirmpassword(WebRequest request, Model model, @RequestParam("token") String token) {
+		// Locale locale = request.getLocale();
+
+		VerificationToken verificationToken = userService.getVerificationToken(token);
+		if (verificationToken == null) {
+//	        String message = messages.getMessage("auth.message.invalidToken", null, locale);
+//	        model.addAttribute("message", message);
+			return "redirect:/badUser"; // ?lang=" + locale.getLanguage();
+		}
+
+		User user = verificationToken.getUser();
+		Calendar cal = Calendar.getInstance();
+		if ((verificationToken.getExpiryDate().getTime() - cal.getTime().getTime()) <= 0) {
+//	        String messageValue = messages.getMessage("auth.message.expired", null, locale);
+//	        model.addAttribute("message", messageValue);
+			return "redirect:/badUser"; // ?lang=" + locale.getLanguage();
+		}
+
+		model.addAttribute("user", user);
+		model.addAttribute("token", token);
+		return "changeforgottenpassword"; // + request.getLocale().getLanguage();
+	}
+
+	@PostMapping("/user/forgottenpasswordchanged")
+	public String forgottenpasswordchanged(@Valid @ModelAttribute User user, @RequestParam("token") String token,
+			BindingResult result, Model model, RedirectAttributes redirectAttributes) {
+		VerificationToken verificationToken = userService.getVerificationToken(token);
+		if (verificationToken == null) {
+			return "redirect:/badUser";
+		}
+
+		User u = verificationToken.getUser();
+		User check = userService.getUserById(user.getUserId());
+		if (check.equals(u)) {
+			userService.changePassword(user);
+		}
+		return "redirect:/login";
+	}
+
+	@GetMapping("user/my/activate2fa")
+	public String activate2fa(Model model) throws UnsupportedEncodingException {
+		System.out.println("In Function");
+		User user = userService.getUserById(getCurrentUserId());
+		String qr = userService.generateQRUrl(user);
+		model.addAttribute("qr", userService.generateQRUrl(user));
+		System.out.println("this is the qr code: " + qr);
+		user.setUsing2FA(true);
+		userService.saveRegisteredUser(user);
+		return "users/qrcode";
+
+	}
+
+	@GetMapping("user/my/deactivate2fa")
+	public String deactivate2fa(Model model) {
+		User user = userService.getUserById(getCurrentUserId());
+		user.setUsing2FA(false);
+		userService.saveRegisteredUser(user);
+		return "/login";
+
+	}
+
+	@RequestMapping(value = { "/login", "/" }, method = RequestMethod.GET)
+	public String showLoginForm(Model model) {
+		Iterable<ClientRegistration> clientRegistrations = null;
+		ResolvableType type = ResolvableType.forInstance(clientRegistrationRepository).as(Iterable.class);
+		if (type != ResolvableType.NONE && ClientRegistration.class.isAssignableFrom(type.resolveGenerics()[0])) {
+			clientRegistrations = (Iterable<ClientRegistration>) clientRegistrationRepository;
+		}
+
+		clientRegistrations.forEach(registration -> oauth2AuthenticationUrls.put(registration.getClientName(),
+				authorizationRequestBaseUri + "/" + registration.getRegistrationId()));
+		model.addAttribute("urls", oauth2AuthenticationUrls);
+
+		return "login_register";
+	}
+
+	@GetMapping("/loginSuccess")
+	public String getLoginInfo(HttpServletRequest request, Model model, OAuth2AuthenticationToken authentication2) {
+
+		OAuth2AuthorizedClient client = authorizedClientService
+				.loadAuthorizedClient(authentication2.getAuthorizedClientRegistrationId(), authentication2.getName());
+
+		String userInfoEndpointUri = client.getClientRegistration().getProviderDetails().getUserInfoEndpoint().getUri();
+
+		if (!StringUtils.isEmpty(userInfoEndpointUri)) {
+			RestTemplate restTemplate = new RestTemplate();
+			HttpHeaders headers = new HttpHeaders();
+			headers.add(HttpHeaders.AUTHORIZATION, "Bearer " + client.getAccessToken().getTokenValue());
+
+			HttpEntity<String> entity = new HttpEntity<String>("", headers);
+
+			ResponseEntity<Map> response = restTemplate.exchange(userInfoEndpointUri, HttpMethod.GET, entity,
+					Map.class);
+			Map userAttributes = response.getBody();
+			model.addAttribute("name", userAttributes.get("name"));
+			String userName;
+			if (userAttributes.get("name") == null) {
+				userName = userAttributes.get("login").toString();
+			} else {
+				userName = userAttributes.get("name").toString();
+			}
+			User u = userService.saveO2authUser(userAttributes.get("email").toString(), userName);
+			UsernamePasswordAuthenticationToken authRequest = new UsernamePasswordAuthenticationToken(u.getUsername(),
+					u.getUsername());
+
+			// Authenticate the user
+			Authentication authentication = customAuthenticationProvider.authenticate(authRequest);
+			SecurityContext securityContext = SecurityContextHolder.getContext();
+			SecurityContextHolder.getContext().setAuthentication(authentication);
+			securityContext.setAuthentication(authentication);
+
+			// Create a new session and add the security context.
+			HttpSession session = request.getSession(true);
+			session.setAttribute("SPRING_SECURITY_CONTEXT", securityContext);
+
+		}
+
+		// Überprüfe die Benutzerrollen Authentication
+
+//        
+//        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+//        System.out.println("User Authorities: " + auth.getAuthorities());
+
+		return "home";
+	}
+
+	@GetMapping("/logout")
+	public String logout() {
+
+		return "redirect:/";
+	}
 //
 //	@PostMapping("/login/process")
 //	public String processLogin(@RequestParam String user, @RequestParam String password) {
@@ -234,28 +440,22 @@ public class UserController {
 //		System.out.println(password);
 //		return "/home";
 //	}
-	
+
 	@GetMapping("/user/my")
 	public String showUserProfile(Model model, RedirectAttributes redirectAttributes) {
-		
+
 		User current_user = userService.getUserById(getCurrentUserId());
 		model.addAttribute("user", current_user);
-		
-		// IF USER: Get creator
-		// IF CREATOR: Show all subscribers
-		// IF CREATOR: Show all Uploaded videos
-		
+
+		Channel my_channel = channelService.getChannelById(getCurrentUserId());
+		model.addAttribute("channel", my_channel);
+
 		// Change password
-		// CHANGE username or channelname and discription
-		
-		
-		//Enable 2fa
-		
-		
-		
-		
+		// Change channelname and discription
+
+		// Enable 2fa
+
 		return "/users/profile";
 	}
-	
 
 }

@@ -1,6 +1,8 @@
 package com.HowTo.spring_boot_HowTo.service;
 
+import java.io.UnsupportedEncodingException;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -9,6 +11,8 @@ import com.HowTo.spring_boot_HowTo.model.User;
 import com.HowTo.spring_boot_HowTo.model.VerificationToken;
 
 public interface UserServiceI {
+	
+	List<User> getAllUsers();
 
 	Page<User> getAllUsers(String username, Pageable pageable);
 	
@@ -29,5 +33,15 @@ public interface UserServiceI {
 	VerificationToken getVerificationToken(String VerificationToken);
 
 	void createVerificationTokenForUser(User user, String token);
+	
+	String generateQRUrl(User user) throws UnsupportedEncodingException;
+
+	User saveO2authUser(String email, String name);
+
+	boolean checkAdmin(User user);
+	
+	User changePassword(User user);
+	
+	Optional<User> getUserByEmail(String email);
 
 }

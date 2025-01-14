@@ -40,6 +40,7 @@ public class HistoryService implements HistoryServiceI{
             if(!historyList.contains(history)) {
             	history.setHistoryOwner(user);
             	history.setHistoryTutorial(tutorial);
+            	tutorial.addHistory(history);
                 user.addToHistory(history);
                 historyRepository.save(history);
             }

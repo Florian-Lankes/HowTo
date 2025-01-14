@@ -1,14 +1,19 @@
 package com.HowTo.spring_boot_HowTo.service.impl;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
+import org.jboss.aerogear.security.otp.api.Base32;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.HowTo.spring_boot_HowTo.model.Comment;
@@ -35,13 +40,23 @@ public class UserService implements UserServiceI {
 	CommentRepositoryI commentRepository;
 	@Autowired
 	GroupRepositoryI groupRepository;
-
 	
-//	@Override
-//	public List<User> getAllUsers() {
-//		// TODO Auto-generated method stub
-//		return userRepository.findAll();
-//	}
+	private final PasswordEncoder passwordEncoder;
+	
+	
+	public static String QR_PREFIX = "https://qrcode.tec-it.com/API/QRCode?data=";
+    public static String APP_NAME = "SpringRegistration";
+	
+	public UserService() {
+		this.passwordEncoder = new BCryptPasswordEncoder();
+	};
+	
+	@Override
+	public List<User> getAllUsers() {
+		// TODO Auto-generated method stub
+		return userRepository.findAll();
+	}
+	
 		
 	@Override
 	public Page<User> getAllUsers(String username, Pageable pageable) {
@@ -67,21 +82,69 @@ public class UserService implements UserServiceI {
 	            throw new UserAlreadyExistException("There is an account with that username: "
 	              + user.getUsername());
 	        }
+		user.setPassword(passwordEncoder.encode(user.getPassword()));
 		user.setRoles(Collections.singletonList(roleRepository.findByDescription("USER")));
 		return userRepository.save(user);
 	}
 	
+
+	@Override
+	public User saveO2authUser(String email, String name) {
+		// TODO Auto-generated method stub
+		User user = new User();
+		  if (usernameExists(name) & emailExists(email)) {
+			  User u = userRepository.findUserByUsername(name).get();
+			  User w = userRepository.findUserByEmail(email).get();
+			  String userEmail1 = u.getEmail();
+			  String userEmail2 = w.getEmail();
+			  if (userEmail1 == userEmail2){
+				  System.out.println("test");
+				  return w;
+			  }else {
+				  throw new UserAlreadyExistException("There is an account with that username: "
+			              + user.getUsername());
+			  }
+	        }
+		  if (!emailExists(user.getEmail())) {
+				user.setEmail(email);
+				user.setUsername(name);
+				user.setEnabled(true);
+				user.setUsingOauth(true);
+				user.setPassword(name);
+				user.setBirthDate(LocalDate.of(2020, 1, 20));
+				user.setPassword(passwordEncoder.encode(user.getPassword()));
+				user.setRoles(Collections.singletonList(roleRepository.findByDescription("USER")));
+				userRepository.save(user);
+				return user;
+		  }else {
+			  throw new UserAlreadyExistException("There is an account with that username: "
+		              + user.getUsername());
+		  }
+//		user.setEmail(email);
+//		user.setUsername(name);
+//		user.setEnabled(true);
+//		user.setPassword(name);
+//		user.setBirthDate(LocalDate.of(2020, 1, 20));
+//		user.setPassword(passwordEncoder.encode(user.getPassword()));
+//		user.setRoles(Collections.singletonList(roleRepository.findByDescription("USER")));
+//		userRepository.save(user);
+//		return user;
+	}
+	
+	
   @Override
-    public VerificationToken getVerificationToken(final String VerificationToken) {
+    public VerificationToken getVerificationToken( String VerificationToken) {
         return tokenRepository.findByToken(VerificationToken);
     }
   
   @Override
-  public void createVerificationTokenForUser(final User user, final String token) {
+  public void createVerificationTokenForUser(User user, String token) {
       VerificationToken myToken = new VerificationToken();
       myToken.setUser(user);
       myToken.setToken(token);
       myToken.setExpiryDate();
+      User u = userRepository.findById(user.getUserId()).get();
+      u.setVerificationToken(myToken);
       tokenRepository.save(myToken);
   }
 	
@@ -106,7 +169,20 @@ public class UserService implements UserServiceI {
 	@Override
 	public User updateUser(User user) {
 		// TODO Auto-generated method stub
-		User local = userRepository.save(user);
+		User u = userRepository.findById(user.getUserId()).get();
+		//u.setPassword(passwordEncoder.encode(user.getPassword())); double hashes the password if not changed
+		u.setUsername(user.getUsername());
+		u.setBirthDate(user.getBirthDate());
+		u.setEmail(user.getEmail());
+		User local = userRepository.save(u);
+		return local;
+	}
+	
+	@Override
+	public User changePassword(User user) {
+		User u = userRepository.findById(user.getUserId()).get();
+		u.setPassword(passwordEncoder.encode(user.getPassword()));
+		User local = userRepository.save(u);
 		return local;
 	}
 
@@ -127,6 +203,12 @@ public class UserService implements UserServiceI {
 		// TODO Auto-generated method stub
 		return null;
 	}
+	
+	public boolean checkAdmin(User user) {
+		// TODO Auto-generated method stub
+		return user.getRoles().contains(roleRepository.findByDescription("ADMIN"));
+	}
+
 
 	private boolean emailExists(String email) {
 		return !userRepository.findUserByEmail(email).isEmpty();
@@ -134,6 +216,17 @@ public class UserService implements UserServiceI {
 	
 	private boolean usernameExists(String username) {
 		return !userRepository.findUserByUsername(username).isEmpty();
+	}
+	
+	@Override
+    public String generateQRUrl(User user) throws UnsupportedEncodingException {
+        return QR_PREFIX + URLEncoder.encode(String.format("otpauth://totp/%s:%s?secret=%s&issuer=%s", APP_NAME, user.getEmail(), user.getSecret(), APP_NAME), "UTF-8");
+    }
+	
+	@Override
+	public Optional<User> getUserByEmail(String email) {
+		Optional<User> u = userRepository.findUserByEmail(email);
+		return u;
 	}
 
 }

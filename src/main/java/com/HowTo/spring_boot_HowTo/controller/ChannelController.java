@@ -2,8 +2,11 @@
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -22,6 +25,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.HowTo.spring_boot_HowTo.OnInformChannelEvent.OnInformChannelEvent;
+import com.HowTo.spring_boot_HowTo.changepasswordloggedin.OnChangePasswordLoggedInEvent;
 import com.HowTo.spring_boot_HowTo.config.MyUserDetails;
 import com.HowTo.spring_boot_HowTo.model.Channel;
 import com.HowTo.spring_boot_HowTo.model.Group;
@@ -43,6 +48,8 @@ public class ChannelController {
 	
 	private UserServiceI userService;
 	
+	@Autowired
+    private ApplicationEventPublisher eventPublisher;
 	
 	public ChannelController(ChannelServiceI channelService, UserServiceI userService) {
 		super();
@@ -61,8 +68,8 @@ public class ChannelController {
 				|| authentication.getPrincipal() instanceof String) {
 			throw new IllegalStateException("User is not authenticated");
 		}
-		MyUserDetails userDetails = (MyUserDetails) authentication.getPrincipal();
-		return userDetails.getId();
+		User user = (User) authentication.getPrincipal();
+		return user.getUserId();
 	}
 	
 	@GetMapping("/view/{id}")
@@ -81,7 +88,6 @@ public class ChannelController {
 	public String showChannelAdForm(Model model, HttpServletRequest request) {
 		
 		Channel channelForm = new Channel();
-		System.out.println(getCurrentUserId());
 		channelForm.setChannelId(getCurrentUserId()); //TODO change dynamically after channel authorization is implemented
 		LocalDate date= LocalDate.now();
 		channelForm.setCreationDate(date);
@@ -107,7 +113,7 @@ public class ChannelController {
     	channelService.saveChannel(channel, getCurrentUserId());
         redirectAttributes.addFlashAttribute("created", "Channel created!");
         
-        return "redirect:/channel/all";
+        return "redirect:/logout";
     }
     
 	@GetMapping(value = {"", "/all"})
@@ -144,20 +150,42 @@ public class ChannelController {
     
     @GetMapping("/delete/{channelId}")
     public String deleteChannel(@PathVariable("channelId") long channelId, Model model, RedirectAttributes redirectAttributes) {
+    	User u = userService.getUserById(getCurrentUserId());
+    	boolean admin= userService.checkAdmin(u);
+    	System.out.println(admin);
+    	if(channelId  !=getCurrentUserId() && !admin) {
+    		System.out.println("Not Admin or Channelowner");
+    		redirectAttributes.addFlashAttribute("failed", "not owner!!");
+    		return "redirect:/home";
+    	}
         Channel channel = channelService.getChannelById(channelId);               
         channelService.delete(channel);
         redirectAttributes.addFlashAttribute("deleted", "Channel deleted!");
+        
+        if(admin) {
         return "redirect:/channel/all";
+        }
+        else {
+        	return "redirect:/logout";
+        }
     }
 	
     @GetMapping("/update/{channelId}")
 	public String showUpdateChannelForm(@PathVariable("channelId") Long channelId, 
 			Model model,
-			HttpServletRequest request) {
+			HttpServletRequest request, RedirectAttributes redirectAttributes) {
+    	User u = userService.getUserById(getCurrentUserId());
+    	boolean admin= userService.checkAdmin(u);
+    	System.out.println(admin);
+    	if(channelId  !=getCurrentUserId() && !admin) {
+    		System.out.println("Not Admin or Channelowner");
+    		redirectAttributes.addFlashAttribute("failed", "not owner!!");
+    		return "redirect:/home";
+    	}
 	 	Channel channel = channelService.getChannelById(channelId); 
     	model.addAttribute("channel", channel);
 		request.getSession().setAttribute("channelSession", channel);
-		
+		 
 		System.out.println("updating channel id="+ channelId);
 		return "/channels/channel-update";
 	}
@@ -188,6 +216,10 @@ public class ChannelController {
 		RedirectAttributes redirectAttributes) {
     	
     	channelService.subscribeChannel(channel, getCurrentUserId());
+    	User u = userService.getUserById(channel.getChannelId());
+    	User current = userService.getUserById(getCurrentUserId());
+    	eventPublisher.publishEvent(new OnInformChannelEvent(u, current.getUsername()));
+    	
     	redirectAttributes.addFlashAttribute("subscribed", "subscribed!");
     	return "redirect:/channel/view/"+channel.getChannelId();
     }
