@@ -2,6 +2,9 @@ package com.HowTo.spring_boot_HowTo.model;
 
 import java.io.Serializable;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -19,9 +22,11 @@ public class Transaction  implements Serializable {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long transactionId;
 
+	@JsonBackReference(value = "wallet-sender")
 	@ManyToOne
 	private Wallet transactionSender;
 	
+	@JsonBackReference(value = "wallet-receiver")
 	@ManyToOne
 	private Wallet transactionReceiver;
 	

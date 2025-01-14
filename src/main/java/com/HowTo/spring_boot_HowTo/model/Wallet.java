@@ -2,6 +2,9 @@ package com.HowTo.spring_boot_HowTo.model;
 
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -22,15 +25,18 @@ public class Wallet{
 	@MapsId
 	@OneToOne
 	@JoinColumn(name = "user_Id")
+	@JsonIgnore
 	private User walletOwner;
 	
 	private Long amount;
 	
 	private WalletPlan walletPlan;
 	
+	@JsonManagedReference(value = "wallet-sender")
 	@OneToMany(mappedBy ="transactionSender", cascade = CascadeType.ALL)
 	private List<Transaction> sendTransactions;
 	
+	@JsonManagedReference(value = "wallet-receiver")
 	@OneToMany(mappedBy ="transactionReceiver", cascade = CascadeType.ALL)
 	private List<Transaction> receivedTransactions;
 	
