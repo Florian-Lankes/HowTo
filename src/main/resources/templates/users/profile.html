@@ -33,8 +33,9 @@
 								<p th:text="${user.password}"></p>
 								<a th:href="@{/user/changemypassword}" class="btn btn-primary btn-sm mb-3">Change Password</a>
 							</div>
+							<a th:href="@{/wallet/create}" class="btn btn-primary btn-sm mb-3" th:unless="${wallet!=null}">Create Wallet</a>
+							<a th:href="@{/wallet/my}" class="btn btn-primary btn-sm mb-3" th:if="${wallet!=null}">Open Wallet</a>
 							<div class="container" id="passwordchange">
-	
 							<div th:replace="~{fragments/alert::alert}"></div>	
 							</div>	
 				<div th:if="${#authentication.principal.using2FA}">

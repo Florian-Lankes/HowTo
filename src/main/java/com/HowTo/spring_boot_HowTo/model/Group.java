@@ -10,6 +10,8 @@ import org.springframework.format.annotation.DateTimeFormat;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -53,8 +55,8 @@ public class Group implements Serializable{
 	@JsonIgnore
 	private List<User> users = new ArrayList<User>();
 	
-
-	@OneToMany(mappedBy = "messageGroup")							//user can be the owner of many comments
+	
+	@OneToMany(mappedBy = "messageGroup", cascade = CascadeType.REMOVE)							//user can be the owner of many comments
 	@JsonManagedReference(value = "group-messages")
 	private List<Message> ownedMessagesGroup = new ArrayList<Message>();
 	

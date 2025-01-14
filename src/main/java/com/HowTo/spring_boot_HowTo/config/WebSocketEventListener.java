@@ -28,16 +28,13 @@ public class WebSocketEventListener {
 		this.messageTemplate = messageTemplate; 
 	}
 	
+	//NOT USED CURRENTLY
 	@EventListener
 	public void handleWebSocketDisconnectListener(SessionDisconnectEvent event) {
 
 		StompHeaderAccessor headerAccessor = StompHeaderAccessor.wrap(event.getMessage());
-		System.out.println(event.getMessage());
 		User user = (User) headerAccessor.getSessionAttributes().get("user");
 		Group group = (Group) headerAccessor.getSessionAttributes().get("group");
-		System.out.println("IN EVENT LISTENER");
-		System.out.println("user: " + user);
-		System.out.println("group: " + group);
 		if (user != null) {
 			logger.info("User disconnected: {}", user.getUsername());
 			var message = new Message.Builder()

@@ -32,9 +32,11 @@ import com.HowTo.spring_boot_HowTo.model.Channel;
 import com.HowTo.spring_boot_HowTo.model.Group;
 import com.HowTo.spring_boot_HowTo.model.Tutorial;
 import com.HowTo.spring_boot_HowTo.model.User;
+import com.HowTo.spring_boot_HowTo.model.Wallet;
 import com.HowTo.spring_boot_HowTo.model.WatchLater;
 import com.HowTo.spring_boot_HowTo.service.ChannelServiceI;
 import com.HowTo.spring_boot_HowTo.service.UserServiceI;
+import com.HowTo.spring_boot_HowTo.service.WalletServiceI;
 import com.HowTo.spring_boot_HowTo.validator.ChannelValidator;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -48,13 +50,16 @@ public class ChannelController {
 	
 	private UserServiceI userService;
 	
+	private WalletServiceI walletService;
 	@Autowired
     private ApplicationEventPublisher eventPublisher;
 	
-	public ChannelController(ChannelServiceI channelService, UserServiceI userService) {
+	
+	public ChannelController(ChannelServiceI channelService, UserServiceI userService, WalletServiceI walletService) {
 		super();
 		this.channelService = channelService;
 		this.userService = userService;
+		this.walletService = walletService;
 	}
 	
 	@InitBinder
@@ -108,7 +113,9 @@ public class ChannelController {
     		System.out.println(result.getAllErrors().toString());
             return "/channels/channel-create";
         }
-
+    	
+    	Wallet wallet = new Wallet();
+    	walletService.saveWallet(wallet, getCurrentUserId());
     	
     	channelService.saveChannel(channel, getCurrentUserId());
         redirectAttributes.addFlashAttribute("created", "Channel created!");
