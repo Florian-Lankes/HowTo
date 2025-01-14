@@ -1,18 +1,66 @@
 <!DOCTYPE html>
 <html layout:decorate="~{layout}">
-<head><meta charset="UTF-8" /></head>
+
+<head>
+	<meta charset="UTF-8" />
+</head>
 
 <body>
 	<section class="layout-content" layout:fragment="mybody">
-			
-		<div style="width: 80%; align-items: center;padding-left:15%; padding-top: 5%;" >
-			This is mybody-fragment in admin.html!
-			
-			probably a site to manage users, maybe not needed because of authority
+
+		<div class="container mt-5">
+			<h1 class="mb-4 text-center">Admin Seiten</h1>
+			<div class="row">
+				<div class="col-md-4 mb-4">
+					<div class="card">
+						<div class="card-body">
+							<h5 class="card-title">Benutzerverwaltung</h5>
+							<p class="card-text">Verwalten Sie die Benutzer Ihrer Plattform.</p>
+							<a href="/user/admin/all" class="btn btn-primary">Zur Seite</a>
+						</div>
+					</div>
+				</div>
+				<div class="col-md-4 mb-4">
+					<div class="card">
+						<div class="card-body">
+							<h5 class="card-title">Inhaltsmanagement</h5>
+							<p class="card-text">Verwalten Sie den Inhalt Ihrer Plattform.</p>
+							<a href="/tutorial/all" class="btn btn-primary">Zur Seite</a>
+						</div>
+					</div>
+				</div>
+				<div class="col-md-4 mb-4">
+					<div class="card">
+						<div class="card-body">
+							<h5 class="card-title">Meldungen</h5>
+							<p class="card-text">Lesen und verwalten Sie Meldungen</p>
+							<a href="/admin/reports" class="btn btn-primary">Zur Seite</a>
+						</div>
+					</div>
+				</div>
+				<div class="col-md-4 mb-4">
+					<div class="card">
+						<div class="card-body">
+							<h5 class="card-title">Kategorien</h5>
+							<p class="card-text">Verwalten Sie die Kategorien der App</p>
+							<a href="/category/all" class="btn btn-primary">Zur Seite</a>
+						</div>
+					</div>
+				</div>
+				<div class="col-md-4 mb-4">
+					<div class="card">
+						<div class="card-body">
+							<h5 class="card-title">Werbungen</h5>
+							<p class="card-text">Verwalten Sie Werbungen der App Partner</p>
+							<a href="/advertisement/all" class="btn btn-primary">Zur Seite</a>
+						</div>
+					</div>
+				</div>
+			</div>
 		</div>
-		<br>
-		<br>
-		<br>	
-	</section>		
+	</section>
+
+
 </body>
+
 </html>

@@ -146,7 +146,6 @@ public class UserService implements UserServiceI {
       User u = userRepository.findById(user.getUserId()).get();
       u.setVerificationToken(myToken);
       tokenRepository.save(myToken);
-      userRepository.save(u);
   }
 	
     @Override
@@ -223,5 +222,11 @@ public class UserService implements UserServiceI {
     public String generateQRUrl(User user) throws UnsupportedEncodingException {
         return QR_PREFIX + URLEncoder.encode(String.format("otpauth://totp/%s:%s?secret=%s&issuer=%s", APP_NAME, user.getEmail(), user.getSecret(), APP_NAME), "UTF-8");
     }
+	
+	@Override
+	public Optional<User> getUserByEmail(String email) {
+		Optional<User> u = userRepository.findUserByEmail(email);
+		return u;
+	}
 
 }

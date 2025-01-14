@@ -35,9 +35,8 @@
 							</div>
 							<a th:href="@{/wallet/create}" class="btn btn-primary btn-sm mb-3" th:unless="${wallet!=null}">Create Wallet</a>
 							<a th:href="@{/wallet/my}" class="btn btn-primary btn-sm mb-3" th:if="${wallet!=null}">Open Wallet</a>
-							<div class="container" id="passwordchange"></div>	
-	
-							<div th:replace="~{fragments/alert::alert}">
+							<div class="container" id="passwordchange">
+							<div th:replace="~{fragments/alert::alert}"></div>	
 							</div>	
 				<div th:if="${#authentication.principal.using2FA}">
 					    You are using Two-step authentication 
@@ -110,6 +109,10 @@
 																														</div>
 							</div>
 						</div>
+		</div>
+		
+		<div>
+			
 		</div>
 	</section>		
 </body>

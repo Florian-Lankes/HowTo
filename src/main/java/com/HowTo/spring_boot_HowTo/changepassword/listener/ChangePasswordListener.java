@@ -44,7 +44,7 @@ public class ChangePasswordListener implements ApplicationListener<OnChangePassw
         String subject = "Password change";
         String confirmationUrl 
           = "http://localhost:8080" + event.getAppUrl() + "/confirmPassword?token=" + token;
-        String message = messages.getMessage("message.regSuccLink", null, event.getLocale());
+        String message = messages.getMessage("message.pwforgotten", null, event.getLocale());
         
         SimpleMailMessage email = new SimpleMailMessage();
         email.setTo(recipientAddress);

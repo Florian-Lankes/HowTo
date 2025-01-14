@@ -1,7 +1,6 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" 
-xmlns:th="http://www.thymeleaf.org" 
-xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" > 
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" data-bs-theme="light">
 
 <head>
 	<title>Spring-Boot Basic</title>
@@ -14,58 +13,123 @@ xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" >
 
 	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 
-	<!-- Custom styles for this template -->
 	<link href="/css/style.css" rel="stylesheet" />
 </head>
 
-
 <body>
-	
-	<header>
-		<div  th:replace="~{fragments/header::header}">
-						
+
+	<header class="bg-primary">
+		<div class="container">
+			<div th:replace="~{fragments/header::header}"></div>
 		</div>
-					
+
 	</header>
 
 
-	<div  class="layout-main" 	style="width: 90%; align-items: center;	padding-left:5%;" >
-				
-			
-		<section layout:fragment="mybody">
-			<div> main content </div>							
-		</section>		
-
-			
-	</div>	<!--div class="layout-main" -->
-
-	<footer class="layout-footer">
-		<div  th:replace="~{fragments/footer::footer}">
-	
+	<div class="offcanvas offcanvas-start" data-bs-scroll="true" tabindex="-1" id="offcanvasScrolling"
+		aria-labelledby="offcanvasScrollingLabel">
+		<div class="offcanvas-header">
+			<h5 class="offcanvas-title" id="offcanvasScrollingLabel">HowTo</h5>
+			<button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
 		</div>
-	</footer> 
-	
+		<div class="offcanvas-body">
+			<nav class="nav flex-column">
+				<a class="btn btn-outline text-start d-flex align-items-center " href="/home">
+					<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+						class="bi bi-house" viewBox="0 0 16 16">
+						<path
+							d="M8.707 1.5a1 1 0 0 0-1.414 0L.646 8.146a.5.5 0 0 0 .708.708L2 8.207V13.5A1.5 1.5 0 0 0 3.5 15h9a1.5 1.5 0 0 0 1.5-1.5V8.207l.646.647a.5.5 0 0 0 .708-.708L13 5.793V2.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1.293zM13 7.207V13.5a.5.5 0 0 1-.5.5h-9a.5.5 0 0 1-.5-.5V7.207l5-5z" />
+					</svg><span>&nbsp; Startseite</span>
+				</a>
+				<a class="btn btn-outline text-start d-flex align-items-center " href="/channel/subscribed">
+					<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+						class="bi bi-collection-play" viewBox="0 0 16 16">
+						<path
+							d="M2 3a.5.5 0 0 0 .5.5h11a.5.5 0 0 0 0-1h-11A.5.5 0 0 0 2 3m2-2a.5.5 0 0 0 .5.5h7a.5.5 0 0 0 0-1h-7A.5.5 0 0 0 4 1m2.765 5.576A.5.5 0 0 0 6 7v5a.5.5 0 0 0 .765.424l4-2.5a.5.5 0 0 0 0-.848z" />
+						<path
+							d="M1.5 14.5A1.5 1.5 0 0 1 0 13V6a1.5 1.5 0 0 1 1.5-1.5h13A1.5 1.5 0 0 1 16 6v7a1.5 1.5 0 0 1-1.5 1.5zm13-1a.5.5 0 0 0 .5-.5V6a.5.5 0 0 0-.5-.5h-13A.5.5 0 0 0 1 6v7a.5.5 0 0 0 .5.5z" />
+					</svg><span>&nbsp; Abos</span>
+				</a>
+				<a class="btn btn-outline text-start d-flex align-items-center " href="/channel/all">
+					<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+						class="bi bi-search" viewBox="0 0 16 16">
+						<path
+							d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0" />
+					</svg><span>&nbsp; Kanäle</span>
+				</a>
+				<a class="btn btn-outline text-start d-flex align-items-center " href="/history/my">
+					<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+						class="bi bi-clock-history" viewBox="0 0 16 16">
+						<path
+							d="M8.515 1.019A7 7 0 0 0 8 1V0a8 8 0 0 1 .589.022zm2.004.45a7 7 0 0 0-.985-.299l.219-.976q.576.129 1.126.342zm1.37.71a7 7 0 0 0-.439-.27l.493-.87a8 8 0 0 1 .979.654l-.615.789a7 7 0 0 0-.418-.302zm1.834 1.79a7 7 0 0 0-.653-.796l.724-.69q.406.429.747.91zm.744 1.352a7 7 0 0 0-.214-.468l.893-.45a8 8 0 0 1 .45 1.088l-.95.313a7 7 0 0 0-.179-.483m.53 2.507a7 7 0 0 0-.1-1.025l.985-.17q.1.58.116 1.17zm-.131 1.538q.05-.254.081-.51l.993.123a8 8 0 0 1-.23 1.155l-.964-.267q.069-.247.12-.501m-.952 2.379q.276-.436.486-.908l.914.405q-.24.54-.555 1.038zm-.964 1.205q.183-.183.35-.378l.758.653a8 8 0 0 1-.401.432z" />
+						<path d="M8 1a7 7 0 1 0 4.95 11.95l.707.707A8.001 8.001 0 1 1 8 0z" />
+						<path
+							d="M7.5 3a.5.5 0 0 1 .5.5v5.21l3.248 1.856a.5.5 0 0 1-.496.868l-3.5-2A.5.5 0 0 1 7 9V3.5a.5.5 0 0 1 .5-.5" />
+					</svg><span>&nbsp; Verlauf</span>
+				</a>
+				<a class="btn btn-outline text-start d-flex align-items-center " href="/watchLater/my">
+					<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+						class="bi bi-bookmark" viewBox="0 0 16 16">
+						<path
+							d="M2 2a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v13.5a.5.5 0 0 1-.777.416L8 13.101l-5.223 2.815A.5.5 0 0 1 2 15.5zm2-1a1 1 0 0 0-1 1v12.566l4.723-2.482a.5.5 0 0 1 .554 0L13 14.566V2a1 1 0 0 0-1-1z" />
+					</svg><span>&nbsp; Später Ansehen</span>
+				</a>
+				<a class="btn btn-outline text-start d-flex align-items-center " href="/group/all">
+					<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-people-fill" viewBox="0 0 16 16">
+					  <path d="M7 14s-1 0-1-1 1-4 5-4 5 3 5 4-1 1-1 1zm4-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6m-5.784 6A2.24 2.24 0 0 1 5 13c0-1.355.68-2.75 1.936-3.72A6.3 6.3 0 0 0 5 9c-4 0-5 3-5 4s1 1 1 1zM4.5 8a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5"/>
+					</svg><span>&nbsp; Gruppen</span>
+				</a>
+				<a class="btn btn-outline text-start d-flex align-items-center" href="/rating/all" sec:authorize="hasAuthority('ADMIN_RIGHTS')">Bewertungen</a>
+				<a class="btn btn-outline text-start d-flex align-items-center" href="/admin" sec:authorize="hasAuthority('ADMIN_RIGHTS')">Admin</a>
+				<button class="btn btn-secondary text-start d-flex align-items-center" id="darkModeToggle">Dark Mode</button>
+
+		</div>
+	</div>
+
+	<div class="container">
+		<section layout:fragment="mybody">
+			<div> main content </div>
+		</section>
+	</div> <!--div class="layout-main" -->
+
+	<footer class="bg-secondary">
+		<div class="container">
+			<div th:replace="~{fragments/footer::footer}"></div>
+		</div>
+
+	</footer>
+
 	<!-- Bootstrap core JavaScript
     ================================================== -->
 	<!-- Placed at the end of the document so the pages load faster -->
-	<script src="/webjars/jquery/jquery.min.js"></script>
 	<script src="/webjars/jquery-mask-plugin/dist/jquery.mask.min.js"></script>
-	<script	src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
-	<script src="/webjars/bootstrap/js/bootstrap.min.js"></script>
+	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 	<script type="text/javascript">
-	    
-		$(function() {
+
+		$(function () {
 			$('[data-toggle="popover"]').popover();
 		});
-		
-		$(document).ready(function(){
-		    $(".navbar-toggle").click(function(){
-		        $(".sidebar").toggleClass("sidebar-open");
-		    })
+
+		$(document).ready(function () {
+			$(".navbar-toggle").click(function () {
+				$(".sidebar").toggleClass("sidebar-open");
+			})
 		});
 
 	</script>
-	
-	
+	<script>
+		$(document).ready(function () {
+			const savedTheme = localStorage.getItem('theme');
+			if (savedTheme) {$('html').attr('data-bs-theme', savedTheme);}
+			$('#darkModeToggle').click(function () {
+				const currentTheme = $('html').attr('data-bs-theme');
+				const newTheme = currentTheme === 'light' ? 'dark' : 'light'; $('html').attr('data-bs-theme', newTheme);
+				localStorage.setItem('theme', newTheme);
+			});
+		});
+	</script>
 </body>
+
 </html>

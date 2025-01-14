@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.HowTo.spring_boot_HowTo.model.User;
@@ -23,6 +25,18 @@ public class GroupService implements GroupServiceI{
 	public List<Group> getAllGroups() {
 		// TODO Auto-generated method stub
 		return groupRepository.findAll();
+	}
+	
+	public Page<Group> getAllGroups(String name, Pageable pageable) {
+		
+		Page <Group> pageGroup;
+		if (name == null) {
+			pageGroup = groupRepository.findAll(pageable);
+		 } else {
+			 pageGroup = groupRepository.findByNameContainingIgnoreCase(name, pageable);
+
+		 }
+		return pageGroup;
 	}
 
 	@Override

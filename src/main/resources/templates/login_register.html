@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Sign In or Register</title>
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+</head>
+
+<body>
+	<div class="container mt-5">
+		<div class="row justify-content-center">
+			<div class="col-md-6">
+				<div class="text-center mb-4">
+					<h1>HowTo</h1>
+				</div>
+
+				<div th:if="${message != null}" class="alert alert-info" th:utext="${message}">message</div>
+				<div th:if="${error != null}" class="alert alert-danger"
+					th:utext="${session[SPRING_SECURITY_LAST_EXCEPTION]}">error</div>
+				<div th:replace="~{fragments/alert::alert}"></div>
+
+				<div class="card">
+					<div class="card-body">
+						<h5 class="card-title text-center">Sign In</h5>
+						<form th:action="@{/login}" method='POST'>
+							<div class="form-group">
+								<label for="name">Nutzer Name</label>
+								<input placeholder="Mein Nutzername" class="form-control" type='text' name='username'
+									value='' />
+							</div>
+							<div class="form-group">
+								<label for="password">Password</label>
+								<input placeholder="********" class="form-control" type='password' name='password' />
+							</div>
+							<div class="form-group">
+								<label>Google Authenticator</label>
+								<input placeholder="063243" class="form-control" type='text' name='code' />
+							</div>
+							<div th:if="${param.error}" class="alert alert-error text-left p-0 " style="color:#FF0000">
+								Invalid username or password or 2FA.
+							</div>
+							<input class="btn btn-primary btn-block" name="submit" type="submit" th:value="Einloggen" />
+
+						</form>
+
+						<div class="btn btn-outline-secondary btn-block text-center mt-3">
+							<a href="/register">Registrieren</a>
+						</div>
+						<div class="text-left mt-3">
+							<a th:href="@{/user/forgotmypassword}">Passwort vergessen?</a>
+						</div>
+					</div>
+				</div>
+
+				<div class="divider text-center my-4">
+					<span>or</span>
+				</div>
+
+				<div class="text-center">
+
+					<p th:each="url : ${urls}">
+						<a class="btn btn-outline-primary btn-block" th:text="${url.key}" th:href="${url.value}">
+
+						</a>
+					</p>
+
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+</body>
+
+</html>
