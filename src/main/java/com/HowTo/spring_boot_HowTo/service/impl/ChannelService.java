@@ -30,6 +30,12 @@ public class ChannelService implements ChannelServiceI{
 	RoleRepositoryI roleRepository;
 	
 	@Override
+	public List<Channel> getAllChannels() {
+		// TODO Auto-generated method stub
+		return channelRepository.findAll();
+	}
+	
+	@Override
 	public Page<Channel> getAllChannels(String channelname, Pageable pageable) {
 	// TODO Auto-generated method stub
 	Page <Channel> pageChannel;

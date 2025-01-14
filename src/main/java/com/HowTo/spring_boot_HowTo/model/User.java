@@ -13,6 +13,10 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import jakarta.persistence.JoinColumn;
 
 import java.io.Serializable;
@@ -26,19 +30,26 @@ import org.springframework.format.annotation.DateTimeFormat;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 @Entity
-//@Table(name = "`user`")
+@Data 
+@Builder 
+@AllArgsConstructor 
+@NoArgsConstructor
 public class User implements Serializable {
 
-	// evtl. Gender add
 	private static final long serialVersionUID = 1L;
+
 	@NotBlank(message = "password is mandatory")
 	@Size(min = 0, message = "{jakarta.validation.constraints.Size}")
 	private String password;
 
 	private boolean enabled;
-
+	
 	public User() {
 		super();
 		this.enabled = false;
@@ -108,6 +119,11 @@ public class User implements Serializable {
 	@OneToMany(mappedBy = "ratingUser", cascade = CascadeType.REMOVE)
 	private List<Rating> ratings = new ArrayList<Rating>();
 
+	@OneToMany(mappedBy = "messageOwner") // user can be the owner of many comments
+	@JsonManagedReference(value = "user-messages")
+	private List<Message> ownedMessagesUser = new ArrayList<Message>();
+	
+	@JsonIgnore
 	@ManyToMany
 	private List<Channel> subscribedChannels = new ArrayList<Channel>();
 
@@ -201,7 +217,7 @@ public class User implements Serializable {
 	}
 
 	public List<WatchLater> getWatchLater() {
-		return Collections.unmodifiableList(watchLater);
+		return new ArrayList<>(watchLater);
 	}
 
 	public void addToHistory(History h) {
@@ -217,7 +233,7 @@ public class User implements Serializable {
 	}
 
 	public List<History> getHistory() {
-		return Collections.unmodifiableList(history);
+		return new ArrayList<>(history);
 	}
 
 	public void addJoinedGroup(Group group) {
@@ -233,7 +249,7 @@ public class User implements Serializable {
 	}
 
 	public List<Group> getJoinedGroups() {
-		return Collections.unmodifiableList(joinedgroups);
+		return new ArrayList<>(joinedgroups);
 	}
 
 	public void addOwnedGroup(Group group) {
@@ -249,7 +265,7 @@ public class User implements Serializable {
 	}
 
 	public List<Group> getOwnedGroups() {
-		return Collections.unmodifiableList(ownedgroups);
+		return new ArrayList<>(ownedgroups);
 	}
 
 	public void addOwnedComment(Comment comment) {
@@ -265,7 +281,7 @@ public class User implements Serializable {
 	}
 
 	public List<Comment> getOwnedComments() {
-		return Collections.unmodifiableList(ownedComments);
+		return new ArrayList<>(ownedComments);
 	}
 
 	public void addSubscription(Channel channel) {
@@ -279,11 +295,15 @@ public class User implements Serializable {
 			subscribedChannels.remove(channel);
 		}
 	}
-	
+
 	public List<Channel> getSubscribedChannels() {
-		return Collections.unmodifiableList(subscribedChannels);
+		return new ArrayList<>(subscribedChannels);
 	}
 	
+	public List<Message> getOwnedMessagesUser() {
+		return ownedMessagesUser;
+	}
+
 	public void addRating(Rating rating) {
 		if (!ratings.contains(rating)) {
 			ratings.add(rating);
@@ -347,5 +367,5 @@ public class User implements Serializable {
 	public void setUsingOauth(boolean isUsingOauth) {
 		this.isUsingOauth = isUsingOauth;
 	}
-	
 }
+

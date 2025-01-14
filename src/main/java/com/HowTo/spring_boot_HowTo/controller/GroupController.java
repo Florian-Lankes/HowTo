@@ -19,7 +19,7 @@ import com.HowTo.spring_boot_HowTo.config.MyUserDetails;
 import com.HowTo.spring_boot_HowTo.model.Group;
 import com.HowTo.spring_boot_HowTo.model.User;
 import com.HowTo.spring_boot_HowTo.service.GroupServiceI;
-
+import com.HowTo.spring_boot_HowTo.service.UserServiceI;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
@@ -30,10 +30,12 @@ import jakarta.validation.Valid;
 public class GroupController {
 	
 	private GroupServiceI groupService;
+	private UserServiceI userService;
 	
-	public GroupController(GroupServiceI groupService) {
+	public GroupController(GroupServiceI groupService, UserServiceI userService) {
 		super();
 		this.groupService = groupService;
+		this.userService = userService;
 	}
 	
 	private Long getCurrentUserId() {
@@ -90,7 +92,9 @@ public class GroupController {
 		
     	List<Group> AllGroups = groupService.getAllGroups();
 		model.addAttribute("groups", AllGroups);
+		List<Group> joinedGroups = userService.getUserById(getCurrentUserId()).getJoinedGroups();
 				
+		model.addAttribute("joinedGroups", joinedGroups);
 		return "/groups/group-list";
 	}
     

@@ -8,16 +8,27 @@ import java.util.List;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Entity
+@Data 
+@Builder
+@AllArgsConstructor 
+@NoArgsConstructor
 public class Group implements Serializable{
 
 	private static final long serialVersionUID = 1L;
@@ -39,7 +50,13 @@ public class Group implements Serializable{
 	
 	@JsonBackReference(value = "user-joinedgroup")
 	@ManyToMany(mappedBy = "joinedgroups")
+	@JsonIgnore
 	private List<User> users = new ArrayList<User>();
+	
+
+	@OneToMany(mappedBy = "messageGroup")							//user can be the owner of many comments
+	@JsonManagedReference(value = "group-messages")
+	private List<Message> ownedMessagesGroup = new ArrayList<Message>();
 	
 	@JsonBackReference(value = "user-group")
 	@ManyToOne()

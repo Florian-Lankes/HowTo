@@ -2,6 +2,7 @@ package com.HowTo.spring_boot_HowTo.config;
 
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.security.reactive.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.access.hierarchicalroles.RoleHierarchy;
@@ -55,8 +56,8 @@ public class SecurityConfiguration {
 	            "/swagger-ui/**",
 	            "/logout",
 	            "/h2-console/**",
-	            "/console/**"
-	            
+	            "/console/**",
+	            "/static/**"
 	    };
 		
 		@Bean public SecurityFilterChain filterChain(HttpSecurity http) throws Exception { 
@@ -120,6 +121,7 @@ public class SecurityConfiguration {
 			.requestMatchers("/category/view/**").hasAuthority("VIEW")
 	        .requestMatchers("/category/all").hasAuthority("VIEW")
 			.requestMatchers("/user/my/**").hasAuthority("VIEW")
+			.requestMatchers("/chat/**").hasAuthority("VIEW")
 			
 			.requestMatchers("/channel/delete/**").hasAuthority("CREATOR_RIGHTS")
 			.requestMatchers("/channel/update/**").hasAuthority("CREATOR_RIGHTS")
@@ -145,10 +147,9 @@ public class SecurityConfiguration {
 			http.httpBasic(Customizer.withDefaults()); 
 			return http.build(); } 
 
-
 	    @Bean
 	    public WebSecurityCustomizer webSecurityCustomizer() {
-	        return (web) -> web.ignoring().requestMatchers("/images/**", "/js/**", "/webjars/**");
+	        return (web) -> web.ignoring().requestMatchers("/images/**", "/js/**", "/webjars/**", "/css/**");
 	    }
 	    
 	    @Bean
