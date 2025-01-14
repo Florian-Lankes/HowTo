@@ -39,5 +39,5 @@ INSERT INTO roleauthority(idrole, idauthority) VALUES (3,3);
 INSERT INTO category(category_id,category_name) Values(1,'Sport');
 INSERT INTO category(category_id,category_name) Values(2,'Alltag');
 
-INSERT INTO tutorial(created_by_channel_channel_id, creation_time,dislikes,likes,tutorial_category_category_id, tutorial_id, title) values (1,now(),0,0,2,1,'Do a pullup');
-INSERT INTO tutorial(created_by_channel_channel_id, creation_time,dislikes,likes,tutorial_category_category_id, tutorial_id, title) values (1,now(),0,0,2,2,'Do a backflip');
+INSERT INTO tutorial(created_by_channel_channel_id, creation_time,dislikes,likes,tutorial_category_category_id, tutorial_id, title, content_Text) values (1,now(),0,0,2,1,'Do a pullup', 'I started with one pullup a day and everyday one more. Now I can do 50 pullups. Strap your Shoulders and pressure');
+INSERT INTO tutorial(created_by_channel_channel_id, creation_time,dislikes,likes,tutorial_category_category_id, tutorial_id, title, content_Text) values (1,now(),0,0,2,2,'Do a backflip','Picture yourself standing at the edge of a pristine lake. The sun is setting, casting a golden glow across the water. The air is crisp and filled with the sound of nature.' );

@@ -1,6 +1,7 @@
 package com.HowTo.spring_boot_HowTo.controller;
 
 import java.time.LocalDate;
+import java.util.List;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -31,9 +32,12 @@ public class CategoryController {
 	
 	@GetMapping("/view/{id}")
 	public String getCategoryView(@PathVariable("id") Long id, Model model) {
-		
+	
 		Category category = categoryService.getCategoryById(id); 
 		model.addAttribute("category", category );
+		List<Category> allCategoriesNotSearched = categoryService.getAllCategorys();
+		allCategoriesNotSearched.remove(category);
+		model.addAttribute("allCategories", allCategoriesNotSearched);
 
 		return "categories/category";
 	}
