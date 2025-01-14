@@ -116,7 +116,7 @@ public class ChannelController {
         return "redirect:/logout";
     }
     
-	@GetMapping(value = {"", "/all"})
+   @GetMapping(value = {"/", "/all"})
 	public String showChannelList(Model model, @RequestParam(required = false) String keyword,
 			@RequestParam(required = false, defaultValue = "1") int page, @RequestParam(required = false,
 			defaultValue = "5") int size) {
