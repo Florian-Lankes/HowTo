@@ -9,6 +9,8 @@ import com.HowTo.spring_boot_HowTo.model.Channel;
 
 public interface ChannelServiceI {
 	
+	List<Channel> getAllChannels();
+	
 	Page<Channel> getAllChannels(String channelname, Pageable pageable);
 	
 	Channel saveChannel(Channel channel, Long userId);
