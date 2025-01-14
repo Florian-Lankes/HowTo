@@ -22,18 +22,26 @@ import org.slf4j.LoggerFactory;
 public class WebSocketEventListener {
 
 	private static final Logger logger = LoggerFactory.getLogger(WebSocketEventListener.class);
-	private final SimpMessageSendingOperations messageTemplate = null;
+	private final SimpMessageSendingOperations messageTemplate;
 
+	public WebSocketEventListener(SimpMessageSendingOperations messageTemplate) { 
+		this.messageTemplate = messageTemplate; 
+	}
+	
 	@EventListener
 	public void handleWebSocketDisconnectListener(SessionDisconnectEvent event) {
 
 		StompHeaderAccessor headerAccessor = StompHeaderAccessor.wrap(event.getMessage());
+		System.out.println(event.getMessage());
 		User user = (User) headerAccessor.getSessionAttributes().get("user");
 		Group group = (Group) headerAccessor.getSessionAttributes().get("group");
+		System.out.println("IN EVENT LISTENER");
+		System.out.println("user: " + user);
+		System.out.println("group: " + group);
 		if (user != null) {
 			logger.info("User disconnected: {}", user.getUsername());
 			var message = new Message.Builder()
-					.content("Hello, World!")
+					.content(user.getUsername() + " is now inactive in this Chat!")
 					.messageType(MessageType.LEAVE)
 					.messageOwner(user)
 					.messageGroup(group)

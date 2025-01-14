@@ -13,6 +13,10 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import jakarta.persistence.JoinColumn;
 
 import java.io.Serializable;
@@ -24,16 +28,28 @@ import java.util.List;
 import org.jboss.aerogear.security.otp.api.Base32;
 import org.springframework.format.annotation.DateTimeFormat;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 @Entity
+@Data 
+@Builder 
+@AllArgsConstructor 
+@NoArgsConstructor
 public class User implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
+	@NotBlank(message = "password is mandatory")
+	@Size(min = 0, message = "{jakarta.validation.constraints.Size}")
+	private String password;
+
+	private boolean enabled;
+	
 	public User() {
 		super();
 		this.enabled = false;
@@ -73,15 +89,6 @@ public class User implements Serializable {
 	@JoinTable(name = "userrole", joinColumns = @JoinColumn(name = "iduser"), inverseJoinColumns = @JoinColumn(name = "idrole"))
 	private List<Role> roles = new ArrayList<Role>();
 
-	@NotBlank(message = "password is mandatory")
-	@Size(min = 5, max = 50, message = "{jakarta.validation.constraints.Size}")
-	private String password;
-
-	private boolean enabled;
-
-	@OneToMany(mappedBy = "messageOwner") // user can be the owner of many comments
-	private List<Message> ownedMessagesUser = new ArrayList<Message>();
-	
 	@JsonIgnore
 	@ManyToMany(cascade = CascadeType.ALL) // user is in groups
 	private List<Group> joinedgroups = new ArrayList<Group>();
@@ -112,6 +119,11 @@ public class User implements Serializable {
 	@OneToMany(mappedBy = "ratingUser", cascade = CascadeType.REMOVE)
 	private List<Rating> ratings = new ArrayList<Rating>();
 
+	@OneToMany(mappedBy = "messageOwner") // user can be the owner of many comments
+	@JsonManagedReference(value = "user-messages")
+	private List<Message> ownedMessagesUser = new ArrayList<Message>();
+	
+	@JsonIgnore
 	@ManyToMany
 	private List<Channel> subscribedChannels = new ArrayList<Channel>();
 
@@ -205,7 +217,7 @@ public class User implements Serializable {
 	}
 
 	public List<WatchLater> getWatchLater() {
-		return Collections.unmodifiableList(watchLater);
+		return new ArrayList<>(watchLater);
 	}
 
 	public void addToHistory(History h) {
@@ -221,7 +233,7 @@ public class User implements Serializable {
 	}
 
 	public List<History> getHistory() {
-		return Collections.unmodifiableList(history);
+		return new ArrayList<>(history);
 	}
 
 	public void addJoinedGroup(Group group) {
@@ -237,7 +249,7 @@ public class User implements Serializable {
 	}
 
 	public List<Group> getJoinedGroups() {
-		return Collections.unmodifiableList(joinedgroups);
+		return new ArrayList<>(joinedgroups);
 	}
 
 	public void addOwnedGroup(Group group) {
@@ -253,7 +265,7 @@ public class User implements Serializable {
 	}
 
 	public List<Group> getOwnedGroups() {
-		return Collections.unmodifiableList(ownedgroups);
+		return new ArrayList<>(ownedgroups);
 	}
 
 	public void addOwnedComment(Comment comment) {
@@ -269,7 +281,7 @@ public class User implements Serializable {
 	}
 
 	public List<Comment> getOwnedComments() {
-		return Collections.unmodifiableList(ownedComments);
+		return new ArrayList<>(ownedComments);
 	}
 
 	public void addSubscription(Channel channel) {
@@ -285,7 +297,11 @@ public class User implements Serializable {
 	}
 
 	public List<Channel> getSubscribedChannels() {
-		return Collections.unmodifiableList(subscribedChannels);
+		return new ArrayList<>(subscribedChannels);
+	}
+	
+	public List<Message> getOwnedMessagesUser() {
+		return ownedMessagesUser;
 	}
 
 	public void addRating(Rating rating) {

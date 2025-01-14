@@ -121,6 +121,7 @@ public class SecurityConfiguration {
 			.requestMatchers("/category/view/**").hasAuthority("VIEW")
 	        .requestMatchers("/category/all").hasAuthority("VIEW")
 			.requestMatchers("/user/my/**").hasAuthority("VIEW")
+			.requestMatchers("/chat/**").hasAuthority("VIEW")
 			
 			.requestMatchers("/channel/delete/**").hasAuthority("CREATOR_RIGHTS")
 			.requestMatchers("/channel/update/**").hasAuthority("CREATOR_RIGHTS")
@@ -146,8 +147,7 @@ public class SecurityConfiguration {
 			http.httpBasic(Customizer.withDefaults()); 
 			return http.build(); } 
 
-	        
-	     	    @Bean
+	    @Bean
 	    public WebSecurityCustomizer webSecurityCustomizer() {
 	        return (web) -> web.ignoring().requestMatchers("/images/**", "/js/**", "/webjars/**", "/css/**");
 	    }

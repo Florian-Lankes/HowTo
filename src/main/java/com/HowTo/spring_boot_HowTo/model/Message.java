@@ -1,6 +1,9 @@
 package com.HowTo.spring_boot_HowTo.model;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
+
+import com.fasterxml.jackson.annotation.JsonBackReference;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -17,11 +20,13 @@ import lombok.Setter;
 @Entity
 //@Getter
 //@Setter
-//@Data
-//@Builder
-//@AllArgsConstructor
-//@NoArgsConstructor
-public class Message {
+@Data
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
+public class Message implements Serializable{
+
+	private static final long serialVersionUID = 1L;
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -31,12 +36,14 @@ public class Message {
 
 	private MessageType messageType;
 
-	 private LocalDateTime timestamp;
+	//private LocalDateTime timestamp;xyvx
 
 	@ManyToOne
+	@JsonBackReference(value = "user-messages")
 	private User messageOwner;
 
 	@ManyToOne
+	@JsonBackReference(value = "group-messages")
 	private Group messageGroup;
 
 	public String getContent() {
@@ -47,13 +54,13 @@ public class Message {
 		this.content = content;
 	}
 
-	public LocalDateTime getTimestamp() {
-		return timestamp;
-	}
-
-	public void setTimestamp(LocalDateTime timestamp) {
-		this.timestamp = timestamp;
-	}
+//	public LocalDateTime getTimestamp() {
+//		return timestamp;
+//	}
+//
+//	public void setTimestamp(LocalDateTime timestamp) {
+//		this.timestamp = timestamp;
+//	}
 
 	public User getMessageOwner() {
 		return messageOwner;
@@ -85,7 +92,7 @@ public class Message {
 		this.messageId = builder.messageId;
 		this.content = builder.content;
 		this.messageType = builder.messageType;
-		this.timestamp = builder.timestamp;
+		//this.timestamp = builder.timestamp;
 		this.messageOwner = builder.messageOwner;
 		this.messageGroup = builder.messageGroup;
 	}
@@ -95,7 +102,7 @@ public class Message {
 		private Long messageId;
 		private String content;
 		private MessageType messageType;
-		private LocalDateTime timestamp;
+		//private LocalDateTime timestamp;
 		private User messageOwner;
 		private Group messageGroup;
 
@@ -114,10 +121,10 @@ public class Message {
 			return this;
 		}
 
-		public Builder timestamp(LocalDateTime timestamp) {
-			this.timestamp = timestamp;
-			return this;
-		}
+//		public Builder timestamp(LocalDateTime timestamp) {
+//			this.timestamp = timestamp;
+//			return this;
+//		}
 
 		public Builder messageOwner(User messageOwner) {
 			this.messageOwner = messageOwner;
