@@ -92,11 +92,11 @@ public class User extends Auditable implements Serializable {
 	private List<Role> roles = new ArrayList<Role>();
 
 	@JsonIgnore
-	@ManyToMany(cascade = CascadeType.ALL) // user is in groups
+	@ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER) // user is in groups
 	private List<Group> joinedgroups = new ArrayList<Group>();
 
 	@JsonManagedReference(value = "user-group")
-	@OneToMany(mappedBy = "groupOwner", cascade = CascadeType.REMOVE) // user can be the owner of many groups
+	@OneToMany(mappedBy = "groupOwner", cascade = CascadeType.REMOVE, fetch = FetchType.EAGER) // user can be the owner of many groups
 	private List<Group> ownedgroups = new ArrayList<Group>();
 
 	@JsonManagedReference(value = "user-comment")
