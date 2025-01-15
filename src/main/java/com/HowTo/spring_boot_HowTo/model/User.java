@@ -9,6 +9,7 @@ import jakarta.persistence.PrimaryKeyJoinColumn;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EntityListeners;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -41,7 +42,8 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 @Builder 
 @AllArgsConstructor 
 @NoArgsConstructor
-public class User implements Serializable {
+@EntityListeners(AuditListener.class)
+public class User extends Auditable implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
