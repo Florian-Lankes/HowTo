@@ -88,8 +88,8 @@ public class TutorialController {
 		commentForm.setCommentId((long) -1); //TODO change dynamically after user authorization is implemented
 		LocalDate date= LocalDate.now();
 		commentForm.setCreationDate(date);
-		Category category = tutorial.getTutorialCategory();
 		
+		Category category = tutorial.getTutorialCategory();
 		if(category != null) {
 			List<Advertisement> advertisements = category.getAdvertisements();
 			int size = advertisements.size();
@@ -202,8 +202,15 @@ try {
 		
 		redirectAttributes.addFlashAttribute("created", "Tutorial created!");
 		
-		return "redirect:/tutorial/all";
+		return "redirect:/tutorial/upload/video/"+ tutorial.getTutorialId();
 	}
+	
+	@GetMapping("/upload/video/{id}")
+	public String uploadVideoView(@PathVariable("id") Long id, Model model) {
+		model.addAttribute(tutorialService.getTutorialById(id));
+		return "tutorials/tutorial-video-upload";
+	}
+	
 	
 	@GetMapping("/delete/{id}")
     public String deleteTutorial(@PathVariable("id") Long tutorialId, Model model, RedirectAttributes redirectAttributes) {

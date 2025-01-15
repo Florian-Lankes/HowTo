@@ -21,10 +21,6 @@ public class Comment {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long commentId;
 	
-	@NotBlank(message = "Title is mandatory")
-	@Size(min = 1, max = 20, message = "{jakarta.validation.constraints.Size}")
-	private String commentTitle;
-	
 	@NotBlank(message = "Comment can not be empty")
 	@Size(min = 1, max = 500, message = "{jakarta.validation.constraints.Size}")
 	private String content;
@@ -46,14 +42,6 @@ public class Comment {
 
 	public void setCommentId(Long commentId) {
 		this.commentId = commentId;
-	}
-
-	public String getCommentTitle() {
-		return commentTitle;
-	}
-
-	public void setCommentTitle(String commentTitle) {
-		this.commentTitle = commentTitle;
 	}
 
 	public String getContent() {
