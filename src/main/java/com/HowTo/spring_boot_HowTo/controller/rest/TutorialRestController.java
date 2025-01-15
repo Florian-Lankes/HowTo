@@ -9,6 +9,7 @@ import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.Link;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -27,7 +28,7 @@ import com.HowTo.spring_boot_HowTo.service.TutorialServiceI;
 import jakarta.validation.Valid;
 
 @RestController
-@RequestMapping(value = "/api/tutorials")
+@RequestMapping(value = "/api/tutorials", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 public class TutorialRestController {
 
 	private TutorialServiceI tutorialService;

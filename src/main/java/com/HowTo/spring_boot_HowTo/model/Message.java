@@ -1,7 +1,6 @@
 package com.HowTo.spring_boot_HowTo.model;
 
 import java.io.Serializable;
-import java.time.LocalDateTime;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 
@@ -11,19 +10,11 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @Entity
-//@Getter
-//@Setter
 @Data
-@Builder
 @AllArgsConstructor
-@NoArgsConstructor
 public class Message implements Serializable{
 
 	private static final long serialVersionUID = 1L;

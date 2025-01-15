@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE jasperReport PUBLIC "-//JasperReports//DTD Report Design//EN" "http://jasperreports.sourceforge.net/dtds/jasperreport.dtd">
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="tutorial_report" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="e1e545eb-7f9b-42df-a6e4-e3c56e7cccd9">
+    <field name="title" class="java.lang.String"/>
+    <field name="contentText" class="java.lang.String"/>
+    <field name="creationTime" class="java.sql.Timestamp"/>
+    
+    <title>
+        <band height="60">
+            <textField>
+                <reportElement x="0" y="0" width="555" height="60"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle">
+                    <font size="22" isBold="true" pdfFontName="Helvetica-Bold"/>
+                </textElement>
+                <textFieldExpression><![CDATA[$F{title}]]></textFieldExpression>
+            </textField>
+        </band>
+    </title>
+    
+    <detail>
+        <band height="700">
+            <!-- Content Field -->
+            <textField>
+                <reportElement x="0" y="0" width="555" height="40"/>
+                <textElement>
+                    <font size="12"/>
+                </textElement>
+                <textFieldExpression><![CDATA[$F{contentText}]]></textFieldExpression>
+            </textField>
+        </band>
+    </detail>
+
+    <summary>
+        <band height="30">
+            <!-- Separator Line -->
+            <line>
+                <reportElement x="0" y="10" width="555" height="1"/>
+            </line>
+            <!-- Creation Time Field -->
+            <textField pattern="yyyy-MM-dd HH:mm:ss">
+                <reportElement x="0" y="10" width="555" height="20"/>
+                <textElement>
+                    <font size="12" isItalic="true"/>
+                </textElement>
+                <textFieldExpression><![CDATA[$F{creationTime}]]></textFieldExpression>
+            </textField>
+        </band>
+    </summary>
+    
+    <noData>
+        <band height="20"/>
+    </noData>
+
+  
+</jasperReport>

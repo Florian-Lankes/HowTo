@@ -48,7 +48,6 @@ public class CustomAuthenticationProvider extends DaoAuthenticationProvider {
                 throw new BadCredentialsException("Invalid verification code");
             }
         }
-        System.out.println("test1.4");
         System.out.println("Proceeding with super.authenticate()");
         try { 
         	final Authentication result = super.authenticate(auth);
