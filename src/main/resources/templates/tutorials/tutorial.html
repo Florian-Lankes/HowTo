@@ -15,11 +15,7 @@
 					Your browser does not support the video tag.
 				</video>
 			</div>
-			<a class="btn btn-info" th:href="@{/rating/tutorial/{tutorialId}(tutorialId = ${tutorial.tutorialId})}">RATE</a>
-			<a class="btn btn-info" th:href="@{/report/tutorial/{id}(id = ${tutorial.tutorialId})}">REPORT</a>
-			<a class="btn btn-info" th:href="@{/api/report/pdf/{id}(id = ${tutorial.tutorialId})}">DOWNLOAD ALS PDF</a>
-			<div class="content"> <strong>Content Text:</strong>
-				<p th:text="${tutorial.contentText}"></p>
+			
 			<div class="content" th:unless="${#strings.isEmpty(tutorial.videoUrl)}">
 				<h3 id="adwarning">Advertisement</h3>
 			</div>
@@ -110,7 +106,8 @@
 			<a class="btn btn-danger" th:href="@{/report/tutorial/{id}(id = ${tutorial.tutorialId})}">
 				Melden
 			</a>
-
+			
+			<a class="btn btn-secondary ms-1" th:href="@{/api/report/pdf/{id}(id = ${tutorial.tutorialId})}">PDF</a>
 		</div>
 
 		<hr class="my-4">

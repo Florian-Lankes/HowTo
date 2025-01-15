@@ -8,6 +8,7 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EntityListeners;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.MapsId;
@@ -16,7 +17,8 @@ import jakarta.persistence.OneToOne;
 
 
 @Entity
-public class Wallet{
+@EntityListeners(AuditListener.class)
+public class Wallet extends Auditable{
 
 	@Id
 	@Column(name = "user_id")

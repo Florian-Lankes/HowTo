@@ -5,13 +5,15 @@ import java.sql.Timestamp;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EntityListeners;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
 
 @Entity
-public class Advertisement implements Serializable{
+@EntityListeners(AuditListener.class)
+public class Advertisement extends Auditable implements Serializable{
 	
 	private static final long serialVersionUID = 1L;
 	@Id
