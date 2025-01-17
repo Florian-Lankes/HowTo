@@ -274,7 +274,7 @@ try {
     	}
 		cloudinaryService.uploadFile(file, tutorialId);
         redirectAttributes.addFlashAttribute("updated", "tutorial video updated!");
-		return "redirect:/tutorial/all";
+		return "redirect:/channel/mychannel";
 	}
     
     @GetMapping("/deletevideo/{id}")

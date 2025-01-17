@@ -81,12 +81,35 @@ public class ChannelController {
 	public String showChannelList(@PathVariable("id") Long channelid ,Model model) {
 		
     	Channel channel = channelService.getChannelById(channelid);
+    	User current = userService.getUserById(getCurrentUserId());
+    	if(channel.getSubscribedFromUserList().contains(current)) {
+    		model.addAttribute("abonniert", true);
+    	}else {
+    		model.addAttribute("abonniert", false);
+    	}
     	List<Tutorial> tutorials = channel.getTutorials();
     	model.addAttribute("channel", channel);
 		model.addAttribute("tutorials", tutorials);
 				
 		return "/channels/channel";
 	}
+	
+	@GetMapping("/mychannel")
+	public String showMyChannel(Model model) {
+		
+    	Channel channel = channelService.getChannelById(getCurrentUserId());
+    	if(channel != null) {
+    	List<Tutorial> tutorials = channel.getTutorials();
+    	model.addAttribute("channel", channel);
+		model.addAttribute("tutorials", tutorials);
+				
+		return "/channels/mychannel";
+		}
+    	else {
+    		return "redirect:/user/my";
+    	}
+	}
+	
 	
 	//CREATE
 	@GetMapping("/create")
@@ -114,8 +137,10 @@ public class ChannelController {
             return "/channels/channel-create";
         }
     	
+    	if(walletService.getWalletById(getCurrentUserId()) == null) {
     	Wallet wallet = new Wallet();
     	walletService.saveWallet(wallet, getCurrentUserId());
+    	}
     	
     	channelService.saveChannel(channel, getCurrentUserId());
         redirectAttributes.addFlashAttribute("created", "Channel created!");
@@ -210,9 +235,15 @@ public class ChannelController {
 			return "/channels/channel-update";
 		}
        
-		channelService.updateChannel(channel);
+		Channel u =channelService.updateChannel(channel);
         redirectAttributes.addFlashAttribute("updated", "channel updated!");
-		return "redirect:/channel/all";
+        
+        if(u.getChannelId() != getCurrentUserId()) {
+        	return "redirect:/channel/all";
+        }else {
+        	return "redirect:/channel/mychannel";
+        }
+        
 		
 	}
     

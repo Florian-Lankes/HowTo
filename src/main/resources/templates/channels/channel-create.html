@@ -5,28 +5,14 @@
 
 <body>
 	<section class="layout-content" layout:fragment="mybody">
-			
-	        <div class="page-header">
-	            <nav class="navbar navbar-expand-md navbar-top bg-light">
-	                <div class="collapse navbar-collapse" id="navbarsExampleDefault">
-	                    <ul class="navbar-nav">
-	                        <li class="nav-item active">
-	                            <i class="oi oi-caret-right"></i>
-	                            <span>Create Channel</span>
-	                        </li>
-	                    </ul>
-	                </div>
-	            </nav>
-	        </div>
-	
-	        <div class="container" id="registration"> 
+	        <div class="container" > 
 				<form th:action="@{/channel/create}"
 				                 th:object="${channel}" method="POST">
 							  
-					 <div class="form-row">
+					 <div class="form-row mt-4">
  	                     <div class="form-group col-md-6">
- 	                         <label for="channelname">Channelname</label>
- 	                         <input type="text" class="form-control" id="channelname" placeholder="Channelname"
+ 	                         <label for="channelname">Kanalname</label>
+ 	                         <input type="text" class="form-control" id="channelname" placeholder="Kanalname"
  	                                autofocus="autofocus" th:field="*{channelname}" 
  	                                th:classappend="${#fields.hasErrors('channelname')} ? 'is-invalid'" />
  	                         <div class="invalid-feedback">
@@ -35,10 +21,10 @@
  	                     </div>
  	                 </div>  
 
-					 <div class="form-row">
+					 <div class="form-row mt-4">
 					     <div class="form-group col-md-6">
-					             <label for="description">Description</label>
-					             <input type="text" class="form-control" id="description" placeholder="Description"
+					             <label for="description">Beschreibung</label>
+					             <input type="text" class="form-control" id="description" placeholder="Beschreibung"
 					                    th:field="*{description}" 
 					                    th:classappend="${#fields.hasErrors('description')} ? 'is-invalid'" />
 					             <div class="invalid-feedback">
@@ -50,7 +36,7 @@
 
 					 <input type="hidden" id="creationDate" th:field="*{creationDate}"/>
 					 <input type="hidden" id="channelId" th:field="*{channelId}"/>
-	               <button type="submit" class="btn btn-primary btn-sm">Save</button>
+	               <button type="submit" class="btn btn-primary my-4">Erstellen</button>
 	           </form>
 	        </div>
 
