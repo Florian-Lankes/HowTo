@@ -48,6 +48,10 @@ public class WatchlaterController {
 	}
 	@GetMapping("/save/{tutorialid}")
 	public String saveWatchLater(@PathVariable("tutorialid") long tutorialId) {
+		if(watchLaterService.getAllWatchLaters().contains(watchLaterService.getWatchLaterById(tutorialId))) {
+			return ("redirect:/tutorial/view/"+ tutorialId);
+		}
+		
 		WatchLater watchLater = new WatchLater();
 		watchLater.setWatchLaterId((long) -1);
 		watchLaterService.saveWatchLater(watchLater, getCurrentUserId(),tutorialId);
