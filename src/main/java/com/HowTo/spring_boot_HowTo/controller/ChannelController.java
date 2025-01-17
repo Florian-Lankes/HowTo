@@ -114,8 +114,10 @@ public class ChannelController {
             return "/channels/channel-create";
         }
     	
+    	if(walletService.getWalletById(getCurrentUserId()) == null) {
     	Wallet wallet = new Wallet();
     	walletService.saveWallet(wallet, getCurrentUserId());
+    	}
     	
     	channelService.saveChannel(channel, getCurrentUserId());
         redirectAttributes.addFlashAttribute("created", "Channel created!");

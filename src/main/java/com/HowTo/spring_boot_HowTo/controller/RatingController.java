@@ -80,7 +80,7 @@ public class RatingController {
 		if(result.hasErrors()) {
 			return "ratings/rating-create";
 		}
-		ratingService.saveRating(rating, getCurrentUserId(), getCurrentUserId());
+		ratingService.saveRating(rating, getCurrentUserId(), tutorialId);
 		return "redirect:/rating/view/" + rating.getRatingId(); 
 	}
 	
