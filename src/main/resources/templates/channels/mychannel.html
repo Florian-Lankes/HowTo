@@ -29,15 +29,18 @@
 				<h4>Noch keine Tutorials hochgeladen!</h4>
 			</div>
 				<div class="row mt-4">
-					<div class="col-md-4 mb-4" th:each="element : ${tutorials}"> <a class="card text-decoration-none"
+					<div class="col-md-4 mb-4" th:each="element : ${tutorials}"
 							th:href="@{/history/track/{tutorialid}(tutorialid=${element.tutorialId})}">
+							<div class="card">
 							<video th:unless="${#strings.isEmpty(element.videoUrl)}" th:src="${element.videoUrl}"
 								class="card-img-top"></video>
 							<div class="card-body">
 								<h5 class="card-title " th:text="${element.Title}"></h5>
 								<p class="card-text" th:text="${element.contentText}"></p>
+								<a th:href="@{/tutorial/update/{id}(id = ${element.tutorialId})}" class="btn btn-primary">Edit Tutorial</a>
+								<a th:href="@{/tutorial/upload/video/{id}(id=${element.tutorialId})}" class="btn btn-primary">Edit Video</a>
 							</div>
-						</a>
+							</div>
 					</div>
 				
 			</div>

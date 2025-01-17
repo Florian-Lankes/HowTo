@@ -12,10 +12,10 @@
 
 		<section class="layout-content" layout:fragment="mybody">
 			<div class="container mt-2">
-				<h1>Kanäle</h1>
+				<h2>Kanäle</h2>
 			</div>
 
-			<form class="container mt-2" th:action="@{/channel/all}" id="searchForm" method="get">
+			<form class="mt-2" th:action="@{/channel/all}" id="searchForm" method="get">
 				<div class="container d-flex mt-2">
 					<div class="search">
 						<input id="keyword" type="search" name="keyword" th:value="${keyword}" class="form-control me-2"

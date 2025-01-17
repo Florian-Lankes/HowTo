@@ -14,9 +14,9 @@
 			<form th:action="@{/tutorial/update}" th:object="${tutorial}" method="POST">
 
 
-				<div class="form-row">
+				<div class="form-row mt-3">
 					<div class="form-group col-md-6">
-						<label>Title</label>
+						<label>Titel</label>
 						<input type="text" class="form-control" autofocus="autofocus" th:field="*{title}"
 							th:classappend="${#fields.hasErrors('title')} ? 'is-invalid'" />
 						<div class="invalid-feedback">
@@ -24,7 +24,7 @@
 						</div>
 					</div>
 				</div>
-				<div class="form-row">
+				<div class="form-row my-2">
 					<div class="form-group">
 						<label>Kategorie</label>
 						<select name="categorySelection" class="form-control">
@@ -32,14 +32,16 @@
 								th:text="${element.categoryName}" th:if="${tutorial.tutorialCategory != null}"
 								th:selected="${element.categoryId} == ${tutorial.tutorialCategory.categoryId}"></option>
 							<option th:each="element : ${categories}" th:value="${element.categoryId}"
-								th:text="${element.categoryName}" th:unless="${tutorial.tutorialCategory != null}"></option>
+								th:text="${element.categoryName}" th:unless="${tutorial.tutorialCategory != null}">
+							</option>
+						</select>
 					</div>
 				</div>
-				<div class="form-row">
-					<div class="form-group col-md-6">
-						<label>Title</label>
-						<textarea type="text" class="form-control" autofocus="autofocus" th:field="*{contentText}"
-							th:classappend="${#fields.hasErrors('contentText')} ? 'is-invalid'"></textarea>
+				<div class="form-row my-2">
+					<div class="form-group">
+						<label>Beschreibung</label>
+						<textarea class="form-control" th:field="*{contentText}"
+							th:classappend="${#fields.hasErrors('contentText')} ? 'is-invalid'" rows="3"></textarea>
 						<div class="invalid-feedback">
 							<span th:errors="*{contentText}"></span>
 						</div>
@@ -55,7 +57,7 @@
 				<input type="hidden" th:field="*{createdByChannel}" />
 				<input type="hidden" th:field="*{videoUrl}" />
 
-				<button type="submit" class="btn btn-primary btn-sm">Update</button>
+				<button type="submit" class="btn btn-primary my-3">Aktualisieren</button>
 			</form>
 		</div>
 
