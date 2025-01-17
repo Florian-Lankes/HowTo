@@ -88,6 +88,23 @@ public class ChannelController {
 		return "/channels/channel";
 	}
 	
+	@GetMapping("/mychannel")
+	public String showMyChannel(Model model) {
+		
+    	Channel channel = channelService.getChannelById(getCurrentUserId());
+    	if(channel != null) {
+    	List<Tutorial> tutorials = channel.getTutorials();
+    	model.addAttribute("channel", channel);
+		model.addAttribute("tutorials", tutorials);
+				
+		return "/channels/mychannel";
+		}
+    	else {
+    		return "redirect:/user/my";
+    	}
+	}
+	
+	
 	//CREATE
 	@GetMapping("/create")
 	public String showChannelAdForm(Model model, HttpServletRequest request) {

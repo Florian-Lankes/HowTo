@@ -17,7 +17,7 @@
 			<input type="hidden" readonly id="channelId" th:field="*{channelId}" />
 			<button type="submit" class="btn btn- btn-success">Subscribe</button>
 		</form>
-
+		
 
 		<form th:action="@{/channel/unsubscribe}" th:object="${channel}" method="POST">
 			<input type="hidden" readonly id="channelId" th:field="*{channelId}" />
