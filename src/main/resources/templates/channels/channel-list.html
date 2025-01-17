@@ -21,12 +21,12 @@
 						<input id="keyword" type="search" name="keyword" th:value="${keyword}" class="form-control me-2"
 							placeholder="Suchen">
 					</div>
-					<div><button type="submit" class="btn btn-secondary">Search</button></div>
+					<div><button type="submit" class="btn btn-secondary">Suchen</button></div>
 				</div>
 
 				<div class="container d-flex mt-2">
 					<div class="input-group-prepend">
-						<label class="input-group-text" for="pageSize">Items per page:</label>
+						<label class="input-group-text" for="pageSize">Items pro Seite:</label>
 					</div>
 					<select form="searchForm" name="size" th:value="${pageSize}" onchange="changePageSize()"
 						class="size-select" id="pageSize">
@@ -45,7 +45,7 @@
 						<tr>
 							<th> Name</th>
 							<th> Beschreibung </th>
-							<th > Actions </th>
+							<th > Aktionen </th>
 						</tr>
 					</thead>
 					<tbody>

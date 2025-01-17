@@ -81,6 +81,12 @@ public class ChannelController {
 	public String showChannelList(@PathVariable("id") Long channelid ,Model model) {
 		
     	Channel channel = channelService.getChannelById(channelid);
+    	User current = userService.getUserById(getCurrentUserId());
+    	if(channel.getSubscribedFromUserList().contains(current)) {
+    		model.addAttribute("abonniert", true);
+    	}else {
+    		model.addAttribute("abonniert", false);
+    	}
     	List<Tutorial> tutorials = channel.getTutorials();
     	model.addAttribute("channel", channel);
 		model.addAttribute("tutorials", tutorials);
@@ -229,9 +235,15 @@ public class ChannelController {
 			return "/channels/channel-update";
 		}
        
-		channelService.updateChannel(channel);
+		Channel u =channelService.updateChannel(channel);
         redirectAttributes.addFlashAttribute("updated", "channel updated!");
-		return "redirect:/channel/all";
+        
+        if(u.getChannelId() != getCurrentUserId()) {
+        	return "redirect:/channel/all";
+        }else {
+        	return "redirect:/channel/mychannel";
+        }
+        
 		
 	}
     
