@@ -32,12 +32,12 @@
 				<div class="content"> <strong>Password</strong>
 								<p th:text="${user.password}"></p>
 								<a th:href="@{/user/changemypassword}" class="btn btn-primary btn-sm mb-3">Change Password</a>
-							</div>
-							<a th:href="@{/wallet/create}" class="btn btn-primary btn-sm mb-3" th:unless="${wallet!=null}">Create Wallet</a>
-							<a th:href="@{/wallet/my}" class="btn btn-primary btn-sm mb-3" th:if="${wallet!=null}">Open Wallet</a>
+				</div>
+				
 							<div class="container" id="passwordchange">
 							<div th:replace="~{fragments/alert::alert}"></div>	
-							</div>	
+				</div>	
+
 				<div th:if="${#authentication.principal.using2FA}">
 					    You are using Two-step authentication 
 						<a th:href="@{my/deactivate2fa}" class="btn btn-danger"> 
@@ -57,6 +57,8 @@
 					</a>
 				</div>
 			</div>
+			<a th:href="@{/wallet/create}" class="btn btn-primary btn-sm mb-3" th:unless="${wallet!=null}">Create Wallet</a>
+			<a th:href="@{/wallet/my}" class="btn btn-primary btn-sm mb-3" th:if="${wallet!=null}">Open Wallet</a>
 			<div class="row"  sec:authorize="!hasAuthority('CREATOR_RIGHTS')">
 										<div class="col-lg-3">
 											<a th:href="@{/channel/create}" class="btn btn-primary btn-sm mb-3"> Add Channel</a>
