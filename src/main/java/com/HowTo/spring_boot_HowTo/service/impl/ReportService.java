@@ -1,12 +1,14 @@
 package com.HowTo.spring_boot_HowTo.service.impl;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.HowTo.spring_boot_HowTo.model.Tutorial;
 import com.HowTo.spring_boot_HowTo.model.User;
+import com.HowTo.spring_boot_HowTo.model.History;
 import com.HowTo.spring_boot_HowTo.model.Report;
 import com.HowTo.spring_boot_HowTo.repository.TutorialRepositoryI;
 import com.HowTo.spring_boot_HowTo.repository.UserRepositoryI;
@@ -68,7 +70,8 @@ public class ReportService implements ReportServiceI{
 	@Override
 	public Report getReportById(Long id) {
 		// TODO Auto-generated method stub
-		return null;
+		Optional<Report> opReport = reportRepository.findById(id);
+		return opReport.isPresent()? opReport.get():null;
 	}
 
 	@Override
@@ -80,7 +83,7 @@ public class ReportService implements ReportServiceI{
 	@Override
 	public void delete(Report report) {
 		// TODO Auto-generated method stub
-		
+		reportRepository.delete(report);
 	}
 
 	
