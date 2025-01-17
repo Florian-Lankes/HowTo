@@ -4,7 +4,6 @@
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>Register</title>
 	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
 </head>
 
@@ -22,8 +21,8 @@
 						<form th:action="@{/register}" th:object="${user}" method="POST">
 
 							<div class="form-group">
-								<label for="username">Username</label>
-								<input type="text" class="form-control" id="username" placeholder="Username"
+								<label for="username">Nutzername</label>
+								<input type="text" class="form-control" id="username" placeholder="Nutzername"
 									autofocus="autofocus" th:field="*{username}"
 									th:classappend="${#fields.hasErrors('username')} ? 'is-invalid'" />
 								<div class="invalid-feedback">
@@ -39,8 +38,8 @@
 								</div>
 							</div>
 							<div class="form-group">
-								<label for="password">Password</label>
-								<input type="password" class="form-control" id="password" placeholder="Password"
+								<label for="password">Passwort</label>
+								<input type="password" class="form-control" id="password" placeholder="Passwort"
 									th:field="*{password}"
 									th:classappend="${#fields.hasErrors('password')} ? 'is-invalid'" />
 								<div class="invalid-feedback">
@@ -48,7 +47,7 @@
 								</div>
 							</div>
 							<div class="form-group">
-								<label for="birthDate">Date of Birth</label>
+								<label for="birthDate">Geburtsdatum</label>
 								<input type="date" class="form-control" id="birthDate" th:field="*{birthDate}"
 									th:classappend="${#fields.hasErrors('birthDate')} ? 'is-invalid'" />
 								<div class="invalid-feedback">
@@ -57,15 +56,15 @@
 							</div>
 							<input type="hidden" id="userId" th:field="*{userId}"/>
 
-							<button type="submit" class="btn btn-primary btn-block">Register</button>
+							<button type="submit" class="btn btn-primary btn-block">Registrieren</button>
 						</form>
 					</div>
 				</div>
 				<div class="divider text-center my-4">
-					<span>or</span>
+					<span>oder</span>
 				</div>
 				<a class="btn btn-outline-primary btn-block" href="/login">
-					Login
+					Einloggen
 				</a>
 			</div>
 		</div>
