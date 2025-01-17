@@ -4,6 +4,9 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springdoc.core.annotations.ParameterObject;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.Link;
@@ -25,10 +28,17 @@ import org.springframework.web.bind.annotation.RestController;
 import com.HowTo.spring_boot_HowTo.model.Tutorial;
 import com.HowTo.spring_boot_HowTo.service.TutorialServiceI;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.ExampleObject;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
 
 @RestController
-@RequestMapping(value = "/api/tutorials", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(value = "/api/tutorials", produces = MediaType.APPLICATION_JSON_VALUE)
 public class TutorialRestController {
 
 	private TutorialServiceI tutorialService;
@@ -36,10 +46,23 @@ public class TutorialRestController {
 	public TutorialRestController(TutorialServiceI tutorialService) {
 		this.tutorialService = tutorialService;
 	}
-
+	
+	
+	@Operation(summary = "Upload a tutorial")
+	@ApiResponses(value = { 
+			@ApiResponse(responseCode = "201", description = "Tutorial created", 
+					content = { @Content(mediaType = "application/json", 
+				    schema = @Schema(implementation = Tutorial.class)) }),
+			@ApiResponse(responseCode = "400", description = "Invalid Parameters", 
+		    content = @Content)})
 	@PostMapping(value = "/", consumes = "application/json")
-	public ResponseEntity<?> postTutorial(@Valid @RequestBody Tutorial tutorial, BindingResult result,
-			@RequestParam("categoryId") Long categoryId, @RequestParam("channelId") Long channelId) {
+	public ResponseEntity<?> postTutorial(@io.swagger.v3.oas.annotations.parameters.RequestBody(
+		    description = "Tutorial to create", required = true,
+		    content = @Content(mediaType = "application/json",
+		      schema = @Schema(implementation = Tutorial.class),
+		      examples = @ExampleObject(value = "{ \"title\": \"How to do muscle ups\" , \"contentText\": \"This is how you do a muscle up. First you have to warm up........\" }"))) 
+			@Valid @RequestBody Tutorial tutorial, BindingResult result,
+			@Parameter(description = "id of category") @RequestParam("categoryId") Long categoryId, @Parameter(description = "id of creator/channel") @RequestParam("channelId") Long channelId) {
 
 		if (result.hasErrors()) {
 			return new ResponseEntity<>(result.getAllErrors(), HttpStatus.BAD_REQUEST);
@@ -57,10 +80,26 @@ public class TutorialRestController {
 
 		return new ResponseEntity<>(entityModel, HttpStatus.CREATED);
 	}
-
+	
+	
+	@Operation(summary = "Update a tutorial")
+	@ApiResponses(value = { 
+			@ApiResponse(responseCode = "200", description = "Updated the tutorial", 
+					content = { @Content(mediaType = "application/json", 
+				    schema = @Schema(implementation = Tutorial.class)) }),
+			@ApiResponse(responseCode = "400", description = "Invalid Parameters", 
+		    content = @Content), 
+			@ApiResponse(responseCode = "404", description = "Tutorial not found", 
+				    content = @Content) })
 	@PutMapping("/{id}")
-	public ResponseEntity<?> updateTutorial(@PathVariable("id") Long tutorialId, @Valid @RequestBody Tutorial tutorial,
-			BindingResult result, @RequestParam("categoryId") Long categoryId) {
+	public ResponseEntity<?> updateTutorial(@Parameter(description = "id of tutorial") @PathVariable("id") Long tutorialId, 
+			@io.swagger.v3.oas.annotations.parameters.RequestBody(
+				    description = "Tutorial to update", required = true,
+				    content = @Content(mediaType = "application/json",
+				      schema = @Schema(implementation = Tutorial.class),
+				      examples = @ExampleObject(value = "{ \"title\": \"How to do 22 planches\" , \"contentText\": \"This is how you do 22 planche. First you have to warm up........\" }"))) 
+			@Valid @RequestBody Tutorial tutorial,
+			BindingResult result, @Parameter(description = "id of category") @RequestParam("categoryId") Long categoryId) {
 
 		if (result.hasErrors()) {
 			return new ResponseEntity<>(result.getAllErrors(), HttpStatus.BAD_REQUEST);
@@ -89,7 +128,13 @@ public class TutorialRestController {
 		return new ResponseEntity<>(entityModel, HttpStatus.OK);
 
 	}
-
+	
+	
+	@Operation(summary = "Get all tutorials")
+	@ApiResponses(value = { 
+		@ApiResponse(responseCode = "200", description = "All tutorials", 
+			content = { @Content(mediaType = "application/json")}),
+		@ApiResponse(responseCode = "204", description = "No tutorials", content = @Content)})
 	@GetMapping("/")
 	public ResponseEntity<?> getAllTutorials() {
 		List<Tutorial> allTutorials = tutorialService.getAllTutorials();
@@ -110,9 +155,27 @@ public class TutorialRestController {
 
 		return new ResponseEntity<>(CollectionModel.of(tutorialModels, listLink), HttpStatus.OK);
 	}
+	
+	
+	@Operation(summary = "Get tutorials by title / paging filter")
+	@ApiResponse(responseCode = "200", description = "Paging Infos", 
+			content = { @Content(mediaType = "application/json")})
+	//OpenAPI can do it
+		@GetMapping("/filter")
+		public Page<Tutorial> filterTutorials(@Parameter(description = "title searched for") @RequestParam("title") String title, @ParameterObject Pageable pageable) {
+		     return tutorialService.getAllTutorials(title, pageable);
+		}
 
+	
+	@Operation(summary = "Get a tutorial by its id")
+	@ApiResponses(value = { 
+	@ApiResponse(responseCode = "200", description = "Found the tutorial", 
+			content = { @Content(mediaType = "application/json", 
+		    schema = @Schema(implementation = Tutorial.class)) }),
+	@ApiResponse(responseCode = "404", description = "Tutorial not found", 
+		    content = @Content) })
 	@GetMapping("/{id}")
-	public ResponseEntity<EntityModel<Tutorial>> getOneTutorial(@PathVariable("id") Long tutorialId) {
+	public ResponseEntity<EntityModel<Tutorial>> getOneTutorial(@Parameter(description = "id of tutorial to be searched") @PathVariable("id") Long tutorialId) {
 		Tutorial tutorial = tutorialService.getTutorialById(tutorialId);
 		if (tutorial == null) {
 			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -125,9 +188,14 @@ public class TutorialRestController {
 
 		return new ResponseEntity<>(entityModel, HttpStatus.OK);
 	}
-
+	
+	
+	@Operation(summary = "Delete a tutorial by its id")
+	@ApiResponses(value = { 
+	@ApiResponse(responseCode = "204", description = "Deleted the tutorial", content = @Content),
+	@ApiResponse(responseCode = "404", description = "Tutorial not found", content = @Content)})
 	@DeleteMapping("/{id}")
-	public ResponseEntity<?> deleteTutorial(@PathVariable("id") Long tutorialId) {
+	public ResponseEntity<?> deleteTutorial(@Parameter(description = "id of tutorial to be deleted") @PathVariable("id") Long tutorialId) {
 		Tutorial tutorial = tutorialService.getTutorialById(tutorialId);
 		if (tutorial == null) {
 			return new ResponseEntity<>(HttpStatus.NOT_FOUND);

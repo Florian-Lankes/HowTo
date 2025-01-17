@@ -101,6 +101,8 @@ public class SecurityConfiguration {
 			.requestMatchers("/user/forgotmypassword").permitAll()
 			.requestMatchers("/confirmPassword").permitAll()
 			.requestMatchers("/user/forgottenpasswordchanged").permitAll()
+			.requestMatchers("/v3/api-docs").permitAll()
+			.requestMatchers("/swagger-ui/index.html").permitAll()
 			
 			.requestMatchers("/home").hasAuthority("VIEW")
 			.requestMatchers("/tutorial/all").hasAuthority("VIEW")

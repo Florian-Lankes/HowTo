@@ -22,6 +22,13 @@ import org.springframework.web.bind.annotation.RestController;
 import com.HowTo.spring_boot_HowTo.model.Rating;
 import com.HowTo.spring_boot_HowTo.service.RatingServiceI;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.ExampleObject;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
 
 
@@ -35,10 +42,21 @@ public class RatingRestController {
 		this.ratingService = ratingService;
 	}
 	
-	
+	@Operation(summary = "Create a rating")
+	@ApiResponses(value = { 
+			@ApiResponse(responseCode = "201", description = "Rating created", 
+					content = { @Content(mediaType = "application/json", 
+				    schema = @Schema(implementation = Rating.class)) }),
+			@ApiResponse(responseCode = "400", description = "Invalid Parameters", 
+		    content = @Content)})
 	@PostMapping(value = "/", consumes = "application/json")
-	public ResponseEntity<?> postRating(@Valid @RequestBody Rating rating, BindingResult result, 
-			@RequestParam("userId") Long userId, @RequestParam("tutorialId") Long tutorialId) {
+	public ResponseEntity<?> postRating(@io.swagger.v3.oas.annotations.parameters.RequestBody(
+		    description = "Rating to create", required = true,
+		    content = @Content(mediaType = "application/json",
+		      schema = @Schema(implementation = Rating.class),
+		      examples = @ExampleObject(value = "{ \"ratingScore\": 5,  \"ratingText\": \"This tutorial is really well made! I can do a pullup now!\" }"))) 
+			@Valid @RequestBody Rating rating, BindingResult result, 
+			@Parameter(description = "id of writer/reader") @RequestParam("userId") Long userId, @Parameter(description = "id of tutorial rated") @RequestParam("tutorialId") Long tutorialId) {
 
 		if (result.hasErrors()) {
 			return new ResponseEntity<>(result.getAllErrors(), HttpStatus.BAD_REQUEST);
@@ -53,9 +71,23 @@ public class RatingRestController {
 		return new ResponseEntity<>(entityModel, HttpStatus.CREATED);
 	}
 	
-	
+	@Operation(summary = "Update a rating")
+	@ApiResponses(value = { 
+			@ApiResponse(responseCode = "200", description = "Updated the rating", 
+					content = { @Content(mediaType = "application/json", 
+				    schema = @Schema(implementation = Rating.class)) }),
+			@ApiResponse(responseCode = "400", description = "Invalid Parameters", 
+		    content = @Content), 
+			@ApiResponse(responseCode = "404", description = "Rating not found", 
+				    content = @Content) })
 	@PutMapping("/{id}")
-	public ResponseEntity<?> updateRating(@PathVariable("id") Long ratingId, @Valid @RequestBody Rating rating,
+	public ResponseEntity<?> updateRating(@Parameter(description = "id of rating") @PathVariable("id") Long ratingId,
+			@io.swagger.v3.oas.annotations.parameters.RequestBody(
+				    description = "Rating to update", required = true,
+				    content = @Content(mediaType = "application/json",
+				      schema = @Schema(implementation = Rating.class),
+				      examples = @ExampleObject(value = "{ \"ratingScore\": 1,  \"ratingText\": \"This tutorial is really bad! It doesn't work at all!\" }"))) 
+			@Valid @RequestBody Rating rating,
 			BindingResult result) {
 
 		if (result.hasErrors()) {
@@ -85,6 +117,11 @@ public class RatingRestController {
 	}
 
 	
+	@Operation(summary = "Get all ratings")
+	@ApiResponses(value = { 
+			@ApiResponse(responseCode = "200", description = "All ratings", 
+				content = { @Content(mediaType = "application/json")}),
+			@ApiResponse(responseCode = "204", description = "No ratings", content = @Content)})
 	@GetMapping("/")
 	public ResponseEntity<?> getAllRatings() {
 		List<Rating> allRatings = ratingService.getAllRatings();
@@ -106,8 +143,16 @@ public class RatingRestController {
 		return new ResponseEntity<>(CollectionModel.of(ratingModels, listLink), HttpStatus.OK);
 	}
 	
+	
+	@Operation(summary = "Get a rating by its id")
+	@ApiResponses(value = { 
+	@ApiResponse(responseCode = "200", description = "Found the rating", 
+			content = { @Content(mediaType = "application/json", 
+		    schema = @Schema(implementation = Rating.class)) }),
+	@ApiResponse(responseCode = "404", description = "Rating not found", 
+		    content = @Content) })
 	@GetMapping("/{id}")
-	public ResponseEntity<EntityModel<Rating>> getOneRating(@PathVariable("id") Long ratingId) {
+	public ResponseEntity<EntityModel<Rating>> getOneRating(@Parameter(description = "id of rating to be searched") @PathVariable("id") Long ratingId) {
 		Rating rating = ratingService.getRatingById(ratingId);
 		if (rating == null) {
 			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -121,8 +166,13 @@ public class RatingRestController {
 		return new ResponseEntity<>(entityModel, HttpStatus.OK);
 	}
 	
+	
+	@Operation(summary = "Delete a rating by its id")
+	@ApiResponses(value = { 
+	@ApiResponse(responseCode = "204", description = "Deleted the rating", content = @Content),
+	@ApiResponse(responseCode = "404", description = "Rating not found", content = @Content)})
 	@DeleteMapping("/{id}")
-	public ResponseEntity<?> deleteRating(@PathVariable("id") Long ratingId) {
+	public ResponseEntity<?> deleteRating(@Parameter(description = "id of rating to be deleted") @PathVariable("id") Long ratingId) {
 		Rating rating = ratingService.getRatingById(ratingId);
 		if (rating == null) {
 			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
