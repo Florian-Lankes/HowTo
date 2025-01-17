@@ -158,7 +158,7 @@ public class WalletController {
 			return "redirect:/wallet/my";
 		}
 		
-		 redirectAttributes.addFlashAttribute("deleted", "Upgrade konnte nicht vervollständigt werden");
+		 redirectAttributes.addFlashAttribute("deleted", "Upgrade konnte nicht vervollständigt werden, da zu wenig Geld vorhanden ist");
 		
 		
 

@@ -1,14 +1,38 @@
 <!DOCTYPE html>
+<html layout:decorate="~{layout}">
 
-<html>
+<head>
+	<meta charset="UTF-8" />
+
+	<script type="text/javascript">
+
+		$(document).ready(function () {
+
+			window.setTimeout(function () {
+				$(".alert").fadeTo(1000, 0).slideUp(1000, function () {
+					$(this).remove();
+				});
+			}, 5000);
+
+		});
+	</script>
+</head>
+
 <body>
-<div id="qr">
-    <p>
-        Scan this Barcode using Google Authenticator app on your phone 
-        to use it later in login
-    </p>
-    <img th:src="${qr}"/>
-</div>
-<a href="/login" class="btn btn-primary">Go to login page</a>
+	<section class="container" layout:fragment="mybody">
+		<div class="container d-flex flex-column align-items-center justify-content-center" id="qr">
+			<h2>
+				Scannen Sie diesen Barcode mit der Google Authenticator-App um 2FA zu aktivieren
+			</h2>
+			<div class="container d-flex flex-column align-items-center justify-content-center">
+				<img th:src="${qr}" width="500" height="500"/>
+			</div>
+			<a th:href="@{/logout}"  class="btn btn-success m-3 btn-lg" >
+				Ausprobieren
+			</a>
+		</div>
+
+	</section>
 </body>
+
 </html>

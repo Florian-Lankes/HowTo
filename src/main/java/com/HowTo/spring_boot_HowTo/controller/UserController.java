@@ -365,7 +365,7 @@ public class UserController {
 		User user = userService.getUserById(getCurrentUserId());
 		user.setUsing2FA(false);
 		userService.saveRegisteredUser(user);
-		return "/login";
+		return "redirect:/logout";
 
 	}
 
