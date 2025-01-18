@@ -8,6 +8,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
@@ -56,6 +58,8 @@ public class TutorialController {
 	private CloudinaryServiceI cloudinaryService;
 	private CategoryServiceI categoryService;
 	private ChannelServiceI channelService;
+	private static final Logger logger = LogManager.getLogger(GroupController.class);
+	
 	
 	public TutorialController(TutorialServiceI tutorialService, CategoryServiceI categoryService, CloudinaryServiceI cloudinaryService, ChannelServiceI channelService) {
 		super();
@@ -80,7 +84,7 @@ public class TutorialController {
 	
 	@GetMapping("/view/{id}")
 	public String getTutorialView(@PathVariable("id") Long id, Model model) {
-		
+		logger.info("Entering getTutorialView method with tutorialId: {}", id);
 		Tutorial tutorial = tutorialService.getTutorialById(id); 
 		
 		//For comment Form in Tutorial
@@ -99,17 +103,19 @@ public class TutorialController {
 			    Advertisement randomAd = advertisements.get(random);
 			    String advertisement = randomAd.getVideoUrl();
 			    model.addAttribute("advertisement", advertisement );
+			    logger.info("Random advertisement added to model: {}", advertisement);
 			    // Use randomAd as needed
 			} else {
 			    // Handle case when the list is empty
-			    System.out.println("No advertisements available.");
+				logger.warn("No advertisements available.");
 			}
 		}
 		else {
-			System.out.println("No category available.");
+			logger.warn("No category available.");
 		}
 		model.addAttribute("tutorial", tutorial );
 		model.addAttribute("comment", commentForm);
+		logger.info("Tutorial and comment form added to model");
 		return "tutorials/tutorial";
 	}
 	
@@ -117,10 +123,11 @@ public class TutorialController {
 	public String likeTutorial(@PathVariable("id") Long id, 
 			Model model,
 			HttpServletRequest request) {
+		logger.info("Entering likeTutorial method with tutorialId: {}", id);
 	 	Tutorial tutorial = tutorialService.getTutorialById(id); 
 	 	tutorial.setLikes(tutorial.getLikes()+1);
 		tutorialService.updateTutorial(tutorial, tutorial.getTutorialCategory().getCategoryId());
-
+		logger.info("Tutorial liked successfully, new like count: {}", tutorial.getLikes());
 		return "redirect:/tutorial/all";
 	}
 	
@@ -128,10 +135,11 @@ public class TutorialController {
 	public String dislikeTutorial(@PathVariable("id") Long id, 
 			Model model,
 			HttpServletRequest request) {
+		logger.info("Entering dislikeTutorial method with tutorialId: {}", id);
 	 	Tutorial tutorial = tutorialService.getTutorialById(id); 
 	 	tutorial.setDislikes(tutorial.getDislikes()+1);
 		tutorialService.updateTutorial(tutorial, tutorial.getTutorialCategory().getCategoryId());
-		
+		logger.info("Tutorial disliked successfully, new dislike count: {}", tutorial.getDislikes());
 		return "redirect:/tutorial/all";
 	}
 	
@@ -139,9 +147,10 @@ public class TutorialController {
 	public String showTutorialList(Model model, @RequestParam(required = false) String keyword,
 			@RequestParam(required = false, defaultValue = "1") int page, @RequestParam(required = false,
 			defaultValue = "5") int size) {
-try {
+		logger.info("Entering showTutorialList method with keyword: {}, page: {}, size: {}", keyword, page, size);
+		try {
 			
-			List<Tutorial> tutorials = new ArrayList<Tutorial>();
+			 List<Tutorial> tutorials = new ArrayList<Tutorial>();
 
 			 //the first page is 1 for the channel, 0 for the database.
 			 Pageable paging = PageRequest.of(page - 1, size);
@@ -159,8 +168,9 @@ try {
 			 model.addAttribute("totalItems", pageTutorial.getTotalElements());
 			 model.addAttribute("totalPages", pageTutorial.getTotalPages());
 			 model.addAttribute("pageSize", size);
-			 
+			 logger.info("Tutorials retrieved and added to model");
 		} catch (Exception e){
+			logger.error("Exception occurred while retrieving tutorials: {}", e.getMessage());
 			model.addAttribute("message", e.getMessage());
 		}
 				
@@ -169,7 +179,7 @@ try {
 	
 	@GetMapping("/create")
 	public String createTutorialView(Model model) {
-		
+		logger.info("Entering createTutorialView method");
 		Tutorial tutorial = new Tutorial();
 		tutorial.setLikes((long) 0);
 		tutorial.setDislikes((long) 0);
@@ -179,6 +189,7 @@ try {
 		model.addAttribute("tutorial", tutorial);
 		model.addAttribute("categories",categories);
 		
+		logger.info("Tutorial creation form initialized and added to model");
 		return "tutorials/tutorial-create";
 	}
 	// 
@@ -186,8 +197,9 @@ try {
 	public String uploadTutorial(@RequestParam("categorySelection") Long categoryId, @Valid @ModelAttribute Tutorial tutorial, 
 			BindingResult results, Model model, 
 			RedirectAttributes redirectAttributes ) {
+		logger.info("Entering uploadTutorial method with tutorial: {}", tutorial);
 		if (results.hasErrors()) {
-			System.out.println(results.getAllErrors().toString());
+			logger.error("Validation errors: {}", results.getAllErrors());
 			List<Category> categories = categoryService.getAllCategorys();
 			model.addAttribute("categories",categories);
     		return "/tutorials/tutorial-create";
@@ -199,14 +211,14 @@ try {
 		for (User u : subscribedUsers) {
 			eventPublisher.publishEvent(new OnInformSubscriberEvent(u, c.getChannelname(), tutorial.getTitle()));
 		}
-		
+		logger.info("Tutorial created successfully with id: {}", tutorial.getTutorialId());
 		redirectAttributes.addFlashAttribute("created", "Tutorial created!");
-		
 		return "redirect:/tutorial/upload/video/"+ tutorial.getTutorialId();
 	}
 	
 	@GetMapping("/upload/video/{id}")
 	public String uploadVideoView(@PathVariable("id") Long id, Model model) {
+		logger.info("Entering uploadVideoView method with tutorialId: {}", id);
 		model.addAttribute(tutorialService.getTutorialById(id));
 		return "tutorials/tutorial-video-upload";
 	}
@@ -214,9 +226,9 @@ try {
 	
 	@GetMapping("/delete/{id}")
     public String deleteTutorial(@PathVariable("id") Long tutorialId, Model model, RedirectAttributes redirectAttributes) {
-        Tutorial tutorial = tutorialService.getTutorialById(tutorialId);     
+		logger.info("Entering deleteTutorial method with tutorialId: {}", tutorialId);
+		Tutorial tutorial = tutorialService.getTutorialById(tutorialId);     
         if(tutorial != null &&tutorial.getVideoUrl() != null && !tutorial.getVideoUrl().isEmpty()) {
-    		
     		String s = tutorial.getVideoUrl();  //String split to get public id and delete it
     		String[] news = s.split("/");
     		String name = news[news.length-1];
@@ -224,9 +236,11 @@ try {
     		String publicId = test[0];
     		cloudinaryService.deleteFile(publicId);
     		cloudinaryService.deleteVideoUrl(tutorialId);
+    		logger.info("Tutorial video deleted with publicId: {}", publicId);
     	}
         tutorialService.delete(tutorial);
         redirectAttributes.addFlashAttribute("deleted", "Tutorial deleted!");
+        logger.info("Tutorial deleted successfully with tutorialId: {}", tutorialId);
         return "redirect:/tutorial/all";
     }
 	
@@ -234,12 +248,12 @@ try {
 	public String showUpdateTutorialForm(@PathVariable("id") Long tutorialId, 
 			Model model,
 			HttpServletRequest request) {
+		logger.info("Entering showUpdateTutorialForm method with tutorialId: {}", tutorialId);
 	 	Tutorial tutorial = tutorialService.getTutorialById(tutorialId); 
     	model.addAttribute("tutorial", tutorial);
     	List<Category> categories = categoryService.getAllCategorys();
 		model.addAttribute("categories",categories);
-
-		System.out.println("updating tutorial id="+ tutorialId);
+		logger.info("Tutorial retrieved and added to model for update with tutorialId: {}", tutorialId);
 		return "/tutorials/tutorial-update";
 	}
     
@@ -249,19 +263,21 @@ try {
 			BindingResult results,
 			Model model, 
 			RedirectAttributes redirectAttributes) {
-		
+    	logger.info("Entering updateTutorial method with tutorialId: {}", tutorial.getTutorialId());
 		if (results.hasErrors()){
+			logger.error("Validation errors: {}", results.getAllErrors());
 			return "/tutorials/tutorial-update";
 		}
 		
 		tutorialService.updateTutorial(tutorial, categoryId);
         redirectAttributes.addFlashAttribute("updated", "tutorial updated!");
+        logger.info("Tutorial updated successfully with tutorialId: {}", tutorial.getTutorialId());
 		return "redirect:/tutorial/all";
 	}
     
     @PostMapping("/uploadvideo/{id}")
 	public String uploadVideo(@PathVariable("id") Long tutorialId, @RequestParam("video") MultipartFile file, RedirectAttributes redirectAttributes) {
-    	
+    	logger.info("Entering uploadVideo method with tutorialId: {}", tutorialId);
     	Tutorial tutorial = tutorialService.getTutorialById(tutorialId);
     	if(tutorial.getVideoUrl() != null && !tutorial.getVideoUrl().isEmpty()) {
     		
@@ -271,9 +287,11 @@ try {
     		String[] test = name.split("\\.");
     		String publicId = test[0];
     		cloudinaryService.deleteFile(publicId);
+    		logger.info("Existing tutorial video deleted with publicId: {}", publicId);
     	}
 		cloudinaryService.uploadFile(file, tutorialId);
         redirectAttributes.addFlashAttribute("updated", "tutorial video updated!");
+        logger.info("New video uploaded successfully for tutorialId: {}", tutorialId);
 		return "redirect:/channel/mychannel";
 	}
     
@@ -281,6 +299,7 @@ try {
 	public String deleteVideo(@PathVariable("id") Long tutorialId, 
 			Model model,
 			HttpServletRequest request, RedirectAttributes redirectAttributes) {
+    	logger.info("Entering deleteVideo method with tutorialId: {}", tutorialId);
     	Tutorial tutorial = tutorialService.getTutorialById(tutorialId);
     	if(tutorial.getVideoUrl() != null && !tutorial.getVideoUrl().isEmpty()) {
     		
@@ -291,8 +310,10 @@ try {
     		String publicId = test[0];
     		cloudinaryService.deleteFile(publicId);
     		cloudinaryService.deleteVideoUrl(tutorialId);
+    		logger.info("Tutorial video deleted with publicId: {}", publicId);
     	}
     	redirectAttributes.addFlashAttribute("deleted", "tutorial video deleted!");
+    	logger.info("Tutorial video deleted successfully for tutorialId: {}", tutorialId);
 		return "redirect:/tutorial/all";
 	}
     

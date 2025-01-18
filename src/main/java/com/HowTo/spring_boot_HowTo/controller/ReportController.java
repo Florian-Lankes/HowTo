@@ -2,6 +2,8 @@ package com.HowTo.spring_boot_HowTo.controller;
 
 import java.util.List;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -30,6 +32,8 @@ public class ReportController {
 	private ReportServiceI reportService;
 	private UserServiceI userService;
 	private TutorialServiceI tutorialService;
+	private static final Logger logger = LogManager.getLogger(GroupController.class);
+	
 
 	public ReportController(ReportServiceI reportService, TutorialServiceI tutorialService, UserServiceI userService) {
 		super();
@@ -50,48 +54,57 @@ public class ReportController {
 
 	@GetMapping("/all")
 	public String showReports(Model model) {
-
+		logger.info("Entering showReports method");
 		List<Report> AllReports = reportService.getAllReports();
 		model.addAttribute("reports", AllReports);
-
+		logger.info("All reports retrieved and added to model");
 		return "reports/report-list";
 	}
 
 	@GetMapping("/delete/{id}")
 	public String deleteReport(@PathVariable("id") Long reportId, RedirectAttributes redirectAttributes) {
+		logger.info("Entering deleteReport method with reportId: {}", reportId);
 		Report report = reportService.getReportById(reportId);
 		reportService.delete(report);
 		redirectAttributes.addFlashAttribute("deleted", "Report deleted!");
+		logger.info("Report deleted successfully with reportId: {}", reportId);
 		return "redirect:/report/all";
 	}
 
 	@GetMapping("/user/{id}")
 	public String reportUserView(@PathVariable("id") Long userId, Model model) {
+		logger.info("Entering reportUserView method with userId: {}", userId);
 		Report report = new Report();
 		model.addAttribute("userId", userId);
 		model.addAttribute("report", report);
-
+		logger.info("Report form created and added to model for userId: {}", userId);
 		return "reports/report-user";
 	}
 
 	@PostMapping("/user/{id}")
 	public String reportUser(@PathVariable("id") Long userId, @Valid @ModelAttribute Report report) {
+		logger.info("Entering reportUser method with userId: {}", userId);
 		reportService.saveUserReport(report, userId);
+		logger.info("User report saved successfully for userId: {}", userId);
 		return "redirect:/channel/view/" + userId;
 	}
 
 	@GetMapping("/tutorial/{id}")
 	public String reportTutorialView(@PathVariable("id") Long tutorialId, Model model) {
+		logger.info("Entering reportTutorialView method with tutorialId: {}", tutorialId);
 		Report report = new Report();
 		model.addAttribute("tutorialId", tutorialId);
 		model.addAttribute("report", report);
+		logger.info("Report form created and added to model for tutorialId: {}", tutorialId);
 		return "reports/report-tutorial";
 	}
 
 	@PostMapping("/tutorial/{id}")
 	public String reportTutorial(@PathVariable("id") Long tutorialId, @Valid @ModelAttribute Report report) {
+		logger.info("Entering reportTutorial method with tutorialId: {}", tutorialId);
 		Tutorial tutorial = tutorialService.getTutorialById(tutorialId);
 		reportService.saveTutorialReport(report, tutorial.getCreatedByChannel().getChannelId(), tutorialId);
+		logger.info("Tutorial report saved successfully for tutorialId: {}", tutorialId);
 		return "redirect:/tutorial/view/" + tutorialId;
 	}
 

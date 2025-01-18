@@ -2,6 +2,8 @@ package com.HowTo.spring_boot_HowTo.controller;
 
 import java.time.LocalDate;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -29,6 +31,8 @@ import jakarta.validation.Valid;
 public class CommentController {
 
 	private CommentServiceI commentService;
+	private static final Logger logger = LogManager.getLogger(GroupController.class);
+	
 	
 	public CommentController(CommentServiceI commentService) {
 		super();
@@ -50,7 +54,8 @@ public class CommentController {
 		public String addComment(@PathVariable("id") Long tutorialId, @Valid @ModelAttribute Comment comment, 
 				BindingResult results, Model model, 
 				RedirectAttributes redirectAttributes ) {
-			
+			logger.info("Entering addComment method with tutorialId: {}", tutorialId); 
+			logger.debug("Comment content: {}", comment.getContent());
 			//request.getSession().setAttribute("commentSession", commentForm);
 			if (results.hasErrors()) {
 	    		return "redirect:/";
@@ -58,7 +63,7 @@ public class CommentController {
 			
 			commentService.saveComment(comment, getCurrentUserId(), tutorialId);
 			redirectAttributes.addFlashAttribute("created", "Comment created!");
+			logger.info("Comment created successfully for tutorialId: {}", tutorialId);
 			return "redirect:/tutorial/view/" + tutorialId;
 		}
-	
 }

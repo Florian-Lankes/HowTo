@@ -7,8 +7,10 @@ import java.util.List;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.messaging.simp.SimpMessageSendingOperations;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+//import org.slf4j.Logger;
+//import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -45,7 +47,8 @@ public class GroupController {
 	private UserServiceI userService;
 	private MessageServiceI messageService;
 	private final SimpMessageSendingOperations messageTemplate;
-	private static final Logger logger = LoggerFactory.getLogger(GroupController.class);
+	//private static final Logger logger = LoggerFactory.getLogger(GroupController.class);
+	private static final Logger logger = LogManager.getLogger(GroupController.class);
 	
 	public GroupController(GroupServiceI groupService, UserServiceI userService, MessageServiceI messageService, 
 			SimpMessageSendingOperations messageTemplate) {
@@ -69,14 +72,15 @@ public class GroupController {
 	//CREATE
 	@GetMapping("/create")
 	public String showGroupAdForm(Model model, HttpServletRequest request) {
-		
+		logger.info("Entering showGroupAdForm method");
 		Group groupForm = new Group();
 		//groupForm.setGroupId(null); //TODO change dynamically after user authorization is implemented
 		LocalDate date= LocalDate.now();
 		groupForm.setCreationDate(date);
 		
 		request.getSession().setAttribute("groupSession", groupForm);
-		model.addAttribute("group", groupForm);		
+		model.addAttribute("group", groupForm);	
+		logger.info("Group form created and added to model");
 		return "/groups/group-create";
 	}
 	
@@ -85,12 +89,13 @@ public class GroupController {
     		BindingResult result, 
     		Model model,
     		RedirectAttributes redirectAttributes) {
+    	logger.info("Entering addGroup method with group: {}", group);
     	if (result.hasErrors()) {
-    		System.out.println(result.getAllErrors().toString());
+    		logger.error("Validation errors: {}", result.getAllErrors()); 
+    		logger.info("User with id {} failed to create group", getCurrentUserId());
             return "/groups/group-create";
         }	
     	Group r= groupService.saveGroup(group, getCurrentUserId());
-    	System.out.println(r.getGroupId());
         redirectAttributes.addFlashAttribute("created", "Group created!");
         groupService.joinGroup(r, getCurrentUserId()); //doenst wanna join the group after creating
         
@@ -104,7 +109,7 @@ public class GroupController {
   		messageTemplate.convertAndSend("/topic/group/" + group.getGroupId(), createMessageDTO);
         
         redirectAttributes.addFlashAttribute("added", "Group created!");
-        logger.info("User with id " + getCurrentUserId() + " created group with id " + r.getGroupId());
+        logger.info("User with id {} created group with id {}", getCurrentUserId(), r.getGroupId());
         return "redirect:/group/all";
     }
 
@@ -113,7 +118,7 @@ public class GroupController {
 	public String showGroupList(Model model, @RequestParam(required = false) String keyword,
 			@RequestParam(required = false, defaultValue = "1") int page, @RequestParam(required = false,
 			defaultValue = "5") int size) {
-		
+    		logger.info("Entering showGroupList method with keyword: {}, page: {}, size: {}", keyword, page, size);
     		try {
 			
 			List<Group> groups = new ArrayList<Group>();
@@ -134,6 +139,7 @@ public class GroupController {
 			 model.addAttribute("totalItems", pageGroup.getTotalElements());
 			 model.addAttribute("totalPages", pageGroup.getTotalPages());
 			 model.addAttribute("pageSize", size);
+			 logger.info("Groups retrieved and added to model");
 			 
 		} catch (Exception e){
 			model.addAttribute("message", e.getMessage());
@@ -143,20 +149,22 @@ public class GroupController {
 			
 		model.addAttribute("ownedGroups", ownedGroups);
 		model.addAttribute("joinedGroups", joinedGroups);
+		logger.info("Owned and joined groups retrieved for userId: {}", getCurrentUserId());
 		return "/groups/group-list";
 	}
     
     @GetMapping("/delete/{id}")
     public String deleteGroup(@PathVariable("id") long id, Model model, RedirectAttributes redirectAttributes) {
+    	logger.info("Entering deleteGroup method with groupId: {}", id);
         Group group = groupService.getGroupById(id);    
         if(group.getGroupOwner().getUserId() != getCurrentUserId()) {
-   	 		System.out.println("wrong user!");
-   	 		
+        	logger.warn("User with id {} is not owner of group with id {}, deletion failed", getCurrentUserId(), id);
    	 		redirectAttributes.addFlashAttribute("failed", "not owner!!");
    	 		return "redirect:/group/all";
    	 	}
         groupService.delete(group);
         redirectAttributes.addFlashAttribute("deleted", "Group deleted!");
+        logger.info("User with id {} deleted group with id {}", getCurrentUserId(), id);
         return "redirect:/group/all";
     }
     
@@ -164,15 +172,15 @@ public class GroupController {
    	public String showUpdateGroupForm(@PathVariable("id") Long id, 
    			Model model,
    			RedirectAttributes redirectAttributes) {
-    	
+    	logger.info("Entering showUpdateGroupForm method with groupId: {}", id);
    	 	Group group = groupService.getGroupById(id); 
    	 	if(group.getGroupOwner().getUserId() != getCurrentUserId()) {
-   	 		System.out.println("wrong user!");
-   	 		
    	 		redirectAttributes.addFlashAttribute("failed", "not owner!!");
-   	 		return "redirect:/group/all";
+	   	 	logger.warn("User with id {} is not owner of group with id {}, update failed", getCurrentUserId(), id);
+	   	 	return "redirect:/group/all";
    	 	}
        	model.addAttribute("group", group);
+       	logger.info("Group retrieved and added to model with groupId: {}", id);
    		return "/groups/group-update";
    	}
        
@@ -182,19 +190,20 @@ public class GroupController {
    			BindingResult results,
    			Model model, 
    			RedirectAttributes redirectAttributes) {
-    	   if(group.getGroupOwner().getUserId() != getCurrentUserId()) {
-      	 		System.out.println("wrong user!");
-      	 		
-      	 		redirectAttributes.addFlashAttribute("failed", "not owner!!");
-      	 		return "/groups/group-all";
-      	 	}	
+    	logger.info("Entering updateGroup method with group: {}", group);
+	   if(group.getGroupOwner().getUserId() != getCurrentUserId()) {
+		   logger.warn("User with id {} is not owner of group with id {}, update failed", getCurrentUserId(), group.getGroupId());
+  	 		redirectAttributes.addFlashAttribute("failed", "not owner!!");
+  	 		return "/groups/group-all";
+  	 	}	
        else if (results.hasErrors()){
-   			
+    	   logger.error("Validation errors: {}", results.getAllErrors());
    			return "/groups/group-update";
    		}
           
    		groupService.updateGroup(group);
-           redirectAttributes.addFlashAttribute("updated", "group updated!");
+        redirectAttributes.addFlashAttribute("updated", "group updated!");
+        logger.info("User with id {} updated group with id {}", getCurrentUserId(), group.getGroupId());
    		return "redirect:/group/all";
    		
    	}
@@ -216,7 +225,7 @@ public class GroupController {
       	public String joinGroup(@PathVariable("id") Long id,
       			Model model, 
       			RedirectAttributes redirectAttributes) {
-      		
+    	   	logger.info("Entering joinGroup method with groupId: {}", id);
     		List<Group> joinedgroups = userService.getUserById(getCurrentUserId()).getJoinedGroups();
     		Group realgroup = groupService.getGroupById(id);
       		if(!joinedgroups.contains(realgroup)) { // User already in group
@@ -232,6 +241,7 @@ public class GroupController {
       		
       		groupService.joinGroup(realgroup, getCurrentUserId());
             redirectAttributes.addFlashAttribute("joined", "group joined!");
+            logger.info("User with id {} joined group with id {}", getCurrentUserId(), id);
       		return "redirect:/group/all";
        }
        
@@ -239,9 +249,9 @@ public class GroupController {
      	public String leaveGroup(@PathVariable("id") Long id,
      			Model model, 
      			RedirectAttributes redirectAttributes) {
-    	   
-     		List<Group> joinedgroups = userService.getUserById(getCurrentUserId()).getJoinedGroups();
-    		Group realgroup = groupService.getGroupById(id);
+    	   	logger.info("Entering leaveGroup method with groupId: {}", id);
+	 		List<Group> joinedgroups = userService.getUserById(getCurrentUserId()).getJoinedGroups();
+			Group realgroup = groupService.getGroupById(id);
      		if(joinedgroups.contains(realgroup)) {
      			Message leaveMessage = new Message();
          		leaveMessage.setContent("");
@@ -254,7 +264,8 @@ public class GroupController {
      		}
      		
      		groupService.leaveGroup(realgroup, getCurrentUserId());
-             redirectAttributes.addFlashAttribute("left", "group left!");
+            redirectAttributes.addFlashAttribute("left", "group left!");
+            logger.info("User with id {} left group with id {}", getCurrentUserId(), id);
      		return "redirect:/group/all";
       }
        

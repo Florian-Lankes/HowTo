@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
@@ -53,6 +55,7 @@ public class ChannelController {
 	private WalletServiceI walletService;
 	@Autowired
     private ApplicationEventPublisher eventPublisher;
+	private static final Logger logger = LogManager.getLogger(GroupController.class);
 	
 	
 	public ChannelController(ChannelServiceI channelService, UserServiceI userService, WalletServiceI walletService) {
@@ -79,33 +82,37 @@ public class ChannelController {
 	
 	@GetMapping("/view/{id}")
 	public String showChannelList(@PathVariable("id") Long channelid ,Model model) {
-		
+		logger.info("Entering showChannelList method with channelId: {}", channelid);
     	Channel channel = channelService.getChannelById(channelid);
     	User current = userService.getUserById(getCurrentUserId());
     	if(channel.getSubscribedFromUserList().contains(current)) {
     		model.addAttribute("abonniert", true);
+    		logger.info("User is subscribed to the channel");
     	}else {
     		model.addAttribute("abonniert", false);
+    		logger.info("User is not subscribed to the channel");
     	}
     	List<Tutorial> tutorials = channel.getTutorials();
     	model.addAttribute("channel", channel);
 		model.addAttribute("tutorials", tutorials);
 				
+		logger.info("Channel and tutorials retrieved and added to model");
 		return "/channels/channel";
 	}
 	
 	@GetMapping("/mychannel")
 	public String showMyChannel(Model model) {
-		
+		logger.info("Entering showMyChannel method");
     	Channel channel = channelService.getChannelById(getCurrentUserId());
     	if(channel != null) {
-    	List<Tutorial> tutorials = channel.getTutorials();
-    	model.addAttribute("channel", channel);
-		model.addAttribute("tutorials", tutorials);
-				
-		return "/channels/mychannel";
+	    	List<Tutorial> tutorials = channel.getTutorials();
+	    	model.addAttribute("channel", channel);
+			model.addAttribute("tutorials", tutorials);
+			logger.info("Channel and tutorials retrieved and added to model");
+			return "/channels/mychannel";
 		}
     	else {
+    		logger.warn("No channel found for current user, redirecting to /user/my");
     		return "redirect:/user/my";
     	}
 	}
@@ -114,7 +121,7 @@ public class ChannelController {
 	//CREATE
 	@GetMapping("/create")
 	public String showChannelAdForm(Model model, HttpServletRequest request) {
-		
+		logger.info("Entering showChannelAdForm method");
 		Channel channelForm = new Channel();
 		channelForm.setChannelId(getCurrentUserId()); //TODO change dynamically after channel authorization is implemented
 		LocalDate date= LocalDate.now();
@@ -122,7 +129,7 @@ public class ChannelController {
 		
 		request.getSession().setAttribute("channelSession", channelForm);
 		model.addAttribute("channel", channelForm);
-				
+		logger.info("Channel form created and added to model");
 		return "channels/channel-create";
 	}
 	
@@ -131,20 +138,22 @@ public class ChannelController {
     		BindingResult result, 
     		Model model,
     		RedirectAttributes redirectAttributes) {
-    	
+    	logger.info("Entering addChannel method with channel: {}", channel);
     	if (result.hasErrors()) {
-    		System.out.println(result.getAllErrors().toString());
+    		logger.error("Validation errors: {}", result.getAllErrors());
+    		logger.info("User with id " + getCurrentUserId() + " failed to create channel");
             return "/channels/channel-create";
         }
     	
     	if(walletService.getWalletById(getCurrentUserId()) == null) {
-    	Wallet wallet = new Wallet();
-    	walletService.saveWallet(wallet, getCurrentUserId());
+	    	Wallet wallet = new Wallet();
+	    	walletService.saveWallet(wallet, getCurrentUserId());
+	    	logger.info("New wallet created for user with id {}", getCurrentUserId());
     	}
     	
     	channelService.saveChannel(channel, getCurrentUserId());
         redirectAttributes.addFlashAttribute("created", "Channel created!");
-        
+        logger.info("User with id {} created channel with id {}", getCurrentUserId(), channel.getChannelId());
         return "redirect:/logout";
     }
     
@@ -152,6 +161,7 @@ public class ChannelController {
 	public String showChannelList(Model model, @RequestParam(required = false) String keyword,
 			@RequestParam(required = false, defaultValue = "1") int page, @RequestParam(required = false,
 			defaultValue = "5") int size) {
+	   	logger.info("Entering showChannelList method with keyword: {}, page: {}, size: {}", keyword, page, size);
 		try {
 			
 			List<Channel> channels = new ArrayList<Channel>();
@@ -172,8 +182,10 @@ public class ChannelController {
 			 model.addAttribute("totalItems", pageChannel.getTotalElements());
 			 model.addAttribute("totalPages", pageChannel.getTotalPages());
 			 model.addAttribute("pageSize", size);
+			 logger.info("Channels retrieved and added to model");
 			 
 		} catch (Exception e){
+			logger.error("Exception occurred while retrieving channels: {}", e.getMessage());
 			model.addAttribute("message", e.getMessage());
 		}
 		return "/channels/channel-list";
@@ -182,17 +194,19 @@ public class ChannelController {
     
     @GetMapping("/delete/{channelId}")
     public String deleteChannel(@PathVariable("channelId") long channelId, Model model, RedirectAttributes redirectAttributes) {
+    	logger.info("Entering deleteChannel method with channelId: {}", channelId);
     	User u = userService.getUserById(getCurrentUserId());
     	boolean admin= userService.checkAdmin(u);
     	System.out.println(admin);
     	if(channelId  !=getCurrentUserId() && !admin) {
-    		System.out.println("Not Admin or Channelowner");
+    		logger.warn("User with id {} is not admin or channel owner, cannot delete channel with id {}", getCurrentUserId(), channelId);
     		redirectAttributes.addFlashAttribute("failed", "not owner!!");
     		return "redirect:/home";
     	}
         Channel channel = channelService.getChannelById(channelId);               
         channelService.delete(channel);
         redirectAttributes.addFlashAttribute("deleted", "Channel deleted!");
+        logger.info("User with id {} deleted channel with id {}", getCurrentUserId(), channelId);
         
         if(admin) {
         return "redirect:/channel/all";
@@ -206,19 +220,19 @@ public class ChannelController {
 	public String showUpdateChannelForm(@PathVariable("channelId") Long channelId, 
 			Model model,
 			HttpServletRequest request, RedirectAttributes redirectAttributes) {
+    	logger.info("Entering showUpdateChannelForm method with channelId: {}", channelId);
     	User u = userService.getUserById(getCurrentUserId());
     	boolean admin= userService.checkAdmin(u);
-    	System.out.println(admin);
+    	logger.debug("Admin status of user: {}", admin);
     	if(channelId  !=getCurrentUserId() && !admin) {
-    		System.out.println("Not Admin or Channelowner");
+    		logger.warn("User with id {} is not admin or channel owner, cannot update channel with id {}", getCurrentUserId(), channelId);
     		redirectAttributes.addFlashAttribute("failed", "not owner!!");
     		return "redirect:/home";
     	}
 	 	Channel channel = channelService.getChannelById(channelId); 
     	model.addAttribute("channel", channel);
 		request.getSession().setAttribute("channelSession", channel);
-		 
-		System.out.println("updating channel id="+ channelId);
+		logger.info("Channel retrieved and added to model with channelId: {}", channelId);
 		return "/channels/channel-update";
 	}
     
@@ -229,22 +243,20 @@ public class ChannelController {
 			Model model, 
 			RedirectAttributes redirectAttributes) {
 		
-				
+    	logger.info("Entering updateChannel method with channel: {}", channel);		
 		if (results.hasErrors()){
-			
+			logger.error("Validation errors: {}", results.getAllErrors());
 			return "/channels/channel-update";
 		}
        
 		Channel u =channelService.updateChannel(channel);
         redirectAttributes.addFlashAttribute("updated", "channel updated!");
-        
+        logger.info("User with id {} updated channel with id {}", getCurrentUserId(), u.getChannelId());
         if(u.getChannelId() != getCurrentUserId()) {
         	return "redirect:/channel/all";
         }else {
         	return "redirect:/channel/mychannel";
         }
-        
-		
 	}
     
     @PostMapping("/subscribe")
@@ -252,13 +264,13 @@ public class ChannelController {
 		BindingResult results,
 		Model model, 
 		RedirectAttributes redirectAttributes) {
-    	
+    	logger.info("Entering subscribeChannel method with channelId: {}", channel.getChannelId());
     	channelService.subscribeChannel(channel, getCurrentUserId());
     	User u = userService.getUserById(channel.getChannelId());
     	User current = userService.getUserById(getCurrentUserId());
     	eventPublisher.publishEvent(new OnInformChannelEvent(u, current.getUsername()));
-    	
     	redirectAttributes.addFlashAttribute("subscribed", "subscribed!");
+    	logger.info("User with id {} subscribed to channel with id {}", getCurrentUserId(), channel.getChannelId());
     	return "redirect:/channel/view/"+channel.getChannelId();
     }
     
@@ -267,9 +279,10 @@ public class ChannelController {
 		BindingResult results,
 		Model model, 
 		RedirectAttributes redirectAttributes) {
-    	
+    	logger.info("Entering unsubscribeChannel method with channelId: {}", channel.getChannelId());
     	channelService.unsubscribeChannel(channel, getCurrentUserId());
     	redirectAttributes.addFlashAttribute("unsubscribed", "unsubscribed!");
+    	logger.info("User with id {} unsubscribed from channel with id {}", getCurrentUserId(), channel.getChannelId());
     	return "redirect:/channel/view/"+channel.getChannelId();
     }
 
@@ -277,20 +290,24 @@ public class ChannelController {
    	public String showChannelSubscriber(@PathVariable("id") Long channelId, 
    			Model model,
    			HttpServletRequest request) {
+    	logger.info("Entering showChannelSubscriber method with channelId: {}", channelId);
    	 	Channel channel = channelService.getChannelById(channelId); 
        	model.addAttribute("channel", channel);
    		request.getSession().setAttribute("channelSession", channel);
    		
-   		System.out.println("get subscriberlist="+ channelId);
+   		logger.info("Channel retrieved and added to model with channelId: {}", channelId); 
+   		logger.debug("get subscriberlist={}", channelId);
    		return "/channels/subscriber-list";
    	}
     
 	@GetMapping("/subscribed")
 	public String showSubscribedChannelList(Model model, HttpServletRequest request) {
+		logger.info("Entering showSubscribedChannelList method");
 		User user = userService.getUserById(getCurrentUserId());
-		List<Channel> channels = user.getSubscribedChannels(); 
+		List<Channel> channels = user.getSubscribedChannels();
 		model.addAttribute("channels", channels );
-				
+		logger.info("Subscribed channels retrieved and added to model for userId: {}", getCurrentUserId()); 
+		logger.debug("Subscribed channels: {}", channels);
 		return "/subscribedChannel";
 	}
 }

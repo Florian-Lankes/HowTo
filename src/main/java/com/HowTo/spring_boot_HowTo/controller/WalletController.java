@@ -1,6 +1,8 @@
 package com.HowTo.spring_boot_HowTo.controller;
 
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -37,6 +39,8 @@ public class WalletController {
 	private WalletServiceI walletService;
 	private TransactionServiceI transactionService;
 	private UserServiceI userService;
+	private static final Logger logger = LogManager.getLogger(GroupController.class);
+	
 	
 	public WalletController(WalletServiceI walletService, TransactionServiceI transactionService,  UserServiceI userService) {
 		super();
@@ -59,17 +63,14 @@ public class WalletController {
 
 	@GetMapping("/create")
     public String addWallet(Model model) {
-    	
+		logger.info("Creating wallet for user ID: {}", getCurrentUserId());
 		Long userId =  getCurrentUserId();
-
     	Wallet wallet = new Wallet();
     	walletService.saveWallet(wallet, userId);
-    	
+    	logger.info("Wallet created successfully for user ID: {}", userId);
 		model.addAttribute("wallet", walletService.getWalletById(userId));
-    	
 //    	model.addAttribute("transactionsReceived", transactionService.getTransactionByTransactionReceiver(userId));
-//    	model.addAttribute("transactionsSend", transactionService.getTransactionByTransactionSender(userId));
-//        
+//    	model.addAttribute("transactionsSend", transactionService.getTransactionByTransactionSender(userId));  
         return "users/wallet";
     }
 	
@@ -77,20 +78,20 @@ public class WalletController {
     public String openWallet(Model model) {
     	
 		Long userId =  getCurrentUserId();
-
+		logger.info("Opening wallet for user ID: {}", userId);
     	model.addAttribute("wallet", walletService.getWalletById(userId));
     	
     	model.addAttribute("transactionsReceived", transactionService.getTransactionByTransactionReceiver(userId));
     	model.addAttribute("transactionsSend", transactionService.getTransactionByTransactionSender(userId));
     	model.addAttribute("user", userService.getAllUsers());
-    	
+    	logger.info("Wallet opened successfully for user ID: {}", userId);
         return "users/wallet";
     }
 	@GetMapping("/donate/{id}")
     public String openDonate(@PathVariable("id") Long receiverUserId, Model model) {
     	
 		Long senderUserId =  getCurrentUserId();
-		
+		logger.info("Opening donation page. Sender user ID: {}, Receiver user ID: {}", senderUserId, receiverUserId);
 		Transaction transactionForm = new Transaction();
 
     	model.addAttribute("senderWallet", walletService.getWalletById(senderUserId));
@@ -100,15 +101,16 @@ public class WalletController {
     	
     	
     	model.addAttribute("transaction", transactionForm);
- 
+    	logger.info("Donation page opened successfully for sender user ID: {}, Receiver user ID: {}", senderUserId, receiverUserId);
         return "channels/donate";
     }
 	
 	@PostMapping("/donate")
     public String openDonate(@ModelAttribute Transaction transaction, Model model, BindingResult result, RedirectAttributes redirectAttributes) {
-    	
+		Long senderUserId = getCurrentUserId();
+		logger.info("Processing donation. Sender user ID: {}", senderUserId);
 		if (result.hasErrors()) {
-    		System.out.println(result.getAllErrors().toString());
+			logger.warn("Validation errors while processing donation: {}", result.getAllErrors());
             return "channels/donate";
         }
     	
@@ -127,21 +129,22 @@ public class WalletController {
     	
     	walletService.updateWallet(senderWallet);
     	walletService.updateWallet(receiverWallet);
-    	
+    	logger.info("Donation processed successfully. Sender user ID: {}, Receiver user ID: {}, Amount: {}", senderUserId, receiverWallet.getWalletOwner().getUserId(), amount);
         redirectAttributes.addFlashAttribute("added", "Donation abgeschlossen");
         
         return "redirect:/wallet/my";
     }
 	@GetMapping("/upgrade")
     public String upgrade(@Valid @ModelAttribute Wallet wallet, RedirectAttributes redirectAttributes){
-		
-		
+		Long userId = getCurrentUserId();
+		logger.info("Upgrading wallet for user ID: {}", userId);
 		wallet = walletService.getWalletById(getCurrentUserId());
     	
 		if(wallet.getWalletPlan() == WalletPlan.BASIC && wallet.getAmount()>=100) {
 			wallet.setWalletPlan(WalletPlan.BASICPLUS);
 			wallet.setAmount(wallet.getAmount()-100);
 			walletService.updateWallet(wallet);
+			logger.info("Wallet upgraded to BASICPLUS for user ID: {}", userId);
 			redirectAttributes.addFlashAttribute("added", "Upgrade konnte vervollständigt werden");
 			return "redirect:/wallet/my";
 		}else if(wallet.getWalletPlan() == WalletPlan.BASICPLUS && wallet.getAmount()>=200){
@@ -149,19 +152,18 @@ public class WalletController {
 			wallet.setAmount(wallet.getAmount()-200);
 			walletService.updateWallet(wallet);
 			redirectAttributes.addFlashAttribute("added", "Upgrade konnte vervollständigt werden");
+			logger.info("Wallet upgraded to PREMIUM for user ID: {}", userId);
 			return "redirect:/wallet/my";
 		}else if(wallet.getWalletPlan() == WalletPlan.PREMIUM && wallet.getAmount()>=300){
 			wallet.setWalletPlan(WalletPlan.PRO);
 			wallet.setAmount(wallet.getAmount()-300);
 			walletService.updateWallet(wallet);
+			logger.info("Wallet upgraded to PRO for user ID: {}", userId);
 			redirectAttributes.addFlashAttribute("added", "Upgrade konnte vervollständigt werden");
 			return "redirect:/wallet/my";
 		}
-		
-		 redirectAttributes.addFlashAttribute("deleted", "Upgrade konnte nicht vervollständigt werden, da zu wenig Geld vorhanden ist");
-		
-		
-
+		logger.warn("Upgrade failed due to insufficient funds for user ID: {}", userId);
+		redirectAttributes.addFlashAttribute("deleted", "Upgrade konnte nicht vervollständigt werden, da zu wenig Geld vorhanden ist");
     	return "redirect:/wallet/my";
     }
 }

@@ -3,6 +3,8 @@ package com.HowTo.spring_boot_HowTo.controller;
 import java.time.LocalDate;
 import java.util.List;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -24,7 +26,8 @@ import jakarta.validation.Valid;
 @RequestMapping("/category")
 public class CategoryController {
 	private CategoryServiceI categoryService;
-
+	private static final Logger logger = LogManager.getLogger(GroupController.class);
+	
 	public CategoryController(CategoryServiceI categoryService) {
 		super();
 		this.categoryService = categoryService;
@@ -32,13 +35,15 @@ public class CategoryController {
 	
 	@GetMapping("/view/{id}")
 	public String getCategoryView(@PathVariable("id") Long id, Model model) {
-	
+		logger.info("Entering getCategoryView method with categoryId: {}", id);
 		Category category = categoryService.getCategoryById(id); 
 		model.addAttribute("category", category );
 		List<Category> allCategoriesNotSearched = categoryService.getAllCategorys();
 		allCategoriesNotSearched.remove(category);
 		model.addAttribute("allCategories", allCategoriesNotSearched);
 
+		logger.info("Category retrieved and added to model with categoryId: {}", id); 
+		logger.debug("All categories excluding current: {}", allCategoriesNotSearched);
 		return "categories/category";
 	}
 
@@ -50,50 +55,57 @@ public class CategoryController {
 
 	@GetMapping("/create")
 	public String showCategoryAdForm(Model model) {
-
+		logger.info("Entering showCategoryList method");
 		Category categoryForm = new Category();
 		model.addAttribute("category", categoryForm);
+		logger.info("All categories retrieved and added to model");
 		return "categories/category-create";
 	}
 
 	@PostMapping("/create")
 	public String addCategory(@Valid @ModelAttribute Category category,BindingResult result, Model model ) {
+		logger.info("Entering addCategory method with category: {}", category);
 		if (result.hasErrors()) {
-			System.out.println(result.getAllErrors().toString());
+			logger.error("Validation errors: {}", result.getAllErrors());
 			return "categories/category-create";
 		}
 		categoryService.saveCategory(category);
+		logger.info("Category saved successfully with id: {}", category.getCategoryId());
 		return "redirect:/category/all";
 	}
 
 	@GetMapping("/delete/{categoryId}")
 	public String deleteCategory(@PathVariable("categoryId") long categoryId, Model model,
 			RedirectAttributes redirectAttributes) {
+		logger.info("Entering deleteCategory method with categoryId: {}", categoryId);
 		Category category = categoryService.getCategoryById(categoryId);
 		categoryService.delete(category);
 		redirectAttributes.addFlashAttribute("deleted", "Category deleted!");
+		logger.info("Category deleted successfully with categoryId: {}", categoryId);
 		return "redirect:/category/all";
 	}
 
 	@GetMapping("/update/{categoryId}")
 	public String showUpdateCategoryForm(@PathVariable("categoryId") Long categoryId, Model model) {
+		logger.info("Entering showUpdateCategoryForm method with categoryId: {}", categoryId);
 		Category category = categoryService.getCategoryById(categoryId);
 		model.addAttribute("category", category);
-
+		logger.info("Category retrieved and added to model with categoryId: {}", categoryId);
 		return "/categories/category-update";
 	}
 
 	@PostMapping("/update")
 	public String updateCategory(@Valid @ModelAttribute Category category, BindingResult results, Model model,
 			RedirectAttributes redirectAttributes) {
-
+		logger.info("Entering updateCategory method with categoryId: {}", category.getCategoryId());
 		if (results.hasErrors()) {
-
+			logger.error("Validation errors: {}", results.getAllErrors());
 			return "/categories/category-update";
 		}
 
 		categoryService.updateCategory(category);
 		redirectAttributes.addFlashAttribute("updated", "category updated!");
+		logger.info("Category updated successfully with categoryId: {}", category.getCategoryId());
 		return "redirect:/category/all";
 
 	}
