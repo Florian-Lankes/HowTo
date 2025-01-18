@@ -4,21 +4,6 @@
 <head>
 	<meta charset="ISO-8859-1">
 	<title>Subscribed Channels</title> <!--maybe change later-->
-
-	<script type="text/javascript">
-
-		$(document).ready(function () {
-
-			window.setTimeout(function () {
-				$(".alert").fadeTo(1000, 0).slideUp(1000, function () {
-					$(this).remove();
-				});
-			}, 5000);
-
-		});
-	</script>
-
-
 </head>
 
 <body>
@@ -34,7 +19,7 @@
 				<h2>Keine Kanäle abonniert</h2>
 			</div>
 
-			<table class="table table-striped table-bordered" th:unless="${channels.size()<1}" style="width: 90%">
+			<table class="table table-striped table-bordered" th:unless="${channels.size()<1}" >
 				<div class="mt-2">
 					<h3>Abonnierte Kanäle</h3>
 				</div>
@@ -42,7 +27,7 @@
 					<tr>
 						<th> Name</th>
 						<th> Beschreibung </th>
-						<th> Actions </th>
+						<th> Aktionen </th>
 					</tr>
 				</thead>
 				<tbody>
