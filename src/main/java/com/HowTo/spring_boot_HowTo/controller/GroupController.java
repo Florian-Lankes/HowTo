@@ -7,6 +7,8 @@ import java.util.List;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.messaging.simp.SimpMessageSendingOperations;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -43,6 +45,7 @@ public class GroupController {
 	private UserServiceI userService;
 	private MessageServiceI messageService;
 	private final SimpMessageSendingOperations messageTemplate;
+	private static final Logger logger = LoggerFactory.getLogger(GroupController.class);
 	
 	public GroupController(GroupServiceI groupService, UserServiceI userService, MessageServiceI messageService, 
 			SimpMessageSendingOperations messageTemplate) {
@@ -73,8 +76,7 @@ public class GroupController {
 		groupForm.setCreationDate(date);
 		
 		request.getSession().setAttribute("groupSession", groupForm);
-		model.addAttribute("group", groupForm);
-				
+		model.addAttribute("group", groupForm);		
 		return "/groups/group-create";
 	}
 	
@@ -86,9 +88,7 @@ public class GroupController {
     	if (result.hasErrors()) {
     		System.out.println(result.getAllErrors().toString());
             return "/groups/group-create";
-        }
-
-    	
+        }	
     	Group r= groupService.saveGroup(group, getCurrentUserId());
     	System.out.println(r.getGroupId());
         redirectAttributes.addFlashAttribute("created", "Group created!");
@@ -104,8 +104,7 @@ public class GroupController {
   		messageTemplate.convertAndSend("/topic/group/" + group.getGroupId(), createMessageDTO);
         
         redirectAttributes.addFlashAttribute("added", "Group created!");
-        
-        
+        logger.info("User with id " + getCurrentUserId() + " created group with id " + r.getGroupId());
         return "redirect:/group/all";
     }
 
