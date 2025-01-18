@@ -8,38 +8,30 @@
 <body>
 	<section class="layout-content" layout:fragment="mybody">
 
-		<div class="page-header">
-			<nav class="navbar navbar-expand-md navbar-top bg-light">
-				<div class="collapse navbar-collapse" id="navbarsExampleDefault">
-					<ul class="navbar-nav">
-						<li class="nav-item active">
-							<i class="oi oi-caret-right"></i>
-							<span>Create Rating</span>
-						</li>
-					</ul>
-				</div>
-			</nav>
-		</div>
-
-		<div class="container" id="registration">
+		<div class="container">
+			
+			<div class="my-4">
+										<h3>Bewerten</h3>
+						</div>
+			
 			<form th:action="@{/rating/tutorial/{tutorialId}(tutorialId=${tutorialId})}" th:object="${rating}"
 				method="POST">
-				<div class="form-row">
+				<div class="form-row mt-3">
 					<div class="form-rating col-md-6">
-						<label class="form-label">Bewertung:</label>
+						<label class="form-label">Score</label>
 						<div class="d-flex justify-content-between"> <span id="range-value-1">1</span> <span
 								id="range-value-2">2</span> <span id="range-value-3">3</span> <span
 								id="range-value-4">4</span> <span id="range-value-5">5</span>
 						</div>
 						<input th:field="*{ratingScore}" type="range" class="form-range" min="1" max="5" step="1">
 					</div>
-					<div class="form-row">
+					<div class="form-row mt-3">
 						<div class="form-rating col-md-6">
-							<label for="name">Rating</label>
-							<input type="text" class="form-control" placeholder="Why" th:field="*{ratingText}" />
+							<label>Bewertungstext</label>
+							<input type="text" class="form-control" placeholder="Warum" th:field="*{ratingText}" />
 						</div>
 					</div>
-					<button type="submit" class="btn btn-primary btn-sm">Rate</button>
+					<button type="submit" class="btn btn-primary my-3">Bewerten</button>
 			</form>
 		</div>
 

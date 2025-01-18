@@ -3,7 +3,7 @@
 
 <head>
 	<meta charset="ISO-8859-1">
-	<title>Management System - Add Rating</title> <!--maybe change later-->
+	<title>Management System - Rating</title> <!--maybe change later-->
 
 </head>
 
@@ -11,23 +11,16 @@
 
 	<section class="layout-content" layout:fragment="mybody">
 
-		<div class="page-header">
-			<nav class="navbar navbar-expand-md navbar-top bg-light">
-				<div class="collapse navbar-collapse" id="navbarsExampleDefault">
-					<ul class="navbar-nav">
-						<li class="nav-item active">
-							<i class="oi oi-caret-right"></i>
-							<span>List Ratings</span>
-						</li>
-					</ul>
-				</div>
-			</nav>
-		</div>
-
-		<div class="container" id="registration">
+		<div class="container">
+			
+			
 
 			<div th:unless="${ratings.size() > 0}" style="width: 80%">
-				<span>No ratings found!</span>
+				<span>Keine Bewertungen!</span>
+			</div>
+			
+			<div class="my-4">
+							<h3>Bewertungen</h3>
 			</div>
 
 
@@ -35,10 +28,10 @@
 				<thead class="table-dark">
 					<tr>
 						<th> Id </th>
-						<th> Rating Text</th>
+						<th> Bewertungstext </th>
 						<th> Score </th>
 						<th> Actions </th>
-						<th> View </th>
+						<th> Anschauen </th>
 					</tr>
 				</thead>
 
