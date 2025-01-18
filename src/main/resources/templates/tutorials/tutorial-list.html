@@ -3,21 +3,7 @@
 
 <head>
 	<meta charset="ISO-8859-1">
-	<title>Management System - Add User</title> <!--maybe change later-->
-
-	<script type="text/javascript">
-
-		$(document).ready(function () {
-
-			window.setTimeout(function () {
-				$(".alert").fadeTo(1000, 0).slideUp(1000, function () {
-					$(this).remove();
-				});
-			}, 5000);
-
-		});
-	</script>
-
+	<title>Management System - Tutorial</title> <!--maybe change later-->
 
 </head>
 
@@ -28,8 +14,8 @@
 
 
 		<div class="container">
-			<div class="mt-2">
-							<h2>Tutorials</h2>
+			<div class="my-4">
+							<h3>Tutorials</h3>
 						</div>
 			<div th:unless="${tutorials.size() > 0}" style="width: 80%">
 				<span>Keine Tutorials hochgeladen!</span>

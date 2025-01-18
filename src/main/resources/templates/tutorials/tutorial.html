@@ -17,7 +17,7 @@
 			</div>
 			
 			<div class="content" th:unless="${#strings.isEmpty(tutorial.videoUrl)}">
-				<h3 id="adwarning">Advertisement</h3>
+				<h3 id="adwarning">Werbung</h3>
 			</div>
 			<!--js to swap videos for ad-->
 			<script th:inline="javascript">
@@ -30,10 +30,10 @@
 				var activeVideo = 0;
 				myvid.addEventListener('ended', myHandler, false);
 				function myHandler(e) {
-					if (adwarning.innerText === "Advertisement") {
+					if (adwarning.innerText === "Werbung") {
 						adwarning.innerText = ""
 					} else {
-						adwarning.innerText = "Advertisement"
+						adwarning.innerText = "Werbung"
 					}
 					if (myvid.hasAttribute("controls")) {
 						myvid.removeAttribute("controls")

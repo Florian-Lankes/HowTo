@@ -3,21 +3,7 @@
 
 <head>
 	<meta charset="ISO-8859-1">
-	<title>Management System - Add Advertisement</title> <!--maybe change later-->
-
-	<script type="text/javascript">
-
-		$(document).ready(function () {
-
-			window.setTimeout(function () {
-				$(".alert").fadeTo(1000, 0).slideUp(1000, function () {
-					$(this).remove();
-				});
-			}, 5000);
-
-		});
-	</script>
-
+	<title>Management System - Advertisement</title> <!--maybe change later-->
 
 </head>
 
@@ -28,15 +14,19 @@
 
 
 		<div class="container">
-
+			<div class="content my-4">
+						<h3>Werbungen</h3>
+					</div>
+			
+			
 			<div class="row">
 				<div class="col-lg-3">
-					<a th:href="@{/advertisement/create}" class="btn btn-primary btn-sm mb-3">Create Advertisement</a>
+					<a th:href="@{/advertisement/create}" class="btn btn-primary my-3">Werbung hochladen</a>
 				</div>
 			</div>
 			
-			<div th:unless="${advertisements.size() > 0}" style="width: 80%">
-			  			<span>No Advertisements shown at the Moment!</span>
+			<div class="container-fluid text-center my-3" th:unless="${advertisements.size() > 0}" style="width: 80%">
+			  			<h2>Keine Werbung hochgeladen</h2>
 					</div>
 			
 			<table class="table table-striped table-bordered" style="width: 80%" th:if="${advertisements.size() > 0}">
@@ -45,10 +35,10 @@
 						<th> Id </th>
 						<th> Name </th>
 						<th> Creation Time </th>
-						<th> Category</th>	
-						<th> URL</th>					
+						<th> Kategorie </th>	
+						<th> URL </th>					
 						<th> Actions </th>
-						<th> Edit Video</th>
+						<th> Video bearbeiten</th>
 					</tr>
 				</thead>
 

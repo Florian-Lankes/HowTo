@@ -103,7 +103,7 @@ public class GroupController {
   		MessageDTO createMessageDTO = MessageDTOMapper.toMessageDTO(createMessage);
   		messageTemplate.convertAndSend("/topic/group/" + group.getGroupId(), createMessageDTO);
         
-        redirectAttributes.addFlashAttribute("joined", "Group joined!");
+        redirectAttributes.addFlashAttribute("added", "Group created!");
         
         
         return "redirect:/group/all";
