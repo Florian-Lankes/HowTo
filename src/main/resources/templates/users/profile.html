@@ -80,7 +80,7 @@
 			<div class="row" sec:authorize="hasAuthority('CREATOR_RIGHTS')">
 
 				<div class="col-lg-3 mb-3">
-					<a th:href="@{/channel/delete/{id}(id=${channel.channelId})}" class="btn btn-danger"><svg
+					<a th:href="@{/channel/delete/{id}(id=${channel.channelId})}" class="btn btn-danger" sec:authorize="!hasAuthority('ADMIN_RIGHTS')"><svg
 							xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
 							class="bi bi-trash" viewBox="0 0 16 16">
 							<path

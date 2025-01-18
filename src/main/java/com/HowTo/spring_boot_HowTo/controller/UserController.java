@@ -365,6 +365,7 @@ public class UserController {
 		User u = verificationToken.getUser();
 		User check = userService.getUserById(user.getUserId());
 		if (check.equals(u)) {
+			u.setUsing2FA(false);
 			userService.changePassword(user);
 			logger.info("Password changed successfully for user: {}", user.getUserId());
 		} else { 

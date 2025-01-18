@@ -7,17 +7,15 @@
 
 <body>
 	<section class="layout-content" layout:fragment="mybody">
-		<div class="">
-			<p>This is the Rating page</p>
-		</div>
 		<div class="container">
-			<label>Score</label>
-			<p th:text="${rating.ratingScore}"></p>
-			<label>Rating Text</label>
+
+			<div class="my-3">
+				<h3>Bewertung</h>
+			</div>
+
+			<p th:text="'Score: ' + ${rating.ratingScore}"></p>
 			<p th:text="${rating.ratingText}"></p>
 		</div>
-		
-
 	</section>
 </body>
 
