@@ -9,12 +9,12 @@ import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
 
 public class AuditListener {
-
+	//before persist in database, this function will be called
 	@PrePersist
 	private void prePersist(Object object) {
 		auditPersist(object);
 	}
-
+	//before update in database this function will be called
 	@PreUpdate
 	private void preUpdate(Object object) {
 		
@@ -30,7 +30,7 @@ public class AuditListener {
 		User user = (User) authentication.getPrincipal();
 		return user.getUserId();
 	}
-
+	//for every auditable object this function will fill the columns for persist and prints to console
 	private void auditPersist(Object entity) {
 		String operation = "INSERT";
 		if (entity instanceof Auditable) {
@@ -47,7 +47,7 @@ public class AuditListener {
 							+ " Creator Id: " + auditable.getCreatedBy() + " Created At: " + auditable.getLastChanged());
 		}
 	}
-
+	// for every auditable object this function will fill the columns for update and prints to console
 	private void auditUpdate(Object entity) {
 		String operation = "UPDATE";
 		if (entity instanceof Auditable) {

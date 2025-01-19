@@ -33,11 +33,14 @@ public class CategoryController {
 		this.categoryService = categoryService;
 	}
 	
+	//Returns Site with all Tutorials of the category, ensures that the selected category is the first category shown on html
 	@GetMapping("/view/{id}")
 	public String getCategoryView(@PathVariable("id") Long id, Model model) {
 		logger.info("Entering getCategoryView method with categoryId: {}", id);
 		Category category = categoryService.getCategoryById(id); 
 		model.addAttribute("category", category );
+		
+		//remove selected category, so that they are shown behind it in html
 		List<Category> allCategoriesNotSearched = categoryService.getAllCategorys();
 		allCategoriesNotSearched.remove(category);
 		model.addAttribute("allCategories", allCategoriesNotSearched);
@@ -47,12 +50,14 @@ public class CategoryController {
 		return "categories/category";
 	}
 
+	//Returns category-list for Admin
 	@GetMapping("/all")
 	public String showCategoryList(Model model) {
 		model.addAttribute("categories", categoryService.getAllCategorys());
 		return "categories/category-list";
 	}
-
+	
+	//shows create page for category
 	@GetMapping("/create")
 	public String showCategoryAdForm(Model model) {
 		logger.info("Entering showCategoryList method");
@@ -61,7 +66,7 @@ public class CategoryController {
 		logger.info("All categories retrieved and added to model");
 		return "categories/category-create";
 	}
-
+	// creates category
 	@PostMapping("/create")
 	public String addCategory(@Valid @ModelAttribute Category category,BindingResult result, Model model ) {
 		logger.info("Entering addCategory method with category: {}", category);
@@ -73,7 +78,7 @@ public class CategoryController {
 		logger.info("Category saved successfully with id: {}", category.getCategoryId());
 		return "redirect:/category/all";
 	}
-
+	// deletes category 
 	@GetMapping("/delete/{categoryId}")
 	public String deleteCategory(@PathVariable("categoryId") long categoryId, Model model,
 			RedirectAttributes redirectAttributes) {
@@ -84,7 +89,7 @@ public class CategoryController {
 		logger.info("Category deleted successfully with categoryId: {}", categoryId);
 		return "redirect:/category/all";
 	}
-
+	// shows update page for category
 	@GetMapping("/update/{categoryId}")
 	public String showUpdateCategoryForm(@PathVariable("categoryId") Long categoryId, Model model) {
 		logger.info("Entering showUpdateCategoryForm method with categoryId: {}", categoryId);
@@ -93,7 +98,7 @@ public class CategoryController {
 		logger.info("Category retrieved and added to model with categoryId: {}", categoryId);
 		return "/categories/category-update";
 	}
-
+	// updates category
 	@PostMapping("/update")
 	public String updateCategory(@Valid @ModelAttribute Category category, BindingResult results, Model model,
 			RedirectAttributes redirectAttributes) {

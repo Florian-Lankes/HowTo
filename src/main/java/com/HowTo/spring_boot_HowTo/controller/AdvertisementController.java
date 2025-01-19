@@ -86,7 +86,7 @@ public class AdvertisementController {
 		
 		advertisementService.saveAdvertisement(advertisement, categoryId);
 		logger.info("Advertisement saved successfully with categoryId: {}", categoryId);
-		return "redirect:/advertisement/all";
+		return "redirect:/advertisement/view/" + advertisement.getAdvertisementId();
 	}
 	
 	@GetMapping("/update/{id}")

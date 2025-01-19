@@ -30,6 +30,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import com.HowTo.spring_boot_HowTo.OnInformChannelEvent.OnInformChannelEvent;
 import com.HowTo.spring_boot_HowTo.changepasswordloggedin.OnChangePasswordLoggedInEvent;
 import com.HowTo.spring_boot_HowTo.config.MyUserDetails;
+import com.HowTo.spring_boot_HowTo.model.Category;
 import com.HowTo.spring_boot_HowTo.model.Channel;
 import com.HowTo.spring_boot_HowTo.model.Group;
 import com.HowTo.spring_boot_HowTo.model.Tutorial;
@@ -309,5 +310,21 @@ public class ChannelController {
 		logger.info("Subscribed channels retrieved and added to model for userId: {}", getCurrentUserId()); 
 		logger.debug("Subscribed channels: {}", channels);
 		return "/subscribedChannel";
+	}
+	
+	@GetMapping("/subscribed/tutorials")
+	public String HowToView(Model model) {
+		logger.info("Entering showSubscribedChannelTutorials method");
+		User user = userService.getUserById(getCurrentUserId());
+		List<Channel> channels = user.getSubscribedChannels();
+		List<Tutorial> tutorials = new ArrayList<Tutorial>();
+		for (Channel c : channels) {
+			tutorials.addAll(c.getTutorials());
+		}
+
+			
+		model.addAttribute("tutorial", tutorials);
+		logger.info("Tutorials retrieved and added to model");
+		return "channels/subscribed-tutorials";
 	}
 }
