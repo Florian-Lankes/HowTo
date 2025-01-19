@@ -57,7 +57,7 @@ public class UserService implements UserServiceI {
 		return userRepository.findAll();
 	}
 	
-		
+		//get all users pagination
 	@Override
 	public Page<User> getAllUsers(String username, Pageable pageable) {
 		// TODO Auto-generated method stub
@@ -70,7 +70,9 @@ public class UserService implements UserServiceI {
 		 }
 		return pageUsers;
 	}
-
+	
+	
+	//saves user, but only if email and username doesnt already exist
 	@Override
 	public User saveUser(User user) {
 		// TODO Auto-generated method stub
@@ -87,7 +89,7 @@ public class UserService implements UserServiceI {
 		return userRepository.save(user);
 	}
 	
-
+	//saves the google or github user if their mail isnt already registered
 	@Override
 	public User saveO2authUser(String email, String name) {
 		// TODO Auto-generated method stub
@@ -137,6 +139,7 @@ public class UserService implements UserServiceI {
         return tokenRepository.findByToken(VerificationToken);
     }
   
+  //creates Verification Token for the user, used for mail
   @Override
   public void createVerificationTokenForUser(User user, String token) {
       VerificationToken myToken = new VerificationToken();
@@ -165,7 +168,7 @@ public class UserService implements UserServiceI {
 	        User user = tokenRepository.findByToken(verificationToken).getUser();
 	        return user;
 	    }
-
+	 
 	@Override
 	public User updateUser(User user) {
 		// TODO Auto-generated method stub
@@ -178,6 +181,7 @@ public class UserService implements UserServiceI {
 		return local;
 	}
 	
+	//changes password, but encripts it again
 	@Override
 	public User changePassword(User user) {
 		User u = userRepository.findById(user.getUserId()).get();
