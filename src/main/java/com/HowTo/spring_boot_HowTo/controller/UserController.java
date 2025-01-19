@@ -104,7 +104,7 @@ public class UserController {
 		this.channelService = channelService;
 		this.walletService = walletService;
 	}
-
+	
 	@InitBinder("user")
 	public void initBinder(WebDataBinder binder) {
 		binder.addValidators(new UserValidator());
@@ -119,7 +119,8 @@ public class UserController {
 		User user = (User) authentication.getPrincipal();
 		return user.getUserId();
 	}
-
+	
+	//shows all user (pagination)
 	@GetMapping(value = { "/user/admin", "/user/admin/all" })
 	public String showUserList(Model model, @RequestParam(required = false) String keyword,
 			@RequestParam(required = false, defaultValue = "1") int page,
@@ -151,7 +152,8 @@ public class UserController {
 		}
 		return "/users/user-all";
 	}
-
+	
+	//admin deletes user
 	@GetMapping("/user/admin/delete/{id}")
 	public String deleteUser(@PathVariable("id") long id, Model model, RedirectAttributes redirectAttributes) {
 		logger.info("Deleting user with ID: {}", id);
@@ -161,7 +163,8 @@ public class UserController {
 		logger.info("User deleted successfully: {}", id);
 		return "redirect:/user/admin/all";
 	}
-
+	
+	//admin updates user form
 	@GetMapping("/user/admin/update/{id}")
 	public String showUpdateUserForm(@PathVariable Long id, Model model, HttpServletRequest request) {
 		logger.info("Fetching user for update with ID: {}", id);
@@ -171,7 +174,8 @@ public class UserController {
 		logger.info("Fetched user for update: {}", id);
 		return "/users/user-update";
 	}
-
+	
+	//admin updates user
 	@PostMapping("/user/admin/update")
 	public String updateUser(@Valid @ModelAttribute("user") User user, BindingResult results, Model model,
 			RedirectAttributes redirectAttributes) {
@@ -185,7 +189,7 @@ public class UserController {
 		return "redirect:/user/admin/all";
 
 	}
-
+	
 	@GetMapping("/user/admin/add")
 	public String showUserAdForm(Model model, HttpServletRequest request) {
 		logger.info("Showing user add form");
@@ -198,7 +202,7 @@ public class UserController {
 		logger.info("User add form shown successfully");
 		return "/users/user-add";
 	}
-
+	
 	@PostMapping("/user/admin/add")
 	public String addUser(@Valid @ModelAttribute User user, BindingResult result, Model model,
 			RedirectAttributes redirectAttributes) throws Exception {
@@ -214,6 +218,7 @@ public class UserController {
 		return "redirect:/user/admin/all";
 	}
 
+	//register form
 	@GetMapping("/register")
 	public String showUserRegisterForm(Model model, HttpServletRequest request) {
 		logger.info("Showing user registration form");
@@ -226,7 +231,8 @@ public class UserController {
 		logger.info("User registration form shown successfully");
 		return "register";
 	}
-
+	
+	//confirm token and email and enables him
 	@GetMapping("/registrationConfirm")
 	public String confirmRegistration(WebRequest request, Model model, @RequestParam("token") String token) {
 
@@ -253,7 +259,8 @@ public class UserController {
 		logger.info("User registration confirmed: {}", user.getUserId());
 		return "redirect:/login"; // + request.getLocale().getLanguage();
 	}
-
+	
+	//registers the user and sends him mail for verification
 	@PostMapping("/register")
 	public String registerUser(@Valid @ModelAttribute User user, BindingResult result, Model model,
 			RedirectAttributes redirectAttributes, HttpServletRequest request) {
@@ -265,6 +272,7 @@ public class UserController {
 		try {
 			User registered = userService.saveUser(user);
 			String appUrl = request.getContextPath();
+			//sends him mail with verification token
 			eventPublisher.publishEvent(new OnRegistrationCompleteEvent(registered, request.getLocale(), appUrl));
 			logger.info("User registered successfully: {}", user.getUserId());
 		} catch (UserAlreadyExistException uaeEx) {
@@ -275,7 +283,9 @@ public class UserController {
 		redirectAttributes.addFlashAttribute("added", "User added! Please confirm per E-mail");
 		return "redirect:/login";
 	}
-
+	
+	
+	//changes passsword form
 	@GetMapping("/user/changemypassword")
 	public String changePassword(Model model, RedirectAttributes redirectAttributes, HttpServletRequest request) {
 		logger.info("Changing password for user");
@@ -284,7 +294,8 @@ public class UserController {
 		logger.info("Password change form shown successfully for user: {}", user.getUserId());
 		return "changepassword";
 	}
-
+	
+	//change password
 	@PostMapping("/user/passwordchanged")
 	public String passwordchanged(@Valid @ModelAttribute User user, BindingResult result, Model model,
 			RedirectAttributes redirectAttributes) {
@@ -293,13 +304,15 @@ public class UserController {
 		eventPublisher.publishEvent(new OnChangePasswordLoggedInEvent(user));
 		return "redirect:/login";
 	}
-
+	
+	//shows form for forgotten password
 	@GetMapping("/user/forgotmypassword")
 	public String forgotmyPassword(RedirectAttributes redirectAttributes, HttpServletRequest request) {
 		logger.info("Showing forgot password form");
 		return "forgotpassword";
 	}
-
+	
+	//sends him a mail with a token , which is used for verfication on the form 
 	@PostMapping("/user/forgotmypassword")
 	public String forgotmyPasswordemail(@RequestParam("email") String email, Model model,
 			RedirectAttributes redirectAttributes, HttpServletRequest request) {
@@ -313,6 +326,8 @@ public class UserController {
 				return "redirect:/login";
 			}
 			String appUrl = request.getContextPath();
+			//this event sends the email with the token
+			
 			eventPublisher.publishEvent(new OnChangePasswordEvent(user, request.getLocale(), appUrl));
 			redirectAttributes.addFlashAttribute("email", "E-Mail for password change has been sent");
 			logger.info("Password change email sent for user: {}", user.getUserId());
@@ -323,7 +338,8 @@ public class UserController {
 			return "redirect:/login";
 		}
 	}
-
+	
+	//checks the token and then enables you to change the password
 	@GetMapping("/confirmPassword")
 
 	public String confirmpassword(WebRequest request, Model model, @RequestParam("token") String token) {
@@ -352,6 +368,7 @@ public class UserController {
 		return "changeforgottenpassword"; // + request.getLocale().getLanguage();
 	}
 
+	//changed the password
 	@PostMapping("/user/forgottenpasswordchanged")
 	public String forgottenpasswordchanged(@Valid @ModelAttribute User user, @RequestParam("token") String token,
 			BindingResult result, Model model, RedirectAttributes redirectAttributes) {
@@ -373,7 +390,8 @@ public class UserController {
 		}
 		return "redirect:/login";
 	}
-
+	
+	//activates 2fa
 	@GetMapping("user/my/activate2fa")
 	public String activate2fa(Model model) throws UnsupportedEncodingException {
 		logger.info("Activating 2FA for user");
@@ -387,7 +405,9 @@ public class UserController {
 		return "users/qrcode";
 
 	}
-
+	
+	
+	//deactivate 2fa
 	@GetMapping("user/my/deactivate2fa")
 	public String deactivate2fa(Model model) {
 		logger.info("Deactivating 2FA for user");
@@ -399,6 +419,7 @@ public class UserController {
 
 	}
 
+	//shows login form
 	@RequestMapping(value = { "/login", "/" }, method = RequestMethod.GET)
 	public String showLoginForm(Model model) {
 		logger.info("Showing login form");
@@ -415,7 +436,9 @@ public class UserController {
 		logger.info("Login form shown successfully with OAuth2 URLs");
 		return "login_register";
 	}
-
+	
+	
+	//login only for google and github
 	@GetMapping("/loginSuccess")
 	public String getLoginInfo(HttpServletRequest request, Model model, OAuth2AuthenticationToken authentication2) {
 		logger.info("Fetching login info for OAuth2 authentication");
@@ -466,12 +489,14 @@ public class UserController {
 		return "redirect:/home";
 	}
 
+	
 	@GetMapping("/logout")
 	public String logout() {
 		logger.info("Logging out user");
 		return "redirect:/";
 	}
-
+	
+	//shows profile of current user
 	@GetMapping("/user/my")
 	public String showUserProfile(Model model, RedirectAttributes redirectAttributes) {
 		logger.info("Showing user profile");
