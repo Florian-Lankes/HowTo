@@ -31,7 +31,8 @@ public class WatchLaterService implements WatchLaterServiceI{
 		// TODO Auto-generated method stub
 		return watchLaterRepository.findAll();
 	}
-
+	// saves watchlater using userid and tutorialid because they have a @ManyToOne Relation
+	// checks if user and tutorial exists and set their list, then save the watchlater
 	@Override
 	public WatchLater saveWatchLater(WatchLater watchLater, Long userid, Long tutorialid) {
         User user = userRepository.findById(userid).get();

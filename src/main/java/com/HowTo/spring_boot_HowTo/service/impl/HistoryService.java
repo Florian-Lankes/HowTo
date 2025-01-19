@@ -31,6 +31,8 @@ public class HistoryService implements HistoryServiceI{
 		return historyRepository.findAll();
 	}
 
+	// saves history using userid and tutorialid because they have a @ManyToOne Relation
+	// checks if user and tutorial exists and set their list, then save the history
 	@Override
 	public History saveHistory(History history, Long userid, Long tutorialid) {
 		User user = userRepository.findById(userid).get();

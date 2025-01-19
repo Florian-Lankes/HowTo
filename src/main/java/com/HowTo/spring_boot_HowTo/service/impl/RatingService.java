@@ -15,46 +15,48 @@ import com.HowTo.spring_boot_HowTo.repository.UserRepositoryI;
 import com.HowTo.spring_boot_HowTo.service.RatingServiceI;
 
 @Service
-public class RatingService implements RatingServiceI{
-	
+public class RatingService implements RatingServiceI {
+
 	@Autowired
 	RatingRepositoryI ratingRepository;
-	
+
 	@Autowired
 	UserRepositoryI userRepository;
-	
+
 	@Autowired
 	TutorialRepositoryI tutorialRepository;
-	
+
 	@Override
 	public List<Rating> getAllRatings() {
 		// TODO Auto-generated method stub
 		return ratingRepository.findAll();
 	}
 
+	// saves rating using userid and tutorialid because they have a @ManyToOne Relation
+	// checks if user and tutorial exists and set their list, then save the rating
 	@Override
 	public Rating saveRating(Rating rating, Long userid, Long tutorialid) {
 		User user = userRepository.findById(userid).get();
-        Tutorial tutorial = tutorialRepository.findById(tutorialid).get();
-        List<Rating> ratingList = user.getRatings();
-        if(user != null && rating != null && ratingList != null && tutorial != null) {
-            if(!ratingList.contains(rating)) {
-            	rating.setRatingUser(user);
-            	rating.setRatingTutorial(tutorial);
-            	tutorial.addRating(rating);
-                user.addRating(rating);
-                ratingRepository.save(rating);
-            }
-        }
+		Tutorial tutorial = tutorialRepository.findById(tutorialid).get();
+		List<Rating> ratingList = user.getRatings();
+		if (user != null && rating != null && ratingList != null && tutorial != null) {
+			if (!ratingList.contains(rating)) {
+				rating.setRatingUser(user);
+				rating.setRatingTutorial(tutorial);
+				tutorial.addRating(rating);
+				user.addRating(rating);
+				ratingRepository.save(rating);
+			}
+		}
 		return rating;
-		
+
 	}
 
 	@Override
 	public Rating getRatingById(Long id) {
 		// TODO Auto-generated method stub
 		Optional<Rating> opRating = ratingRepository.findById(id);
-		return opRating.isPresent()? opRating.get():null;
+		return opRating.isPresent() ? opRating.get() : null;
 	}
 
 	@Override

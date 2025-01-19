@@ -32,10 +32,10 @@ public class ReportService implements ReportServiceI{
 		// TODO Auto-generated method stub
 		return reportRepository.findAll();
 	}
-
+	// saves TUTORIAL report using userid and tutorialid because they have a @ManyToOne Relation
+	// checks if user and tutorial exists and set their list, then save the report
 	@Override
 	public Report saveTutorialReport(Report report, Long userId, Long tutorialId) {
-		
 		User user = userRepository.findById(userId).get();
 		Tutorial tutorial = tutorialRepository.findById(tutorialId).get();
 		List<Report> reports = user.getReports();
@@ -51,7 +51,8 @@ public class ReportService implements ReportServiceI{
 		}
 		return report;
 	}
-	
+	// saves USER report using ONLY userid because they have a @ManyToOne Relation
+	// checks if user exists and set their list, then save the report
 	@Override
 	public Report saveUserReport(Report report, Long userId) {
 		User user = userRepository.findById(userId).get();

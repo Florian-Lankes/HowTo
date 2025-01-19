@@ -44,7 +44,7 @@ public class HistoryController {
 		User user = (User) authentication.getPrincipal();
 		return user.getUserId();
 	}
-	
+	// returns the history page for the user that is logged in
 	@GetMapping("/my")
 	public String getHistoryId(Model model) {
 		logger.info("Entering getHistoryId method");
@@ -53,7 +53,7 @@ public class HistoryController {
 		logger.info("User history retrieved and added to model for userId: {}", getCurrentUserId());
 		return "history";
 	}
-	
+	// tracks the click on a tutorial and redirects it to the page
 	@GetMapping("/track/{tutorialid}")
 	public String trackView(@PathVariable("tutorialid") long tutorialid) {
 		logger.info("Entering trackView method with tutorialId: {}", tutorialid);
@@ -65,7 +65,7 @@ public class HistoryController {
 		logger.info("History tracked and saved for tutorialId: {} and userId: {}", tutorialid, getCurrentUserId());
 		return "redirect:/tutorial/view/{tutorialid}";
 	}
-	
+	// deletes the history entry
 	@GetMapping("/delete/{id}")
     public String deleteHistory(@PathVariable("id") long id, Model model, RedirectAttributes redirectAttributes) {
 		logger.info("Entering deleteHistory method with historyId: {}", id);

@@ -41,7 +41,7 @@ public class WatchlaterController {
 		User user = (User) authentication.getPrincipal();
 		return user.getUserId();
 	}
-	
+	// returns watchlater page for current user
 	@GetMapping("/my")
 	public String getWatchLaterId(Model model) {
 		Long userId = getCurrentUserId(); 
@@ -53,6 +53,7 @@ public class WatchlaterController {
 		return "watchLater";
 		
 	}
+	// saves selected tutorial to watchlater
 	@GetMapping("/save/{tutorialid}")
 	public String saveWatchLater(@PathVariable("tutorialid") long tutorialId) {
 		Long userId = getCurrentUserId(); 
@@ -69,7 +70,7 @@ public class WatchlaterController {
 		return ("redirect:/tutorial/view/"+ tutorialId);
 		
 	}
-	
+	// deletes tutorial from watchlater list
 	@GetMapping("/delete/{id}")
     public String deleteWatchLater(@PathVariable("id") long id, Model model, RedirectAttributes redirectAttributes) {
 		Long userId = getCurrentUserId(); 
