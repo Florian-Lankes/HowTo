@@ -30,7 +30,9 @@ public class CloudinaryService implements CloudinaryServiceI {
 	
 	@Autowired
 	AdvertisementRepositoryI advertisementRepository;
-
+	
+	
+	//takes the multipart file and uploads it on cloudinary. the returned string will be saved in tutorial
 	@Override
 	public String uploadFile(MultipartFile file, Long tutorialId) {
 		Tutorial tutorial = tutorialRepository.findById(tutorialId).get();
@@ -59,7 +61,7 @@ public class CloudinaryService implements CloudinaryServiceI {
 	}
 	
 	
-	
+	//deletes the file on cloudinary via public id
 	@Override
 	public void deleteFile(String publicId) {
 		
@@ -78,7 +80,7 @@ public class CloudinaryService implements CloudinaryServiceI {
 		tutorialRepository.save(tutorial);
 	}
 	
-	
+	//upload a file for advertisements on cloudinary
 	@Override
 	public String uploadFileAdvertisement(MultipartFile file, Long advertisementId) {
 		Advertisement advertisement = advertisementRepository.findById(advertisementId).get();
@@ -107,7 +109,7 @@ public class CloudinaryService implements CloudinaryServiceI {
 	}
 	
 	
-	
+	//deletes the file on cloudinary via public id
 	@Override
 	public void deleteFileAdvertisement(String publicId) {
 		

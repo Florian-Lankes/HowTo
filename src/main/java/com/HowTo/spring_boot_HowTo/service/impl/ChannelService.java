@@ -35,6 +35,7 @@ public class ChannelService implements ChannelServiceI{
 		return channelRepository.findAll();
 	}
 	
+	//gets pagination of all channels
 	@Override
 	public Page<Channel> getAllChannels(String channelname, Pageable pageable) {
 	// TODO Auto-generated method stub
@@ -47,7 +48,8 @@ public class ChannelService implements ChannelServiceI{
 	 }
 	return pageChannel;
 	}
-
+	
+	//saves channel and adds the creator role to the user
 	@Override
 	public Channel saveChannel(Channel channel, Long userId) {
 		// TODO Auto-generated method stub
@@ -73,7 +75,8 @@ public class ChannelService implements ChannelServiceI{
 		Channel local = channelRepository.save(channel);
 		return local;
 	}
-
+	
+	//deletes channel and removes creator role
 	@Override
 	public void delete(Channel channel) {
 		// TODO Auto-generated method stub
@@ -85,6 +88,7 @@ public class ChannelService implements ChannelServiceI{
 		channelRepository.delete(channel);
 	}
 	
+	//adds the user to a subscriber list
 	@Override
 	public Channel subscribeChannel(Channel channel, Long userId) {
 		User user = userRepository.findById(userId).get();
@@ -102,6 +106,7 @@ public class ChannelService implements ChannelServiceI{
 		return channel;
 	}
 	
+	//removes user from subscriber list
 	@Override
 	public Channel unsubscribeChannel(Channel channel, Long userId) {
 		User user = userRepository.findById(userId).get();

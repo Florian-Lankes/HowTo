@@ -27,7 +27,8 @@ public class AdvertisementService implements AdvertisementServiceI{
 		// TODO Auto-generated method stub
 		return AdvertisementRepository.findAll();
 	}
-
+	
+	//saves ads with their respective category
 	@Override
 	public Advertisement saveAdvertisement(Advertisement a, Long categoryId) {
 		// TODO Auto-generated method stub
@@ -47,7 +48,8 @@ public class AdvertisementService implements AdvertisementServiceI{
 		Optional<Advertisement> opAdvertisement = AdvertisementRepository.findById(id);
 		return opAdvertisement.isPresent()? opAdvertisement.get():null;
 	}
-
+	
+	//update Ad and maybe their category
 	@Override
 	public Advertisement updateAdvertisement(Advertisement a, Long categoryId) {
 		
