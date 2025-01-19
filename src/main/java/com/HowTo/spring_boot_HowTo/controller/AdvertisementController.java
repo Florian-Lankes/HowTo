@@ -45,6 +45,7 @@ public class AdvertisementController {
 		this.cloudinaryService = cloudinaryService;
 	}
 	
+	//returns site of one specific ad
 	@GetMapping("/view/{id}")
 	public String getAdvertisementView(@PathVariable("id") Long id, Model model) {
 		
@@ -54,6 +55,7 @@ public class AdvertisementController {
 		return "advertisements/advertisement";
 	}
 	
+	//returns all ads site
 	@GetMapping("/all")
 	public String showAllAdvertisements(Model model) {
 		List<Advertisement> advertisements = advertisementService.getAllAdvertisements();
@@ -61,6 +63,7 @@ public class AdvertisementController {
 		return "advertisements/advertisement-list";
 	}
 	
+	//shows the form to create ad
 	@GetMapping("/create")
 	public String showAdvertisementForm(Model model) {
 		logger.info("Entering showAdvertisementForm method");
@@ -76,6 +79,7 @@ public class AdvertisementController {
 		return "advertisements/advertisement-create";
 	}
 	
+	//creates ad and adds it to the db
 	@PostMapping("/create")
 	public String addAdvertisement(@RequestParam("categorySelection") Long categoryId, @Valid @ModelAttribute Advertisement advertisement, Model model, BindingResult result) {
 		logger.info("Entering addAdvertisement method with categoryId: " + categoryId);
@@ -89,6 +93,7 @@ public class AdvertisementController {
 		return "redirect:/advertisement/view/" + advertisement.getAdvertisementId();
 	}
 	
+	//shows form to update ad
 	@GetMapping("/update/{id}")
 	public String showUpdateAdvertisementForm(@PathVariable("id") Long advertisementId, Model model) {
 		logger.info("Entering showUpdateAdvertisementForm method with advertisementId: {}", advertisementId);
@@ -99,7 +104,8 @@ public class AdvertisementController {
 		logger.info("Advertisement retrieved and added to model with advertisementId: {}", advertisementId);
 		return "/advertisements/advertisement-update";
 	}
-
+	
+	//updates ad
 	@PostMapping("/update")
 	public String updateAdvertisement(@Valid @ModelAttribute Advertisement advertisement, @RequestParam("categorySelection") Long categoryId, BindingResult results, Model model,
 			RedirectAttributes redirectAttributes) {
@@ -116,12 +122,13 @@ public class AdvertisementController {
 
 	}
 	
+	//deletes a ad
 	@GetMapping("/delete/{id}")
     public String deleteAdvertisement(@PathVariable("id") Long advertisementId, Model model, RedirectAttributes redirectAttributes) {
 		logger.info("Entering deleteAdvertisement method with advertisementId: {}", advertisementId);
 		Advertisement advertisement = advertisementService.getAdvertisementById(advertisementId);     
     	if(advertisement != null && advertisement.getVideoUrl() != null && !advertisement.getVideoUrl().isEmpty()) {
-    		
+    		//if a video exists, deletes it on cloudinary with the public id
     		String s = advertisement.getVideoUrl();  //String split to get public id and delete it
     		String[] news = s.split("/");
     		String name = news[news.length-1];
@@ -137,12 +144,13 @@ public class AdvertisementController {
         return "redirect:/advertisement/all";
     }
     
+	//uploads new video
     @PostMapping("/uploadvideo/{id}")
 	public String uploadVideo(@PathVariable("id") Long advertisementId, @RequestParam("video") MultipartFile file, RedirectAttributes redirectAttributes) {
     	logger.info("Entering uploadVideo method with advertisementId: {}", advertisementId);
     	Advertisement advertisement = advertisementService.getAdvertisementById(advertisementId);
     	if(advertisement.getVideoUrl() != null && !advertisement.getVideoUrl().isEmpty()) {
-    		
+    		//if video exists, deletes the previous video, then uploads new
     		String s = advertisement.getVideoUrl();  //String split to get public id and delete it
     		String[] news = s.split("/");
     		String name = news[news.length-1];
@@ -157,6 +165,7 @@ public class AdvertisementController {
 		return "redirect:/advertisement/all";
 	}
     
+    //delete video
     @GetMapping("/deletevideo/{id}")
 	public String deleteVideo(@PathVariable("id") Long advertisementId, 
 			Model model,

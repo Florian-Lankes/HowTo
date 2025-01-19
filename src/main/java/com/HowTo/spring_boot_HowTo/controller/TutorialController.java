@@ -81,7 +81,7 @@ public class TutorialController {
 		return user.getUserId();
 	}
 	
-	
+	//shows tutorial page with all comments
 	@GetMapping("/view/{id}")
 	public String getTutorialView(@PathVariable("id") Long id, Model model) {
 		logger.info("Entering getTutorialView method with tutorialId: {}", id);
@@ -89,7 +89,7 @@ public class TutorialController {
 		
 		//For comment Form in Tutorial
 		Comment commentForm = new Comment();
-		commentForm.setCommentId((long) -1); //TODO change dynamically after user authorization is implemented
+		commentForm.setCommentId((long) -1); 
 		LocalDate date= LocalDate.now();
 		commentForm.setCreationDate(date);
 		
@@ -119,6 +119,7 @@ public class TutorialController {
 		return "tutorials/tutorial";
 	}
 	
+	//likes a tutorial
 	@GetMapping("/like/{id}")
 	public String likeTutorial(@PathVariable("id") Long id, 
 			Model model,
@@ -131,6 +132,7 @@ public class TutorialController {
 		return "redirect:/tutorial/all";
 	}
 	
+	//dislikes a tutorial
 	@GetMapping("/dislike/{id}")
 	public String dislikeTutorial(@PathVariable("id") Long id, 
 			Model model,
@@ -143,6 +145,7 @@ public class TutorialController {
 		return "redirect:/tutorial/all";
 	}
 	
+	//shows all tutorials pagination
 	@GetMapping("/all")
 	public String showTutorialList(Model model, @RequestParam(required = false) String keyword,
 			@RequestParam(required = false, defaultValue = "1") int page, @RequestParam(required = false,
@@ -177,6 +180,7 @@ public class TutorialController {
 		return "tutorials/tutorial-list";
 	}
 	
+	//shows the tutorial form 
 	@GetMapping("/create")
 	public String createTutorialView(Model model) {
 		logger.info("Entering createTutorialView method");
@@ -192,7 +196,8 @@ public class TutorialController {
 		logger.info("Tutorial creation form initialized and added to model");
 		return "tutorials/tutorial-create";
 	}
-	// 
+	
+	// uploads a tutorial and publishes a mail to all subscriber
 	@PostMapping("/upload")
 	public String uploadTutorial(@RequestParam("categorySelection") Long categoryId, @Valid @ModelAttribute Tutorial tutorial, 
 			BindingResult results, Model model, 
@@ -208,6 +213,7 @@ public class TutorialController {
 		Channel c = channelService.getChannelById(getCurrentUserId());
 		List<User> subscribedUsers = c.getSubscribedFromUserList();
 		
+		//this event sends a mail to all subscriber
 		for (User u : subscribedUsers) {
 			eventPublisher.publishEvent(new OnInformSubscriberEvent(u, c.getChannelname(), tutorial.getTitle()));
 		}
@@ -216,6 +222,7 @@ public class TutorialController {
 		return "redirect:/tutorial/upload/video/"+ tutorial.getTutorialId();
 	}
 	
+	//upload video form
 	@GetMapping("/upload/video/{id}")
 	public String uploadVideoView(@PathVariable("id") Long id, Model model) {
 		logger.info("Entering uploadVideoView method with tutorialId: {}", id);
@@ -223,12 +230,13 @@ public class TutorialController {
 		return "tutorials/tutorial-video-upload";
 	}
 	
-	
+	//deletes tutorial
 	@GetMapping("/delete/{id}")
     public String deleteTutorial(@PathVariable("id") Long tutorialId, Model model, RedirectAttributes redirectAttributes) {
 		logger.info("Entering deleteTutorial method with tutorialId: {}", tutorialId);
 		Tutorial tutorial = tutorialService.getTutorialById(tutorialId);     
         if(tutorial != null &&tutorial.getVideoUrl() != null && !tutorial.getVideoUrl().isEmpty()) {
+        	//deletes video if it existed on cloudinary
     		String s = tutorial.getVideoUrl();  //String split to get public id and delete it
     		String[] news = s.split("/");
     		String name = news[news.length-1];
@@ -244,6 +252,7 @@ public class TutorialController {
         return "redirect:/tutorial/all";
     }
 	
+	//update tutorial form
 	@GetMapping("/update/{id}")
 	public String showUpdateTutorialForm(@PathVariable("id") Long tutorialId, 
 			Model model,
@@ -257,7 +266,7 @@ public class TutorialController {
 		return "/tutorials/tutorial-update";
 	}
     
-    
+    //update tutorial
     @PostMapping("/update")
 	public String updateTutorial(@Valid @ModelAttribute Tutorial tutorial, @RequestParam("categorySelection") Long categoryId,//@Valid @ModelAttribute Long channel,
 			BindingResult results,
@@ -275,6 +284,7 @@ public class TutorialController {
 		return "redirect:/tutorial/all";
 	}
     
+   //new video. if it had a video, deletes the old one and uploads the new one on cloudinary
     @PostMapping("/uploadvideo/{id}")
 	public String uploadVideo(@PathVariable("id") Long tutorialId, @RequestParam("video") MultipartFile file, RedirectAttributes redirectAttributes) {
     	logger.info("Entering uploadVideo method with tutorialId: {}", tutorialId);
@@ -295,6 +305,7 @@ public class TutorialController {
 		return "redirect:/channel/mychannel";
 	}
     
+    //deletes the video
     @GetMapping("/deletevideo/{id}")
 	public String deleteVideo(@PathVariable("id") Long tutorialId, 
 			Model model,

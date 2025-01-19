@@ -48,6 +48,7 @@ public class HomeController {
 		return user.getUserId();
 	}
 	
+	//returns a page full of tutorials on the home page including categoriesw
 	@GetMapping("/home")
 	public String HowToView(Model model, @RequestParam(required = false) String keyword,
 			@RequestParam(required = false, defaultValue = "1") int page, @RequestParam(required = false,

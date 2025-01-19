@@ -69,7 +69,7 @@ public class GroupController {
 		return user.getUserId();
 	}
 	
-	//CREATE
+	//show group form
 	@GetMapping("/create")
 	public String showGroupAdForm(Model model, HttpServletRequest request) {
 		logger.info("Entering showGroupAdForm method");
@@ -84,6 +84,7 @@ public class GroupController {
 		return "/groups/group-create";
 	}
 	
+	//creates new Group and initializes chat
     @PostMapping("/create")
     public String addGroup(@Valid @ModelAttribute Group group, 
     		BindingResult result, 
@@ -97,7 +98,7 @@ public class GroupController {
         }	
     	Group r= groupService.saveGroup(group, getCurrentUserId());
         redirectAttributes.addFlashAttribute("created", "Group created!");
-        groupService.joinGroup(r, getCurrentUserId()); //doenst wanna join the group after creating
+        groupService.joinGroup(r, getCurrentUserId()); //joins groups directly after creating
         
         Message createMessage = new Message();
   		createMessage.setContent("");
@@ -113,7 +114,7 @@ public class GroupController {
         return "redirect:/group/all";
     }
 
-    //GETALL
+    //gets all groups (pagination)
     @GetMapping(value = { "/", "/all" })
 	public String showGroupList(Model model, @RequestParam(required = false) String keyword,
 			@RequestParam(required = false, defaultValue = "1") int page, @RequestParam(required = false,
@@ -144,6 +145,7 @@ public class GroupController {
 		} catch (Exception e){
 			model.addAttribute("message", e.getMessage());
 		}
+    	//get all joined or owned groups to show actions accordingly
 		List<Group> joinedGroups = userService.getUserById(getCurrentUserId()).getJoinedGroups();
 		List<Group> ownedGroups = userService.getUserById(getCurrentUserId()).getOwnedGroups();
 			
@@ -153,11 +155,13 @@ public class GroupController {
 		return "/groups/group-list";
 	}
     
+    //delete group
     @GetMapping("/delete/{id}")
     public String deleteGroup(@PathVariable("id") long id, Model model, RedirectAttributes redirectAttributes) {
     	logger.info("Entering deleteGroup method with groupId: {}", id);
         Group group = groupService.getGroupById(id);    
         if(group.getGroupOwner().getUserId() != getCurrentUserId()) {
+        	//if owner deletion failed
         	logger.warn("User with id {} is not owner of group with id {}, deletion failed", getCurrentUserId(), id);
    	 		redirectAttributes.addFlashAttribute("failed", "not owner!!");
    	 		return "redirect:/group/all";
@@ -168,6 +172,7 @@ public class GroupController {
         return "redirect:/group/all";
     }
     
+    //update group
     @GetMapping("/update/{id}")
    	public String showUpdateGroupForm(@PathVariable("id") Long id, 
    			Model model,
@@ -175,6 +180,7 @@ public class GroupController {
     	logger.info("Entering showUpdateGroupForm method with groupId: {}", id);
    	 	Group group = groupService.getGroupById(id); 
    	 	if(group.getGroupOwner().getUserId() != getCurrentUserId()) {
+   	 	//if owner failed
    	 		redirectAttributes.addFlashAttribute("failed", "not owner!!");
 	   	 	logger.warn("User with id {} is not owner of group with id {}, update failed", getCurrentUserId(), id);
 	   	 	return "redirect:/group/all";
@@ -184,7 +190,7 @@ public class GroupController {
    		return "/groups/group-update";
    	}
        
-       
+      //update group
     @PostMapping("/update")
    	public String updateGroup(@Valid @ModelAttribute Group group,
    			BindingResult results,
@@ -221,6 +227,7 @@ public class GroupController {
 //      		return "/groups/group-detail";
 //      	}
        
+    //join a group
        @GetMapping("/join/{id}")
       	public String joinGroup(@PathVariable("id") Long id,
       			Model model, 
@@ -245,6 +252,7 @@ public class GroupController {
       		return "redirect:/group/all";
        }
        
+       //leave a group
        @GetMapping("/leave/{id}")
      	public String leaveGroup(@PathVariable("id") Long id,
      			Model model, 
