@@ -457,12 +457,6 @@ public class UserController {
 			logger.info("OAuth2 login info fetched successfully for user: {}", u.getUserId());
 		}
 
-		// Überprüfe die Benutzerrollen Authentication
-
-//        
-//        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-//        System.out.println("User Authorities: " + auth.getAuthorities());
-
 		return "redirect:/home";
 	}
 

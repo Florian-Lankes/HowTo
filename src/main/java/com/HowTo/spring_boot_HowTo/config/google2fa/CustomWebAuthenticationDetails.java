@@ -12,6 +12,7 @@ public class CustomWebAuthenticationDetails extends WebAuthenticationDetails {
 
     public CustomWebAuthenticationDetails(HttpServletRequest request) {
         super(request);
+        //set verifcationCode for 2FA
         verificationCode = request.getParameter("code");
     }
 

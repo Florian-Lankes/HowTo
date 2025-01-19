@@ -15,16 +15,12 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import com.HowTo.spring_boot_HowTo.model.Channel;
-import com.HowTo.spring_boot_HowTo.model.Report;
 import com.HowTo.spring_boot_HowTo.model.Transaction;
 import com.HowTo.spring_boot_HowTo.model.User;
 import com.HowTo.spring_boot_HowTo.model.Wallet;
 import com.HowTo.spring_boot_HowTo.model.WalletPlan;
-import com.HowTo.spring_boot_HowTo.service.GroupServiceI;
 import com.HowTo.spring_boot_HowTo.service.TransactionServiceI;
 import com.HowTo.spring_boot_HowTo.service.WalletServiceI;
-import com.HowTo.spring_boot_HowTo.service.impl.UserService;
 
 import jakarta.validation.Valid;
 
@@ -69,8 +65,6 @@ public class WalletController {
     	walletService.saveWallet(wallet, userId);
     	logger.info("Wallet created successfully for user ID: {}", userId);
 		model.addAttribute("wallet", walletService.getWalletById(userId));
-//    	model.addAttribute("transactionsReceived", transactionService.getTransactionByTransactionReceiver(userId));
-//    	model.addAttribute("transactionsSend", transactionService.getTransactionByTransactionSender(userId));  
         return "users/wallet";
     }
 	
