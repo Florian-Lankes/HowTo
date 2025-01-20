@@ -56,11 +56,14 @@
 		</div>
 		<div class="container d-flex align-items-center">
 			<div class="me-2 btn btn-secondary align-items-center">
-				<span th:text="${tutorial.tutorialCategory.categoryName}"></span>
+				<span th:if="${tutorial.tutorialCategory != null}" th:text="${tutorial.tutorialCategory.categoryName}"></span>
+				<span th:if="${tutorial.tutorialCategory == null}">Keine Kategorie</span>
 			</div>
 			<h3 class="mb-0" th:text="${tutorial.title}"></h3>
 		</div>
+		
 		<div class="container mt-2">
+			<a th:href="@{/tutorial/ratings/{id}(id=${tutorial.tutorialId})}" class="text-decoration-none mb-0" th:text="${'⌀ Bewertung: '+ avgScore}"></a>
 			<p th:text="${tutorial.contentText}"></p>
 		</div>
 		<div class="container d-flex">

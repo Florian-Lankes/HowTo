@@ -34,6 +34,7 @@ import com.HowTo.spring_boot_HowTo.model.Advertisement;
 import com.HowTo.spring_boot_HowTo.model.Category;
 import com.HowTo.spring_boot_HowTo.model.Channel;
 import com.HowTo.spring_boot_HowTo.model.Comment;
+import com.HowTo.spring_boot_HowTo.model.Rating;
 import com.HowTo.spring_boot_HowTo.config.MyUserDetails;
 
 import com.HowTo.spring_boot_HowTo.model.Tutorial;
@@ -113,11 +114,44 @@ public class TutorialController {
 		else {
 			logger.warn("No category available.");
 		}
+		
+		
+		model.addAttribute( "avgScore", calculateAvgRating(tutorial));
 		model.addAttribute("tutorial", tutorial );
 		model.addAttribute("comment", commentForm);
 		logger.info("Tutorial and comment form added to model");
 		return "tutorials/tutorial";
 	}
+	//calculates the average rating from a tutorial and returns the correct string to add in html
+	public String calculateAvgRating(Tutorial l) {
+		int counter = 0;
+		double sum = 0;
+		for(Rating e :  l.getRatings()) {
+			counter++;
+			sum += e.getRatingScore();
+		}
+		double avgScore ;
+		String avgScoreString;
+		if(sum!=0) {
+			avgScore = sum/counter;
+			avgScoreString = avgScore + "/5";
+		}
+		else {
+			avgScoreString = "Noch keine vorhanden";
+		}
+		return avgScoreString;
+	}
+	
+	@GetMapping("/ratings/{id}")
+	public String getRatingsFromTutorial(@PathVariable("id") Long tutorialId, Model model) {
+		Tutorial tutorial = tutorialService.getTutorialById(tutorialId); 
+		
+		model.addAttribute( "avgScore", calculateAvgRating(tutorial));
+		model.addAttribute("tutorial", tutorial);
+		return "/tutorials/tutorial-ratings";
+		
+	}
+	
 	
 	//likes a tutorial
 	@GetMapping("/like/{id}")

@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html layout:decorate="~{layout}">
+
+<head>
+	<meta charset="UTF-8" />
+</head>
+
+<body>
+	<section class="layout-content mt-2" layout:fragment="mybody">
+		<div class="container align-items-center">
+			<h3>
+				<a class="mb-0 text-decoration-none" th:href="@{/history/track/{tutorialid}(tutorialid = ${tutorial.tutorialId})}" th:text="${tutorial.title}"></a>
+			</h3>
+			
+			<h4  class="mt-2 mb-0" th:text="${'⌀ Bewertung: '+ avgScore}"></h4>
+
+		</div>
+		<hr class="my-4">
+		<div class="container mt-2">
+
+			<div th:each="element: ${tutorial.ratings}">
+				<div class=" mt-2 container border rounded border-secondary">
+					<h5 class="mt-2" th:text="${element.ratingUser.username}"></h5>
+					<div>
+						<p th:text="${'Bewertung: '+element.ratingScore + '/5'}"></p>
+					</div>
+
+					<div>
+						<p th:text="${'Beschreibung: '+ element.ratingText}"></p>
+					</div>
+				</div>
+			</div>
+
+
+		</div>
+	</section>
+</body>
+
+</html>
