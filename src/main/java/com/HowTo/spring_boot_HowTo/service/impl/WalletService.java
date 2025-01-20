@@ -1,9 +1,5 @@
 package com.HowTo.spring_boot_HowTo.service.impl;
 
-import com.HowTo.spring_boot_HowTo.model.Group;
-import com.HowTo.spring_boot_HowTo.model.History;
-import com.HowTo.spring_boot_HowTo.model.Rating;
-import com.HowTo.spring_boot_HowTo.model.Tutorial;
 import com.HowTo.spring_boot_HowTo.model.User;
 import com.HowTo.spring_boot_HowTo.model.Wallet;
 import com.HowTo.spring_boot_HowTo.model.WalletPlan;
@@ -33,13 +29,14 @@ public class WalletService implements WalletServiceI {
 		return walletRepository.findAll();
 	}
 
+	// saves wallet using userid because they have a @OneToOne Relation
+	// checks if user exists and set their wallet, then save the wallet
 	@Override
 	public Wallet saveWallet(Wallet wallet, Long userid) {
 		User user = userRepository.findById(userid).get();
 		List<Wallet> walletList = getAllWallets();
         if(user != null && wallet != null) {
             if(!walletList.contains(wallet)) {
-//            	wallet.setWalletId(userid);
             	wallet.setAmount(500L);
             	wallet.setWalletPlan(WalletPlan.BASIC);   
             	wallet.setWalletOwner(user);
