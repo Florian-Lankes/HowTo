@@ -12,7 +12,8 @@ import io.swagger.v3.oas.models.servers.Server;
 
 @Configuration
 public class OpenAPIConfiguration {
-
+	
+	//sets Open API informations
    @Bean
    public OpenAPI defineOpenApi() {
        Server server = new Server();

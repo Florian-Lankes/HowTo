@@ -14,8 +14,7 @@ import com.HowTo.spring_boot_HowTo.repository.UserRepositoryI;
 public interface UserRepository extends UserRepositoryI, PagingAndSortingRepository<User, Long>{
 
 	Optional<User> findUserByUsername(String username); 
-	//List<User> findByNameContainingIgnoreCase (String name);
-	//Page <User> findAll(Pageable pageable);
+	
 	Page <User> findByUsernameContainingIgnoreCase (String username, Pageable pageable);
 	
 	Optional<User> findUserByEmail(String email);

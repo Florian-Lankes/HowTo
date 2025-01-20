@@ -35,6 +35,7 @@ public class TutorialService implements TutorialServiceI{
 		return tutorialRepository.findAll();
 	}
 	
+	//get all tutorials (pagination)
 	@Override
 	public Page<Tutorial> getAllTutorials(String title, Pageable pageable){
 		Page <Tutorial> pageTutorial;
@@ -46,7 +47,8 @@ public class TutorialService implements TutorialServiceI{
 		 }
 		return pageTutorial;
 	}
-
+	
+	//saves tutorials on a specific channel id with category
 	@Override
 	public Tutorial saveTutorial(Tutorial tutorial, Long channelId, Long categoryId) {
 		// TODO Auto-generated method stub
@@ -65,14 +67,15 @@ public class TutorialService implements TutorialServiceI{
 		}
 		return tutorial;
 	}
-
+	
 	@Override
 	public Tutorial getTutorialById(Long id) {
 		// TODO Auto-generated method stub
 		Optional<Tutorial> opTutorial = tutorialRepository.findById(id);
 		return opTutorial.isPresent()? opTutorial.get():null;
 	}
-
+	
+	//updates tutorial maybe category
 	@Override
 	public Tutorial updateTutorial(Tutorial tutorial, Long categoryId) {
 		Category category = categoryRepository.findById(categoryId).get();

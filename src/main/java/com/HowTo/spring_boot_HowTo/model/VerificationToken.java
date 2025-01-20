@@ -59,5 +59,4 @@ public class VerificationToken {
 		this.expiryDate = calculateExpiryDate(EXPIRATION);
 	}
     
-    // standard constructors, getters and setters
 }

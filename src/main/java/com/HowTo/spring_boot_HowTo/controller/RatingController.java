@@ -65,7 +65,7 @@ public class RatingController {
 		ratingService.delete(rating);
 		redirectAttributes.addFlashAttribute("deleted", "Rating deleted!");
 		logger.info("Rating deleted successfully with ratingId: {}", ratingId);
-		return "redirect:/rating/all";
+		return "redirect:/rating/myratings";
 	}
 	
 	// shows one rating (not used anymore/yet) but maybe later usefull
@@ -98,7 +98,7 @@ public class RatingController {
 		}
 		ratingService.saveRating(rating, getCurrentUserId(), tutorialId);
 		logger.info("Rating saved successfully for tutorialId: {}", tutorialId);
-		return "redirect:/rating/view/" + rating.getRatingId(); 
+		return "redirect:/tutorial/view/" + tutorialId; 
 	}
 	// shows the update page for a rating
 	@GetMapping("/update/{id}")
@@ -120,7 +120,18 @@ public class RatingController {
 		}
 		ratingService.updateRating(rating);
 		logger.info("Rating updated successfully with ratingId: {}", rating.getRatingId());
-		return "redirect:/rating/view/" + rating.getRatingId(); 
+		return "redirect:/rating/myratings"; 
 	}
+	
+	// returns all the ratings the user created
+		@GetMapping("/myratings")
+		public String showMyRatings(Model model) {
+			logger.info("Entering showMyRatings method");
+			User u = userService.getUserById(getCurrentUserId());	
+			List<Rating> myratings  = u.getRatings();
+			model.addAttribute("ratings", myratings);
+			logger.info("All my ratings retrieved and added to model");
+			return "ratings/rating-list";
+		}
 	
 }

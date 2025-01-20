@@ -2,21 +2,12 @@ package com.HowTo.spring_boot_HowTo.config;
 
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.security.reactive.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.access.hierarchicalroles.RoleHierarchy;
-import org.springframework.security.access.hierarchicalroles.RoleHierarchyImpl;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
-import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer.FrameOptionsConfig;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.factory.PasswordEncoderFactories;
-import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
@@ -41,32 +32,28 @@ public class SecurityConfiguration {
 		CustomOAuth2UserService customOAuth2UserService;
 
 		
+		//create Encoder for the password 
 		@Bean public PasswordEncoder passwordEncoder() {
 			return new BCryptPasswordEncoder();
 		} 
 		
+		//create the CustomAuthenticationProvider, set our userDetailsService and the passwordEncoder for login
 		@Bean public CustomAuthenticationProvider customAuthenticationProvider() {
 			CustomAuthenticationProvider provider = new CustomAuthenticationProvider(userDetailsService);
 			provider.setPasswordEncoder(passwordEncoder());
 			return provider;
 		}
 		
-		private static final String[] AUTH_WHITE_LIST = {
-	            "/v3/api-docs/**",
-	            "/swagger-ui/**",
-	            "/logout",
-	            "/h2-console/**",
-	            "/console/**",
-	            "/static/**"
-	    };
 		
+		//set settings of SecurityFilterChain that the different URLs are secure
 		@Bean public SecurityFilterChain filterChain(HttpSecurity http) throws Exception { 
-			http.csrf().disable()
+			http
 			.csrf().ignoringRequestMatchers(new AntPathRequestMatcher("/api/**")) 
 			.ignoringRequestMatchers(new AntPathRequestMatcher("/h2-console/**"))
 			.and()
 			.headers(headersConfigurer -> headersConfigurer.frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin))
 			.authenticationProvider(customAuthenticationProvider())
+			//set login settings
 			.formLogin(formLogin -> formLogin 
 					.loginPage("/login") 
 					.authenticationDetailsSource(authenticationDetailsSource) 
@@ -74,12 +61,14 @@ public class SecurityConfiguration {
 					.failureUrl("/login?error=true") 
 					.permitAll()
 			)
+			//set oauth2 login settings
 			.oauth2Login(oauth2 -> oauth2
 					.loginPage("/login")
 					.authenticationDetailsSource(authenticationDetailsSource) 
 					.defaultSuccessUrl("/loginSuccess", true) 
 					.failureUrl("/login?error=true") 
 			)
+			//set logout settings
 			.logout(logout -> logout 
 			.logoutUrl("/logout") 
 			.logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
@@ -89,6 +78,7 @@ public class SecurityConfiguration {
 			.deleteCookies("JSESSIONID")
 			.permitAll()
 			)
+			//set all Pages that are accessible with no authorization
 			.authorizeHttpRequests(authorize -> authorize 
 			.requestMatchers("/resources/**").permitAll()
 			.requestMatchers("/api/**").permitAll()
@@ -103,7 +93,7 @@ public class SecurityConfiguration {
 			.requestMatchers("/user/forgottenpasswordchanged").permitAll()
 			.requestMatchers("/v3/api-docs").permitAll()
 			.requestMatchers("/swagger-ui/index.html").permitAll()
-			
+			//set all Pages that are accessible with User authorization
 			.requestMatchers("/home").hasAuthority("VIEW")
 			.requestMatchers("/tutorial/all").hasAuthority("VIEW")
 			.requestMatchers("/tutorial/view/**").hasAuthority("VIEW")
@@ -124,7 +114,7 @@ public class SecurityConfiguration {
 	        .requestMatchers("/category/all").hasAuthority("VIEW")
 			.requestMatchers("/user/my/**").hasAuthority("VIEW")
 			.requestMatchers("/chat/**").hasAuthority("VIEW")
-			
+			//set all Pages that are accessible with Creator authorization
 			.requestMatchers("/channel/delete/**").hasAuthority("CREATOR_RIGHTS")
 			.requestMatchers("/channel/update/**").hasAuthority("CREATOR_RIGHTS")
 			.requestMatchers("/tutorial/create").hasAuthority("CREATOR_RIGHTS")
@@ -133,7 +123,7 @@ public class SecurityConfiguration {
 	        .requestMatchers("/tutorial/deletevideo/**").hasAuthority("CREATOR_RIGHTS")
 			.requestMatchers("/tutorial/update/**").hasAuthority("CREATOR_RIGHTS")
 			.requestMatchers("/tutorial/delete/**").hasAuthority("CREATOR_RIGHTS")
-			
+			//set all Pages that are accessible with Admin authorization
 			.requestMatchers("/admin/**").hasAuthority("ADMIN_RIGHTS")
 	        .requestMatchers("/category/create").hasAuthority("ADMIN_RIGHTS")
 	        .requestMatchers("/category/delete/**").hasAuthority("ADMIN_RIGHTS")
@@ -144,27 +134,8 @@ public class SecurityConfiguration {
 			.anyRequest().authenticated()
 			);
 			http.headers(headers -> headers.frameOptions(HeadersConfigurer.FrameOptionsConfig::disable));
-			http.formLogin().defaultSuccessUrl("/home", true);
 			http.formLogin(Customizer.withDefaults());
 			http.httpBasic(Customizer.withDefaults()); 
 			return http.build(); } 
-
-	    @Bean
-	    public WebSecurityCustomizer webSecurityCustomizer() {
-	        return (web) -> web.ignoring().requestMatchers("/images/**", "/js/**", "/webjars/**", "/css/**");
-	    }
-	    
-	    @Bean
-        public AuthenticationManager authenticationManager(
-        		AuthenticationConfiguration authenticationConfiguration) throws Exception {
-            return authenticationConfiguration.getAuthenticationManager();
-        }
-
-	
-//		@Bean
-//		public PasswordEncoder getPasswordEncoder() {
-//			//return new BCryptPasswordEncoder();
-//			return new BCryptPasswordEncoder();
-//		}
 
 }
