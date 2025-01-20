@@ -65,7 +65,7 @@ public class RatingController {
 		ratingService.delete(rating);
 		redirectAttributes.addFlashAttribute("deleted", "Rating deleted!");
 		logger.info("Rating deleted successfully with ratingId: {}", ratingId);
-		return "redirect:/rating/all";
+		return "redirect:/rating/myratings";
 	}
 	
 	// shows one rating (not used anymore/yet) but maybe later usefull
@@ -127,7 +127,7 @@ public class RatingController {
 		@GetMapping("/myratings")
 		public String showMyRatings(Model model) {
 			logger.info("Entering showMyRatings method");
-			User u = userService.getUserById(getCurrentUserId());
+			User u = userService.getUserById(getCurrentUserId());	
 			List<Rating> myratings  = u.getRatings();
 			model.addAttribute("ratings", myratings);
 			logger.info("All my ratings retrieved and added to model");
