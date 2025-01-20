@@ -56,7 +56,8 @@
 		</div>
 		<div class="container d-flex align-items-center">
 			<div class="me-2 btn btn-secondary align-items-center">
-				<span th:text="${tutorial.tutorialCategory.categoryName}"></span>
+				<span th:if="${tutorial.tutorialCategory != null}" th:text="${tutorial.tutorialCategory.categoryName}"></span>
+				<span th:if="${tutorial.tutorialCategory == null}">Keine Kategorie</span>
 			</div>
 			<h3 class="mb-0" th:text="${tutorial.title}"></h3>
 		</div>
