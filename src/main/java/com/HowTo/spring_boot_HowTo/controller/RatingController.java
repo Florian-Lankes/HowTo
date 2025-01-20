@@ -78,7 +78,7 @@ public class RatingController {
 		return "/ratings/rating";
 	}
 	
-	//shows the create page for a tutorial
+	//shows the create page for a rating
 	@GetMapping("/tutorial/{tutorialId}")
 	public String ratingTutorialView(@PathVariable("tutorialId") long tutorialId, Model model) {
 		logger.info("Entering ratingTutorialView method with tutorialId: {}", tutorialId);

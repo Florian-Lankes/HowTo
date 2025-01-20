@@ -60,7 +60,9 @@
 			</div>
 			<h3 class="mb-0" th:text="${tutorial.title}"></h3>
 		</div>
+		
 		<div class="container mt-2">
+			<a th:href="@{/tutorial/ratings/{id}(id=${tutorial.tutorialId})}" class="text-decoration-none mb-0" th:text="${'⌀ Bewertung: '+ avgScore}"></a>
 			<p th:text="${tutorial.contentText}"></p>
 		</div>
 		<div class="container d-flex">
