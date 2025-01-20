@@ -144,7 +144,7 @@ public class AdvertisementController {
         return "redirect:/advertisement/all";
     }
     
-	//uploads new video
+	//uploads new video max 99MB
     @PostMapping("/uploadvideo/{id}")
 	public String uploadVideo(@PathVariable("id") Long advertisementId, @RequestParam("video") MultipartFile file, RedirectAttributes redirectAttributes) {
     	logger.info("Entering uploadVideo method with advertisementId: {}", advertisementId);

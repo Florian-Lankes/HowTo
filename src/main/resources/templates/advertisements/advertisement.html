@@ -2,29 +2,37 @@
 <html layout:decorate="~{layout}">
 
 <head>
-	<meta charset="UTF-8" />
+    <meta charset="UTF-8" />
+    <script>
+        function checkFile() {
+            var fileInput = document.getElementById('video');
+            var uploadButton = document.getElementById('uploadButton');
+            uploadButton.style.display = fileInput.value ? 'block' : 'none';
+        }
+    </script>
 </head>
 
 <body>
-	<section class="layout-content  my-2" layout:fragment="mybody">
-		<h2>Werbevideo hochladen</h2>
-		<div class="content" th:unless="${#strings.isEmpty(advertisement.videoUrl)}"> 
-						<video width="640" height="360" th:src="@{${advertisement.videoUrl}}" controls type="video/mp4" autoplay>
-						Your browser does not support the video tag.
-						</video>
-								</div>
-		<form th:action="@{/advertisement/uploadvideo/{id}(id=${advertisement.advertisementId})}" method="POST" enctype="multipart/form-data">
-			<input type="file" id="video" name="video" accept="video/mp4" />
-			<button type="submit" class="btn btn-primary">Video hochladen</button>
-					</form>		
-		<a th:unless="${#strings.isEmpty(advertisement.videoUrl)}" th:href="@{/advertisement/deletevideo/{id}(id=${advertisement.advertisementId})}" class="btn btn-danger">						<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
-					  <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z"/>
-					  <path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z"/>
-					</svg>Video löschen</a>
+    <section class="layout-content my-2" layout:fragment="mybody">
+        <h2>Werbevideo hochladen</h2>
 		
-
-
-	</section>
+		<a class="btn btn-warning my-3" href="/advertisement/all">   Zurück</a>
+        <div class="content" th:unless="${#strings.isEmpty(advertisement.videoUrl)}">
+            <video width="640" height="360" th:src="@{${advertisement.videoUrl}}" controls type="video/mp4" autoplay>
+                Your browser does not support the video tag.
+            </video>
+        </div>
+        <form th:action="@{/advertisement/uploadvideo/{id}(id=${advertisement.advertisementId})}" method="POST" enctype="multipart/form-data">
+            <input type="file" id="video" name="video" accept="video/mp4" onchange="checkFile()" />
+            <button type="submit" class="btn btn-primary my-3" id="uploadButton" style="display: none;">Video hochladen</button>
+        </form>
+        <a th:unless="${#strings.isEmpty(advertisement.videoUrl)}" th:href="@{/advertisement/deletevideo/{id}(id=${advertisement.advertisementId})}" class="btn btn-danger my-3">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
+                <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z" />
+                <path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z" />
+            </svg>Video löschen
+        </a>
+    </section>
 </body>
 
 </html>

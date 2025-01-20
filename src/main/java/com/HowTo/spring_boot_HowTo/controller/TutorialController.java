@@ -284,7 +284,7 @@ public class TutorialController {
 		return "redirect:/tutorial/all";
 	}
     
-   //new video. if it had a video, deletes the old one and uploads the new one on cloudinary
+   //new video max 99MB. if it had a video, deletes the old one and uploads the new one on cloudinary
     @PostMapping("/uploadvideo/{id}")
 	public String uploadVideo(@PathVariable("id") Long tutorialId, @RequestParam("video") MultipartFile file, RedirectAttributes redirectAttributes) {
     	logger.info("Entering uploadVideo method with tutorialId: {}", tutorialId);
@@ -325,7 +325,7 @@ public class TutorialController {
     	}
     	redirectAttributes.addFlashAttribute("deleted", "tutorial video deleted!");
     	logger.info("Tutorial video deleted successfully for tutorialId: {}", tutorialId);
-		return "redirect:/tutorial/all";
+		return "redirect:/channel/mychannel";
 	}
     
 }
