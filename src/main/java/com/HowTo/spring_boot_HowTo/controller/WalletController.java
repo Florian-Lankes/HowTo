@@ -15,16 +15,12 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import com.HowTo.spring_boot_HowTo.model.Channel;
-import com.HowTo.spring_boot_HowTo.model.Report;
 import com.HowTo.spring_boot_HowTo.model.Transaction;
 import com.HowTo.spring_boot_HowTo.model.User;
 import com.HowTo.spring_boot_HowTo.model.Wallet;
 import com.HowTo.spring_boot_HowTo.model.WalletPlan;
-import com.HowTo.spring_boot_HowTo.service.GroupServiceI;
 import com.HowTo.spring_boot_HowTo.service.TransactionServiceI;
 import com.HowTo.spring_boot_HowTo.service.WalletServiceI;
-import com.HowTo.spring_boot_HowTo.service.impl.UserService;
 
 import jakarta.validation.Valid;
 
@@ -61,6 +57,7 @@ public class WalletController {
 		return user.getUserId();
 	}
 
+	//create wallet
 	@GetMapping("/create")
     public String addWallet(Model model) {
 		logger.info("Creating wallet for user ID: {}", getCurrentUserId());
@@ -69,11 +66,10 @@ public class WalletController {
     	walletService.saveWallet(wallet, userId);
     	logger.info("Wallet created successfully for user ID: {}", userId);
 		model.addAttribute("wallet", walletService.getWalletById(userId));
-//    	model.addAttribute("transactionsReceived", transactionService.getTransactionByTransactionReceiver(userId));
-//    	model.addAttribute("transactionsSend", transactionService.getTransactionByTransactionSender(userId));  
         return "users/wallet";
     }
 	
+	//open wallet of active user
 	@GetMapping("/my")
     public String openWallet(Model model) {
     	
@@ -87,6 +83,8 @@ public class WalletController {
     	logger.info("Wallet opened successfully for user ID: {}", userId);
         return "users/wallet";
     }
+	
+	//Open Donation form for the user of the channel
 	@GetMapping("/donate/{id}")
     public String openDonate(@PathVariable("id") Long receiverUserId, Model model) {
     	
@@ -105,6 +103,7 @@ public class WalletController {
         return "channels/donate";
     }
 	
+	//donate to the user of the channel
 	@PostMapping("/donate")
     public String openDonate(@ModelAttribute Transaction transaction, Model model, BindingResult result, RedirectAttributes redirectAttributes) {
 		Long senderUserId = getCurrentUserId();
@@ -134,6 +133,8 @@ public class WalletController {
         
         return "redirect:/wallet/my";
     }
+	
+	//upgrades walletPlan of user
 	@GetMapping("/upgrade")
     public String upgrade(@Valid @ModelAttribute Wallet wallet, RedirectAttributes redirectAttributes){
 		Long userId = getCurrentUserId();

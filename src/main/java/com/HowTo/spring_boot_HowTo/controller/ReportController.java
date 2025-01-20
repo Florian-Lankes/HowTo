@@ -51,7 +51,7 @@ public class ReportController {
 		MyUserDetails userDetails = (MyUserDetails) authentication.getPrincipal();
 		return userDetails.getId();
 	}
-
+	//shows all reports for admin
 	@GetMapping("/all")
 	public String showReports(Model model) {
 		logger.info("Entering showReports method");
@@ -60,7 +60,7 @@ public class ReportController {
 		logger.info("All reports retrieved and added to model");
 		return "reports/report-list";
 	}
-
+	// deletes the selected report
 	@GetMapping("/delete/{id}")
 	public String deleteReport(@PathVariable("id") Long reportId, RedirectAttributes redirectAttributes) {
 		logger.info("Entering deleteReport method with reportId: {}", reportId);
@@ -70,7 +70,9 @@ public class ReportController {
 		logger.info("Report deleted successfully with reportId: {}", reportId);
 		return "redirect:/report/all";
 	}
-
+	//Reporting is split between channel report and tutorial report
+	
+	//shows create page for channel report 
 	@GetMapping("/user/{id}")
 	public String reportUserView(@PathVariable("id") Long userId, Model model) {
 		logger.info("Entering reportUserView method with userId: {}", userId);
@@ -80,7 +82,7 @@ public class ReportController {
 		logger.info("Report form created and added to model for userId: {}", userId);
 		return "reports/report-user";
 	}
-
+	//creates the report done on previous page
 	@PostMapping("/user/{id}")
 	public String reportUser(@PathVariable("id") Long userId, @Valid @ModelAttribute Report report) {
 		logger.info("Entering reportUser method with userId: {}", userId);
@@ -88,7 +90,7 @@ public class ReportController {
 		logger.info("User report saved successfully for userId: {}", userId);
 		return "redirect:/channel/view/" + userId;
 	}
-
+	//shows create page for tutorial report
 	@GetMapping("/tutorial/{id}")
 	public String reportTutorialView(@PathVariable("id") Long tutorialId, Model model) {
 		logger.info("Entering reportTutorialView method with tutorialId: {}", tutorialId);
@@ -98,7 +100,7 @@ public class ReportController {
 		logger.info("Report form created and added to model for tutorialId: {}", tutorialId);
 		return "reports/report-tutorial";
 	}
-
+	//creates the report done on previous page
 	@PostMapping("/tutorial/{id}")
 	public String reportTutorial(@PathVariable("id") Long tutorialId, @Valid @ModelAttribute Report report) {
 		logger.info("Entering reportTutorial method with tutorialId: {}", tutorialId);

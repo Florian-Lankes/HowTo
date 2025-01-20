@@ -34,6 +34,7 @@ public class RegistrationListener implements ApplicationListener<OnRegistrationC
         this.confirmRegistration(event);
     }
 
+    //Creates and sends a Email to user that registered with a link to enable the user
     private void confirmRegistration(OnRegistrationCompleteEvent event) {
         User user = event.getUser();
         String token = UUID.randomUUID().toString();

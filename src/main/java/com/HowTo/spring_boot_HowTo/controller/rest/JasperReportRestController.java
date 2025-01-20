@@ -23,6 +23,7 @@ public class JasperReportRestController {
     @Autowired
     private JasperReportServiceI jasperReportService;
 
+    //creates pdf of selected tutorial for download
     @GetMapping("/pdf/{id}")
     public ResponseEntity<InputStreamResource> generateReport(@PathVariable("id") Long tutorialId) throws Exception {
         ByteArrayOutputStream pdfStream = jasperReportService.generatePdfReport(tutorialId);

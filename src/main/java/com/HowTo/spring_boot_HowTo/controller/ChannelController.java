@@ -30,6 +30,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import com.HowTo.spring_boot_HowTo.OnInformChannelEvent.OnInformChannelEvent;
 import com.HowTo.spring_boot_HowTo.changepasswordloggedin.OnChangePasswordLoggedInEvent;
 import com.HowTo.spring_boot_HowTo.config.MyUserDetails;
+import com.HowTo.spring_boot_HowTo.model.Category;
 import com.HowTo.spring_boot_HowTo.model.Channel;
 import com.HowTo.spring_boot_HowTo.model.Group;
 import com.HowTo.spring_boot_HowTo.model.Tutorial;
@@ -80,6 +81,7 @@ public class ChannelController {
 		return user.getUserId();
 	}
 	
+	//show a channel with their tutorials
 	@GetMapping("/view/{id}")
 	public String showChannelList(@PathVariable("id") Long channelid ,Model model) {
 		logger.info("Entering showChannelList method with channelId: {}", channelid);
@@ -100,6 +102,7 @@ public class ChannelController {
 		return "/channels/channel";
 	}
 	
+	//shows your channel page, where you upload and edit tutorials
 	@GetMapping("/mychannel")
 	public String showMyChannel(Model model) {
 		logger.info("Entering showMyChannel method");
@@ -118,7 +121,7 @@ public class ChannelController {
 	}
 	
 	
-	//CREATE
+	//create form
 	@GetMapping("/create")
 	public String showChannelAdForm(Model model, HttpServletRequest request) {
 		logger.info("Entering showChannelAdForm method");
@@ -133,6 +136,7 @@ public class ChannelController {
 		return "channels/channel-create";
 	}
 	
+	//create channel and new wallet if it doenst exist yet
     @PostMapping("/create")
     public String addChannel(@Valid @ModelAttribute Channel channel, 
     		BindingResult result, 
@@ -157,6 +161,7 @@ public class ChannelController {
         return "redirect:/logout";
     }
     
+    //get all channels (pagination)
    @GetMapping(value = {"/", "/all"})
 	public String showChannelList(Model model, @RequestParam(required = false) String keyword,
 			@RequestParam(required = false, defaultValue = "1") int page, @RequestParam(required = false,
@@ -191,7 +196,7 @@ public class ChannelController {
 		return "/channels/channel-list";
 	}
     
-    
+    //delete a channel if he is admin or owner
     @GetMapping("/delete/{channelId}")
     public String deleteChannel(@PathVariable("channelId") long channelId, Model model, RedirectAttributes redirectAttributes) {
     	logger.info("Entering deleteChannel method with channelId: {}", channelId);
@@ -216,6 +221,7 @@ public class ChannelController {
         }
     }
 	
+    //update Channel form
     @GetMapping("/update/{channelId}")
 	public String showUpdateChannelForm(@PathVariable("channelId") Long channelId, 
 			Model model,
@@ -236,7 +242,7 @@ public class ChannelController {
 		return "/channels/channel-update";
 	}
     
-    
+    //update channel
     @PostMapping("/update")
 	public String updateChannel(@Valid @ModelAttribute Channel channel,
 			BindingResult results,
@@ -259,6 +265,7 @@ public class ChannelController {
         }
 	}
     
+    //subscribe to channel and notify channel
     @PostMapping("/subscribe")
     public String subscribeChannel(@Valid @ModelAttribute Channel channel,
 		BindingResult results,
@@ -268,12 +275,15 @@ public class ChannelController {
     	channelService.subscribeChannel(channel, getCurrentUserId());
     	User u = userService.getUserById(channel.getChannelId());
     	User current = userService.getUserById(getCurrentUserId());
+    	
+    	//this event sends a mail to the subscribed channel and informs him
     	eventPublisher.publishEvent(new OnInformChannelEvent(u, current.getUsername()));
     	redirectAttributes.addFlashAttribute("subscribed", "subscribed!");
     	logger.info("User with id {} subscribed to channel with id {}", getCurrentUserId(), channel.getChannelId());
     	return "redirect:/channel/view/"+channel.getChannelId();
     }
     
+    //unsubscribe from channel
     @PostMapping("/unsubscribe")
     public String unsubscribeChannel(@Valid @ModelAttribute Channel channel,
 		BindingResult results,
@@ -286,6 +296,7 @@ public class ChannelController {
     	return "redirect:/channel/view/"+channel.getChannelId();
     }
 
+    //shows all subscriber from the channel
     @GetMapping("/subscriberlist/{id}")
    	public String showChannelSubscriber(@PathVariable("id") Long channelId, 
    			Model model,
@@ -300,6 +311,7 @@ public class ChannelController {
    		return "/channels/subscriber-list";
    	}
     
+    //shows all channels you subscribed
 	@GetMapping("/subscribed")
 	public String showSubscribedChannelList(Model model, HttpServletRequest request) {
 		logger.info("Entering showSubscribedChannelList method");
@@ -309,5 +321,22 @@ public class ChannelController {
 		logger.info("Subscribed channels retrieved and added to model for userId: {}", getCurrentUserId()); 
 		logger.debug("Subscribed channels: {}", channels);
 		return "/subscribedChannel";
+	}
+	
+	//shows all tutorials from the channel you subscribed
+	@GetMapping("/subscribed/tutorials")
+	public String HowToView(Model model) {
+		logger.info("Entering showSubscribedChannelTutorials method");
+		User user = userService.getUserById(getCurrentUserId());
+		List<Channel> channels = user.getSubscribedChannels();
+		List<Tutorial> tutorials = new ArrayList<Tutorial>();
+		for (Channel c : channels) {
+			tutorials.addAll(c.getTutorials());
+		}
+
+			
+		model.addAttribute("tutorial", tutorials);
+		logger.info("Tutorials retrieved and added to model");
+		return "channels/subscribed-tutorials";
 	}
 }

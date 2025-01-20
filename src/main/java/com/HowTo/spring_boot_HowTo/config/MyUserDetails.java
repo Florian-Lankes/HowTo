@@ -2,18 +2,11 @@ package com.HowTo.spring_boot_HowTo.config;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
-import java.util.Set;
-import java.util.SortedSet;
-import java.util.TreeSet;
 
-import org.springframework.security.core.CredentialsContainer;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.SpringSecurityCoreVersion;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.util.Assert;
 
 import com.HowTo.spring_boot_HowTo.model.Authority;
 import com.HowTo.spring_boot_HowTo.model.Role;
@@ -25,18 +18,6 @@ public class MyUserDetails implements UserDetails  {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	//private static final long serialVersionUID = SpringSecurityCoreVersion.SERIAL_VERSION_UID;
-	
-//	public MyUserDetails(User user) {
-//		super(user.getEmail(), user.getPassword(), user.isEnabled(), true, true, true,getAuthorities(user.getRoles()));
-//		System.out.println("HI");
-//		this.userName = user.getUsername();
-//		this.password = user.getPassword();
-//		this.id = user.getUserId();
-//		this.active = user.isActive();
-//		this.secret = user.getSecret();
-//		this.isUsing2FA = user.isUsing2FA();
-//	}
 
 	private String userName;
 	private String password;
@@ -47,12 +28,8 @@ public class MyUserDetails implements UserDetails  {
     private List<GrantedAuthority> authorities;
 	private List<Role> roles;
 	
-//	private List<GrantedAuthority> authorities;
-//	private List<Role> roles;
-//
 	public MyUserDetails(User user) {
-		// TODO Auto-generated constructor stub
-		// super(user.getEmail(), user.getPassword(), user.isEnabled(), true, true, true,getAuthorities(user.getRoles()));
+		// set data of the user
 		this.userName = user.getUsername();
 		this.password = user.getPassword();
 		this.id = user.getUserId();
@@ -99,58 +76,9 @@ public class MyUserDetails implements UserDetails  {
 		return this.userName;
 	}
 
-//	@Override
-//	public boolean isAccountNonExpired() {
-//		// TODO Auto-generated method stub
-//		return true;
-//	}
-//
-//	@Override
-//	public boolean isAccountNonLocked() {
-//		// TODO Auto-generated method stub
-//		return true;
-//	}
-//
-//	@Override
-//	public boolean isCredentialsNonExpired() {
-//		// TODO Auto-generated method stub
-//		return true;
-//	}
-//
-//	@Override
-//	public boolean isEnabled() {
-//		// TODO Auto-generated method stub
-//		return this.active;
-//	}
-//
 	public Long getId() {
 		return this.id;
 	}
-	 private static Collection<? extends GrantedAuthority> getAuthorities(final Collection<Role> roles) {
-	        return getGrantedAuthorities(getPrivileges(roles));
-	    }
-	
-	 private static List<String> getPrivileges(final Collection<Role> roles) {
-	        final List<String> privileges = new ArrayList<>();
-	        final List<Authority> collection = new ArrayList<>();
-	        for (final Role role : roles) {
-	            privileges.add(role.getDescription());
-	            collection.addAll(role.getAuthorities());
-	        }
-	        for (final Authority item : collection) {
-	            privileges.add(item.getDescription());
-	        }
-
-	        return privileges;
-	    }
-	 
-	 private static List<GrantedAuthority> getGrantedAuthorities(final List<String> privileges) {
-	        final List<GrantedAuthority> authorities = new ArrayList<>();
-	        for (final String privilege : privileges) {
-	            authorities.add(new SimpleGrantedAuthority(privilege));
-	        }
-	        return authorities;
-	    }
 	public boolean isUsing2FA() {
 		return isUsing2FA;
 	}

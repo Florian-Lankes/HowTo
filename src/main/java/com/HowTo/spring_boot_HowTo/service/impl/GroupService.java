@@ -27,6 +27,7 @@ public class GroupService implements GroupServiceI{
 		return groupRepository.findAll();
 	}
 	
+	//get all Groups pagination
 	public Page<Group> getAllGroups(String name, Pageable pageable) {
 		
 		Page <Group> pageGroup;
@@ -38,7 +39,8 @@ public class GroupService implements GroupServiceI{
 		 }
 		return pageGroup;
 	}
-
+	
+	//save group and sets the group owner to userid
 	@Override
 	public Group saveGroup(Group group, Long UserId) {
 		// TODO Auto-generated method stub
@@ -56,7 +58,7 @@ public class GroupService implements GroupServiceI{
 		}			
 		return group;
 	}
-
+	
 	@Override
 	public Group getGroupById(Long id) { 
 		// TODO Auto-generated method stub
@@ -70,6 +72,7 @@ public class GroupService implements GroupServiceI{
 		return local;
 	}
 	
+	//adds user to the joined group list
 	@Override
 	public Group joinGroup(Group group, Long UserId) {
 		User user = userRepository.findById(UserId).get();
@@ -86,6 +89,8 @@ public class GroupService implements GroupServiceI{
 		return group;
 	}
 	
+	//removes user from the group
+	
 	@Override
 	public Group leaveGroup(Group group, Long UserId){
 		User user = userRepository.findById(UserId).get();
@@ -101,7 +106,8 @@ public class GroupService implements GroupServiceI{
 		}
 		return group;
 	}
-
+	
+	//deletes group and removes all user
 	@Override
 	public void delete(Group group) {
 		// TODO Auto-generated method stub

@@ -42,6 +42,7 @@ public class CategoryService implements CategoryServiceI{
 		return local;
 	}
 
+	//before deleting category, deletes all tutorials and ads in the category
 	@Override
 	public void delete(Category category) {
 		List<Tutorial> tutorials = category.getTutorials();

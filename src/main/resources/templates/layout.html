@@ -16,7 +16,7 @@
 	<link href="/css/style.css" rel="stylesheet" />
 </head>
 
-<body>
+<body class="d-flex flex-column min-vh-100">
 
 	<header class="bg-primary">
 		<div class="container">
@@ -41,7 +41,7 @@
 							d="M8.707 1.5a1 1 0 0 0-1.414 0L.646 8.146a.5.5 0 0 0 .708.708L2 8.207V13.5A1.5 1.5 0 0 0 3.5 15h9a1.5 1.5 0 0 0 1.5-1.5V8.207l.646.647a.5.5 0 0 0 .708-.708L13 5.793V2.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1.293zM13 7.207V13.5a.5.5 0 0 1-.5.5h-9a.5.5 0 0 1-.5-.5V7.207l5-5z" />
 					</svg><span>&nbsp; Startseite</span>
 				</a>
-				<a class="btn btn-outline text-start d-flex align-items-center " href="/channel/subscribed">
+				<a class="btn btn-outline text-start d-flex align-items-center " href="/channel/subscribed/tutorials">
 					<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
 						class="bi bi-collection-play" viewBox="0 0 16 16">
 						<path
@@ -56,6 +56,12 @@
 						<path
 							d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0" />
 					</svg><span>&nbsp; Kanäle</span>
+				</a>
+				<a class="btn btn-outline text-start d-flex align-items-center " href="/channel/subscribed">
+					<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-person-video3" viewBox="0 0 16 16">
+					  <path d="M14 9.5a2 2 0 1 1-4 0 2 2 0 0 1 4 0m-6 5.7c0 .8.8.8.8.8h6.4s.8 0 .8-.8-.8-3.2-4-3.2-4 2.4-4 3.2"/>
+					  <path d="M2 2a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h5.243c.122-.326.295-.668.526-1H2a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v7.81c.353.23.656.496.91.783Q16 12.312 16 12V4a2 2 0 0 0-2-2z"/>
+					</svg><span>&nbsp; Abonnierte Kanäle</span>
 				</a>
 				<a class="btn btn-outline text-start d-flex align-items-center " href="/history/my">
 					<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
@@ -75,40 +81,37 @@
 					</svg><span>&nbsp; Später Ansehen</span>
 				</a>
 				<a class="btn btn-outline text-start d-flex align-items-center " href="/group/all">
-					<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-people-fill" viewBox="0 0 16 16">
-					  <path d="M7 14s-1 0-1-1 1-4 5-4 5 3 5 4-1 1-1 1zm4-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6m-5.784 6A2.24 2.24 0 0 1 5 13c0-1.355.68-2.75 1.936-3.72A6.3 6.3 0 0 0 5 9c-4 0-5 3-5 4s1 1 1 1zM4.5 8a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5"/>
+					<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+						class="bi bi-people-fill" viewBox="0 0 16 16">
+						<path
+							d="M7 14s-1 0-1-1 1-4 5-4 5 3 5 4-1 1-1 1zm4-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6m-5.784 6A2.24 2.24 0 0 1 5 13c0-1.355.68-2.75 1.936-3.72A6.3 6.3 0 0 0 5 9c-4 0-5 3-5 4s1 1 1 1zM4.5 8a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5" />
 					</svg><span>&nbsp; Gruppen</span>
 				</a>
-				<a class="btn btn-outline text-start d-flex align-items-center" href="/rating/all" sec:authorize="hasAuthority('ADMIN_RIGHTS')">Bewertungen</a>
-				<a class="btn btn-outline text-start d-flex align-items-center" href="/admin" sec:authorize="hasAuthority('ADMIN_RIGHTS')">Admin</a>
-				<button class="btn btn-secondary text-start d-flex align-items-center" id="darkModeToggle">Dark Mode</button>
+				<a class="btn btn-outline text-start d-flex align-items-center" href="/admin"
+					sec:authorize="hasAuthority('ADMIN_RIGHTS')">Admin</a>
+				<button class="btn btn-secondary text-start d-flex align-items-center" id="darkModeToggle">Dark
+					Mode</button>
 
 		</div>
 	</div>
 
-	<div class="container">
+	<div class="container flex-grow-1">
 		<section layout:fragment="mybody">
 			<div> main content </div>
 		</section>
 	</div> <!--div class="layout-main" -->
 
-	<footer class="bg-secondary">
-		<div class="container">
-			<div th:replace="~{fragments/footer::footer}"></div>
-		</div>
-
+	<footer class="bg-secondary mb-0">
+		<div th:replace="~{fragments/footer::footer}"></div>
 	</footer>
 
-	<!-- Bootstrap core JavaScript
-    ================================================== -->
-	<!-- Placed at the end of the document so the pages load faster -->
 	<script src="/webjars/jquery-mask-plugin/dist/jquery.mask.min.js"></script>
 	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 	<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
 	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 	<script type="text/javascript">
 
-		
+
 
 		$(document).ready(function () {
 			$(".navbar-toggle").click(function () {

@@ -43,24 +43,20 @@
 
 
 			</form>
-			<table class="table table-striped table-bordered" th:unless="${users.size()<1}" style="width: 90%">
+			<table class="table table-striped table-bordered" th:unless="${users.size()<1}" >
 				<thead class="table-dark">
 					<tr>
-						<th> ID</th>
 						<th> Nutzername</th>
 						<th> Email </th>
 						<th> Geburtsdatum </th>
-						<th> Passwort </th>
-						<th> Actions </th>
+						<th> Aktionen </th>
 					</tr>
 				</thead>
 				<tbody>
 					<tr th:each="user: ${users}">
-						<td th:text="${user.userId}"></td>
 						<td th:text="${user.username}"></td>
 						<td th:text="${user.email}"></td>
 						<td th:text="${user.birthDate}"></td>
-						<td th:text="${user.password}"></td>
 						<td>
 
 							<a th:href="@{/user/admin/update/{id}(id=${user.userId})}" class="btn btn-primary"><svg

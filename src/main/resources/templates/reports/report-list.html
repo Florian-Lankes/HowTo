@@ -17,26 +17,18 @@
 						</div>
 
 
-			<div th:unless="${reports.size() > 0}" style="width: 80%">
-				<span>Keine Meldungen!</span>
-			</div>
-
-
-			<table class="table table-striped table-bordered" th:unless="${reports.size()<1}" style="width: 80%">
+			<table class="table table-striped table-bordered" th:unless="${reports.size()<1}">
 				<thead class="table-dark">
 					<tr>
-						<th> Id </th>
-						<th> Nutzername </th>
-						<th> Tutorial </th>
+						<th> Gemeldeter Nutzer </th>
+						<th> Gemeldetes Tutorial </th>
 						<th> Grund </th>
-						<th> Actions </th>
-
+						<th> Aktionen </th>
 					</tr>
 				</thead>
 
 				<tbody>
 					<tr th:each="element: ${reports}">
-						<td th:text="${element.reportId}"></td>
 						<td th:text="${element.reportUser.username}"></td>
 						<td th:if="${element.reportTutorial != null}" th:text="${element.reportTutorial.title}"></td>
 						<td th:unless="${element.reportTutorial != null}" ></td>

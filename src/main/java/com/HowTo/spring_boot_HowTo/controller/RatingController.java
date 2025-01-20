@@ -48,6 +48,7 @@ public class RatingController {
 		User user = (User) authentication.getPrincipal();
 		return user.getUserId();
 	}
+	// returns all ratings (not used anymore/yet) but maybe later usefull
 	@GetMapping("/all")
 	public String showRatings(Model model) {
 		logger.info("Entering showRatings method");
@@ -56,6 +57,7 @@ public class RatingController {
 		logger.info("All ratings retrieved and added to model");
 		return "ratings/rating-list";
 	}
+	// deletes a rating
 	@GetMapping("/delete/{id}")
 	public String deleteRating(@PathVariable("id") Long ratingId, RedirectAttributes redirectAttributes) {
 		logger.info("Entering deleteRating method with ratingId: {}", ratingId);
@@ -65,6 +67,8 @@ public class RatingController {
 		logger.info("Rating deleted successfully with ratingId: {}", ratingId);
 		return "redirect:/rating/all";
 	}
+	
+	// shows one rating (not used anymore/yet) but maybe later usefull
 	@GetMapping("/view/{id}")
 	public String viewRating(@PathVariable("id") long ratingId, Model model) {
 		logger.info("Entering viewRating method with ratingId: {}", ratingId);
@@ -74,6 +78,7 @@ public class RatingController {
 		return "/ratings/rating";
 	}
 	
+	//shows the create page for a tutorial
 	@GetMapping("/tutorial/{tutorialId}")
 	public String ratingTutorialView(@PathVariable("tutorialId") long tutorialId, Model model) {
 		logger.info("Entering ratingTutorialView method with tutorialId: {}", tutorialId);
@@ -83,6 +88,7 @@ public class RatingController {
 		logger.info("Rating form created and added to model for tutorialId: {}", tutorialId);
 		return "/ratings/rating-create";
 	}	
+	//creates the rating made on previous site
 	@PostMapping("/tutorial/{tutorialId}")
 	public String ratingTutorial(@PathVariable("tutorialId") Long tutorialId, @Valid @ModelAttribute Rating rating,
 			BindingResult result) {
@@ -94,7 +100,7 @@ public class RatingController {
 		logger.info("Rating saved successfully for tutorialId: {}", tutorialId);
 		return "redirect:/rating/view/" + rating.getRatingId(); 
 	}
-	
+	// shows the update page for a rating
 	@GetMapping("/update/{id}")
 	public String updateRatingView(@PathVariable("id") long ratingId, Model model) {
 		logger.info("Entering updateRatingView method with ratingId: {}", ratingId);
@@ -103,6 +109,7 @@ public class RatingController {
 		logger.info("Rating retrieved and added to model with ratingId: {}", ratingId);
 		return "/ratings/rating-update";
 	}	
+	// updates rating done on previous site
 	@PostMapping("/update")
 	public String updateRating(@Valid @ModelAttribute Rating rating,
 			BindingResult result) {

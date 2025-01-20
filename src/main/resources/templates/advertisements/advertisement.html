@@ -7,6 +7,7 @@
 
 <body>
 	<section class="layout-content  my-2" layout:fragment="mybody">
+		<h2>Werbevideo hochladen</h2>
 		<div class="content" th:unless="${#strings.isEmpty(advertisement.videoUrl)}"> 
 						<video width="640" height="360" th:src="@{${advertisement.videoUrl}}" controls type="video/mp4" autoplay>
 						Your browser does not support the video tag.
