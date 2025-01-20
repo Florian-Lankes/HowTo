@@ -61,7 +61,11 @@ public class RatingService implements RatingServiceI {
 
 	@Override
 	public Rating updateRating(Rating rating) {
-		Rating local = ratingRepository.save(rating);
+		Rating local = ratingRepository.findById(rating.getRatingId()).get();
+		local.setRatingScore(rating.getRatingScore());
+		local.setRatingText(rating.getRatingText());
+		ratingRepository.save(local);
+		
 		return local;
 	}
 

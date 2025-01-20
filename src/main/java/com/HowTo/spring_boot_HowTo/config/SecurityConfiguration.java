@@ -44,9 +44,13 @@ public class SecurityConfiguration {
 			return provider;
 		}
 		
+		
 		//set settings of SecurityFilterChain that the different URLs are secure
 		@Bean public SecurityFilterChain filterChain(HttpSecurity http) throws Exception { 
 			http
+			.csrf().ignoringRequestMatchers(new AntPathRequestMatcher("/api/**")) 
+			.ignoringRequestMatchers(new AntPathRequestMatcher("/h2-console/**"))
+			.and()
 			.headers(headersConfigurer -> headersConfigurer.frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin))
 			.authenticationProvider(customAuthenticationProvider())
 			//set login settings
