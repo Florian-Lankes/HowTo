@@ -81,9 +81,11 @@ public class AdvertisementController {
 	
 	//creates ad and adds it to the db
 	@PostMapping("/create")
-	public String addAdvertisement(@RequestParam("categorySelection") Long categoryId, @Valid @ModelAttribute Advertisement advertisement, Model model, BindingResult result) {
+	public String addAdvertisement(@RequestParam("categorySelection") Long categoryId, @Valid @ModelAttribute Advertisement advertisement, BindingResult result, Model model ) {
 		logger.info("Entering addAdvertisement method with categoryId: " + categoryId);
 		if (result.hasErrors()) {
+			List<Category> categories = categoryService.getAllCategorys();
+			model.addAttribute("categories",categories);
 			logger.error("Validation errors: {}", result.getAllErrors());
 			return "advertisements/advertisement-create";
 		}
@@ -107,10 +109,12 @@ public class AdvertisementController {
 	
 	//updates ad
 	@PostMapping("/update")
-	public String updateAdvertisement(@Valid @ModelAttribute Advertisement advertisement, @RequestParam("categorySelection") Long categoryId, BindingResult results, Model model,
+	public String updateAdvertisement(@Valid @ModelAttribute Advertisement advertisement, BindingResult results, @RequestParam("categorySelection") Long categoryId,  Model model,
 			RedirectAttributes redirectAttributes) {
 		logger.info("Entering updateAdvertisement method with advertisementId: {}", advertisement.getAdvertisementId());
 		if (results.hasErrors()) {
+			List<Category> categories = categoryService.getAllCategorys();
+			model.addAttribute("categories",categories);
 			logger.error("Validation errors: {}", results.getAllErrors());
 			return "advertisements/advertisement-update";
 		}
