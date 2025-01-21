@@ -15,7 +15,7 @@
 					Your browser does not support the video tag.
 				</video>
 			</div>
-			
+
 			<div class="content" th:unless="${#strings.isEmpty(tutorial.videoUrl)}">
 				<h3 id="adwarning">Werbung</h3>
 			</div>
@@ -56,14 +56,16 @@
 		</div>
 		<div class="container d-flex align-items-center">
 			<div class="me-2 btn btn-secondary align-items-center">
-				<span th:if="${tutorial.tutorialCategory != null}" th:text="${tutorial.tutorialCategory.categoryName}"></span>
+				<span th:if="${tutorial.tutorialCategory != null}"
+					th:text="${tutorial.tutorialCategory.categoryName}"></span>
 				<span th:if="${tutorial.tutorialCategory == null}">Keine Kategorie</span>
 			</div>
 			<h3 class="mb-0" th:text="${tutorial.title}"></h3>
 		</div>
-		
+
 		<div class="container mt-2">
-			<a th:href="@{/tutorial/ratings/{id}(id=${tutorial.tutorialId})}" class="text-decoration-none mb-0" th:text="${'⌀ Bewertung: '+ avgScore}"></a>
+			<a th:href="@{/tutorial/ratings/{id}(id=${tutorial.tutorialId})}" class="text-decoration-none mb-0"
+				th:text="${'⌀ Bewertung: '+ avgScore}"></a>
 			<p th:text="${tutorial.contentText}"></p>
 		</div>
 		<div class="container d-flex">
@@ -106,33 +108,59 @@
 				</svg>
 			</a>
 
-			<a class="btn btn-danger" th:href="@{/report/tutorial/{id}(id = ${tutorial.tutorialId})}">			<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-exclamation-triangle" viewBox="0 0 16 16">
-			  <path d="M7.938 2.016A.13.13 0 0 1 8.002 2a.13.13 0 0 1 .063.016.15.15 0 0 1 .054.057l6.857 11.667c.036.06.035.124.002.183a.2.2 0 0 1-.054.06.1.1 0 0 1-.066.017H1.146a.1.1 0 0 1-.066-.017.2.2 0 0 1-.054-.06.18.18 0 0 1 .002-.183L7.884 2.073a.15.15 0 0 1 .054-.057m1.044-.45a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767z"/>
-			  <path d="M7.002 12a1 1 0 1 1 2 0 1 1 0 0 1-2 0M7.1 5.995a.905.905 0 1 1 1.8 0l-.35 3.507a.552.552 0 0 1-1.1 0z"/>
-			</svg>
+			<a class="btn btn-danger" th:href="@{/report/tutorial/{id}(id = ${tutorial.tutorialId})}"> <svg
+					xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+					class="bi bi-exclamation-triangle" viewBox="0 0 16 16">
+					<path
+						d="M7.938 2.016A.13.13 0 0 1 8.002 2a.13.13 0 0 1 .063.016.15.15 0 0 1 .054.057l6.857 11.667c.036.06.035.124.002.183a.2.2 0 0 1-.054.06.1.1 0 0 1-.066.017H1.146a.1.1 0 0 1-.066-.017.2.2 0 0 1-.054-.06.18.18 0 0 1 .002-.183L7.884 2.073a.15.15 0 0 1 .054-.057m1.044-.45a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767z" />
+					<path
+						d="M7.002 12a1 1 0 1 1 2 0 1 1 0 0 1-2 0M7.1 5.995a.905.905 0 1 1 1.8 0l-.35 3.507a.552.552 0 0 1-1.1 0z" />
+				</svg>
 			</a>
-			
+
 			<a class="btn btn-secondary ms-1" th:href="@{/api/report/pdf/{id}(id = ${tutorial.tutorialId})}">PDF</a>
 		</div>
 
 		<hr class="my-4">
 		<div class="container mt-2">
 			<div th:each="element: ${tutorial.attachedComments}">
-				<div class="d-flex">
+				<form th:action="@{/comment/update}" th:object="${comment}" method="POST"
+					class="container-fluid d-flex align-items-center mb-0 mt-2">
+					<div style="min-width: 100px">
+						<p class="mb-1" th:text="${element.creationDate}"></p>
+					</div>
 					<div>
 						<h5 th:text="${element.commentOwner.username}"></h5>
 					</div>
-					<span>&nbsp;:</span>
-					<div class="container flex-grow-1 text-left">
-						<p th:text="${element.content}"></p>
+					<div class="container flex-grow-1 text-left me-3 mb-0">
+						<input id="content" name="content" class="form-control mb-2" rows="3"
+							th:value="${element.content}"></input>
 					</div>
-					<div style="min-width: 100px;">
-						<p th:text="${element.creationDate}"></p>
-					</div>					
-				</div>
-
-
-
+					<div class="d-flex align-items-center mb-2">
+						<input type="hidden" name="commentId" th:value="${element.commentId}" />
+						<button th:if="${element.commentOwner.getUserId == currentUserId}" class="btn btn-secondary"
+							type="submit">Ändern</button>
+						<a th:if="${element.commentOwner.getUserId == currentUserId}"
+							sec:authorize="!hasAuthority('ADMIN_RIGHTS')"
+							th:href="@{/comment/delete/{id}(id=${element.commentId})}" class="btn btn-danger ms-3"><svg
+								xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+								class="bi bi-trash" viewBox="0 0 16 16">
+								<path
+									d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z" />
+								<path fill-rule="evenodd"
+									d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z" />
+							</svg></a>
+						<a sec:authorize="hasAuthority('ADMIN_RIGHTS')"
+							th:href="@{/comment/delete/{id}(id=${element.commentId})}" class="btn btn-danger ms-3"><svg
+								xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+								class="bi bi-trash" viewBox="0 0 16 16">
+								<path
+									d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z" />
+								<path fill-rule="evenodd"
+									d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z" />
+							</svg></a>
+					</div>
+				</form>
 			</div>
 		</div>
 
