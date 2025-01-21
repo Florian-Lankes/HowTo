@@ -56,8 +56,7 @@
 		</div>
 		<div class="container d-flex align-items-center">
 			<div class="me-2 btn btn-secondary align-items-center">
-				<span th:if="${tutorial.tutorialCategory != null}"
-					th:text="${tutorial.tutorialCategory.categoryName}"></span>
+				<span th:if="${tutorial.tutorialCategory != null}" th:text="${tutorial.tutorialCategory.categoryName}" th:attr="onclick=|window.location.href='@{/category/view/{id}(id=${tutorial.tutorialCategory.categoryId})}'|"></span>
 				<span th:if="${tutorial.tutorialCategory == null}">Keine Kategorie</span>
 			</div>
 			<a class="btn btn-primary btn me-2" th:href="@{/channel/view/{id}(id=${tutorial.createdByChannel.channelId})}">

@@ -36,7 +36,7 @@ public class User implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
-	@NotBlank(message = "password is mandatory")
+	@NotBlank(message = "Passwort ist notwendig")
 	@Size(min = 0, message = "{jakarta.validation.constraints.Size}")
 	private String password;
 
@@ -55,11 +55,11 @@ public class User implements Serializable {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long userId;
 
-	@NotBlank(message = "Name is mandatory")
+	@NotBlank(message = "Name ist notwendig")
 	@Size(min = 5, max = 50, message = "{jakarta.validation.constraints.Size}")
 	private String username;
 
-	@NotBlank(message = "email is mandatory")
+	@NotBlank(message = "Email ist notwendig")
 	private String email;
 
 	private boolean active = true;

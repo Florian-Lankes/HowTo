@@ -31,6 +31,7 @@
 				<div class="row mt-3">
 					<div class="col-md-6"> <label for="transactionAmount">Betrag</label> <input
 							type="number"  class="form-control" id="transactionAmount" th:field="*{transactionAmount}"
+							th:min="1"
 							th:max="${senderWallet.amount}" required /> <input type="hidden" id="transactionSender"
 							th:field="*{transactionSender}" /> <input type="hidden" id="transactionReceiver"
 							th:field="*{transactionReceiver}" /> 

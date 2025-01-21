@@ -27,7 +27,7 @@ public class Advertisement extends Auditable implements Serializable{
 	
 	private String videoUrl;
 	
-	@NotBlank(message = "Name is mandatory")
+	@NotBlank(message = "Name ist notwendig")
 	@Size(min = 5, max = 50, message = "{jakarta.validation.constraints.Size}")
 	private String name;
 	
