@@ -28,7 +28,7 @@ public class Tutorial extends Auditable implements Serializable {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long tutorialId;
 
-	@NotBlank(message = "Title is mandatory")
+	@NotBlank(message = "Titel ist notwendig")
 	@Size(min = 5, max = 50, message = "{jakarta.validation.constraints.Size}")
 	private String title;
 

@@ -32,8 +32,8 @@
 					<button type="submit" class="btn btn-danger">Deabonnieren</button>
 				</form>
 
-				<div class="">
-					<a class="btn btn-success" th:href="@{/wallet/donate/{id}(id = ${channel.channelId})}"> <svg
+				<div class="" th:unless="${channel.channelId == CurrentUserId}">
+					<a class="btn btn-success" th:href="@{/wallet/donate/{id}(id = ${channel.channelId})}" th:if="${wallet!=null}"> <svg
 							xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
 							class="bi bi-cash-coin" viewBox="0 0 16 16">
 							<path fill-rule="evenodd"

@@ -8,6 +8,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -84,7 +85,12 @@ public class ReportController {
 	}
 	//creates the report done on previous page
 	@PostMapping("/user/{id}")
-	public String reportUser(@PathVariable("id") Long userId, @Valid @ModelAttribute Report report) {
+	public String reportUser(@PathVariable("id") Long userId, @Valid @ModelAttribute Report report, BindingResult result,  Model model) {
+		if (result.hasErrors()) {
+			model.addAttribute("userId", userId);
+			logger.error("Validation errors: {}", result.getAllErrors());
+			return "reports/report-user";
+		}
 		logger.info("Entering reportUser method with userId: {}", userId);
 		reportService.saveUserReport(report, userId);
 		logger.info("User report saved successfully for userId: {}", userId);
@@ -102,8 +108,13 @@ public class ReportController {
 	}
 	//creates the report done on previous page
 	@PostMapping("/tutorial/{id}")
-	public String reportTutorial(@PathVariable("id") Long tutorialId, @Valid @ModelAttribute Report report) {
-		logger.info("Entering reportTutorial method with tutorialId: {}", tutorialId);
+	public String reportTutorial(@PathVariable("id") Long tutorialId, @Valid @ModelAttribute Report report, BindingResult result , Model model) {
+		if (result.hasErrors()) {
+			model.addAttribute("tutorialId", tutorialId);
+			logger.error("Validation errors: {}", result.getAllErrors());
+			return "reports/report-tutorial";
+		}
+		logger.info("Entering reportTutorial method with tuto rialId: {}", tutorialId);
 		Tutorial tutorial = tutorialService.getTutorialById(tutorialId);
 		reportService.saveTutorialReport(report, tutorial.getCreatedByChannel().getChannelId(), tutorialId);
 		logger.info("Tutorial report saved successfully for tutorialId: {}", tutorialId);

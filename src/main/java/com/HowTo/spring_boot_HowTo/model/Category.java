@@ -25,7 +25,7 @@ private static final long serialVersionUID = 1L;
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long categoryId;
 	
-	@NotBlank(message = "Name is mandatory")
+	@NotBlank(message = "Name ist notwendig")
 	@Size(min = 5, max = 50, message = "{jakarta.validation.constraints.Size}")
 	private String categoryName;
 	
