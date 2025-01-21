@@ -164,6 +164,20 @@ public class UserController {
 		return "redirect:/user/admin/all";
 	}
 	
+	//user Account delete
+	@GetMapping("/user/delete")
+	public String deleteAccount( Model model, RedirectAttributes redirectAttributes) {
+		logger.info("Deleting user with ID: {}", getCurrentUserId());
+		User user = userService.getUserById(getCurrentUserId());
+		userService.delete(user);
+		redirectAttributes.addFlashAttribute("deleted", "User deleted!");
+		logger.info("User deleted successfully: {}", getCurrentUserId());
+		return "redirect:/logout";
+	}
+	
+	
+	
+	
 	//admin updates user form
 	@GetMapping("/user/admin/update/{id}")
 	public String showUpdateUserForm(@PathVariable Long id, Model model, HttpServletRequest request) {

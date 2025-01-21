@@ -10,6 +10,8 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 
 @Entity
 @EntityListeners(AuditListener.class)
@@ -25,7 +27,8 @@ public class Advertisement extends Auditable implements Serializable{
 	
 	private String videoUrl;
 	
-	//@NotBlank
+	@NotBlank(message = "Name is mandatory")
+	@Size(min = 5, max = 50, message = "{jakarta.validation.constraints.Size}")
 	private String name;
 	
 	@JsonBackReference(value = "advertisement-category")
