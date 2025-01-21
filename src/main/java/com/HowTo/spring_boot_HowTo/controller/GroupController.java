@@ -74,6 +74,7 @@ public class GroupController {
 	public String showGroupAdForm(Model model, HttpServletRequest request) {
 		logger.info("Entering showGroupAdForm method");
 		Group groupForm = new Group();
+		System.out.println(groupForm.getGroupId());
 		//groupForm.setGroupId(null); //TODO change dynamically after user authorization is implemented
 		LocalDate date= LocalDate.now();
 		groupForm.setCreationDate(date);
@@ -97,6 +98,8 @@ public class GroupController {
             return "groups/group-create";
         }	
     	Group r= groupService.saveGroup(group, getCurrentUserId());
+    	System.out.println(r.getGroupId());
+    	logger.info("Leaving saveGroup function with group: {}", r);
         redirectAttributes.addFlashAttribute("created", "Group created!");
         groupService.joinGroup(r, getCurrentUserId()); //joins groups directly after creating
         

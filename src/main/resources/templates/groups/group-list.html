@@ -100,9 +100,9 @@
 									<path
 										d="M5 6a1 1 0 1 1-2 0 1 1 0 0 1 2 0m4 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0m4 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0" />
 								</svg></a>
-							<a th:href="@{/group/leave/{id}(id=${group.groupId})}" class="btn btn-danger">Gruppe
+							<a th:if="${joinedGroups.contains(group)}" th:href="@{/group/leave/{id}(id=${group.groupId})}" class="btn btn-danger">Gruppe
 								verlassen</a>
-							<a th:href="@{/group/join/{id}(id=${group.groupId})}" class="btn btn-success">Gruppe
+							<a th:if="${!joinedGroups.contains(group)}" th:href="@{/group/join/{id}(id=${group.groupId})}" class="btn btn-success">Gruppe
 								beitreten</a>
 
 						</td>
