@@ -89,6 +89,9 @@ public class WalletController {
     public String openDonate(@PathVariable("id") Long receiverUserId, Model model) {
     	
 		Long senderUserId =  getCurrentUserId();
+		if(receiverUserId == senderUserId) {
+			return "redirect:/channel/view/"+receiverUserId;
+		}
 		logger.info("Opening donation page. Sender user ID: {}, Receiver user ID: {}", senderUserId, receiverUserId);
 		Transaction transactionForm = new Transaction();
 

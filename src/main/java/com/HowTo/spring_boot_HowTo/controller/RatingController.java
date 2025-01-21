@@ -21,6 +21,7 @@ import com.HowTo.spring_boot_HowTo.model.User;
 import com.HowTo.spring_boot_HowTo.service.RatingServiceI;
 import com.HowTo.spring_boot_HowTo.service.UserServiceI;
 
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 
 @Controller
@@ -59,13 +60,14 @@ public class RatingController {
 	}
 	// deletes a rating
 	@GetMapping("/delete/{id}")
-	public String deleteRating(@PathVariable("id") Long ratingId, RedirectAttributes redirectAttributes) {
+	public String deleteRating(@PathVariable("id") Long ratingId, RedirectAttributes redirectAttributes, HttpServletRequest request) {
 		logger.info("Entering deleteRating method with ratingId: {}", ratingId);
 		Rating rating = ratingService.getRatingById(ratingId);
 		ratingService.delete(rating);
 		redirectAttributes.addFlashAttribute("deleted", "Rating deleted!");
+		String referer = request.getHeader("Referer");
 		logger.info("Rating deleted successfully with ratingId: {}", ratingId);
-		return "redirect:/rating/myratings";
+		return "redirect:" + referer;
 	}
 	
 	// shows one rating (not used anymore/yet) but maybe later usefull

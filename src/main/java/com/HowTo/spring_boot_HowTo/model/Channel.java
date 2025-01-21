@@ -27,11 +27,11 @@ public class Channel implements Serializable{
 	@Id
 	private Long channelId;
 	
-	@NotBlank(message = "Name is mandatory")
+	@NotBlank(message = "Name ist notwendig")
 	@Size(min = 5, max = 50, message = "{jakarta.validation.constraints.Size}")
 	private String channelname;
 	
-	@NotBlank(message = "Description is mandatory")
+	@NotBlank(message = "Beschreibung ist notwendig")
 	@Size(min = 5, max = 500, message = "{jakarta.validation.constraints.Size}")
 	private String description;
 	

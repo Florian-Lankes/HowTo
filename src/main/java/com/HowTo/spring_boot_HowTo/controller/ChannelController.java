@@ -40,7 +40,6 @@ import com.HowTo.spring_boot_HowTo.model.WatchLater;
 import com.HowTo.spring_boot_HowTo.service.ChannelServiceI;
 import com.HowTo.spring_boot_HowTo.service.UserServiceI;
 import com.HowTo.spring_boot_HowTo.service.WalletServiceI;
-import com.HowTo.spring_boot_HowTo.validator.ChannelValidator;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
@@ -66,10 +65,6 @@ public class ChannelController {
 		this.walletService = walletService;
 	}
 	
-	@InitBinder
-	public void initBinder(WebDataBinder binder) {
-		binder.addValidators(new ChannelValidator());
-	}
 	
 	private Long getCurrentUserId() {
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -95,6 +90,9 @@ public class ChannelController {
     		logger.info("User is not subscribed to the channel");
     	}
     	List<Tutorial> tutorials = channel.getTutorials();
+    	Wallet wallet = walletService.getWalletById(getCurrentUserId());
+		model.addAttribute("wallet", wallet);
+		model.addAttribute("CurrentUserId", getCurrentUserId());
     	model.addAttribute("channel", channel);
 		model.addAttribute("tutorials", tutorials);
 				

@@ -113,6 +113,7 @@ public class SecurityConfiguration {
 			.requestMatchers("/category/view/**").hasAuthority("VIEW")
 	        .requestMatchers("/category/all").hasAuthority("VIEW")
 			.requestMatchers("/user/my/**").hasAuthority("VIEW")
+			.requestMatchers("/user/delete").hasAuthority("VIEW")
 			.requestMatchers("/chat/**").hasAuthority("VIEW")
 			//set all Pages that are accessible with Creator authorization
 			.requestMatchers("/channel/delete/**").hasAuthority("CREATOR_RIGHTS")

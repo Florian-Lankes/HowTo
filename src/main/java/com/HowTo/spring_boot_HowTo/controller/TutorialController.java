@@ -305,12 +305,14 @@ public class TutorialController {
     
     //update tutorial
     @PostMapping("/update")
-	public String updateTutorial(@Valid @ModelAttribute Tutorial tutorial, @RequestParam("categorySelection") Long categoryId,//@Valid @ModelAttribute Long channel,
-			BindingResult results,
+	public String updateTutorial(@Valid @ModelAttribute Tutorial tutorial, BindingResult results,
+			@RequestParam("categorySelection") Long categoryId,
 			Model model, 
 			RedirectAttributes redirectAttributes) {
     	logger.info("Entering updateTutorial method with tutorialId: {}", tutorial.getTutorialId());
 		if (results.hasErrors()){
+		 	List<Category> categories = categoryService.getAllCategorys();
+			model.addAttribute("categories",categories);
 			logger.error("Validation errors: {}", results.getAllErrors());
 			return "tutorials/tutorial-update";
 		}
