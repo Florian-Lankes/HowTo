@@ -50,6 +50,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 		return converter;
 	}
 
+	// Marked for removal, because of centralized definition in JacksonConfig
 	// Defines a bean for ObjectMapper which will handle JSON serialization and deserialization
 	@Bean
 	public ObjectMapper objectMapper() {
