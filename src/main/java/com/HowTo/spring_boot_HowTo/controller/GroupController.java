@@ -151,7 +151,6 @@ public class GroupController {
     	//get all joined or owned groups to show actions accordingly
 		List<Group> joinedGroups = userService.getUserById(getCurrentUserId()).getJoinedGroups();
 		List<Group> ownedGroups = userService.getUserById(getCurrentUserId()).getOwnedGroups();
-			
 		model.addAttribute("ownedGroups", ownedGroups);
 		model.addAttribute("joinedGroups", joinedGroups);
 		logger.info("Owned and joined groups retrieved for userId: {}", getCurrentUserId());
@@ -163,7 +162,8 @@ public class GroupController {
     public String deleteGroup(@PathVariable("id") long id, Model model, RedirectAttributes redirectAttributes) {
     	logger.info("Entering deleteGroup method with groupId: {}", id);
         Group group = groupService.getGroupById(id);    
-        if(group.getGroupOwner().getUserId() != getCurrentUserId()) {
+        System.out.println(userService.checkAdmin(userService.getUserById(getCurrentUserId())));
+        if(group.getGroupOwner().getUserId() != getCurrentUserId() && !userService.checkAdmin(userService.getUserById(getCurrentUserId()))) {
         	//if owner deletion failed
         	logger.warn("User with id {} is not owner of group with id {}, deletion failed", getCurrentUserId(), id);
    	 		redirectAttributes.addFlashAttribute("failed", "not owner!!");
