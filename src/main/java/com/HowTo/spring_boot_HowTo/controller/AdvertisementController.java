@@ -102,7 +102,7 @@ public class AdvertisementController {
 		List<Category> categories = categoryService.getAllCategorys();
 		model.addAttribute("categories",categories);
 		logger.info("Advertisement retrieved and added to model with advertisementId: {}", advertisementId);
-		return "/advertisements/advertisement-update";
+		return "advertisements/advertisement-update";
 	}
 	
 	//updates ad
@@ -112,7 +112,7 @@ public class AdvertisementController {
 		logger.info("Entering updateAdvertisement method with advertisementId: {}", advertisement.getAdvertisementId());
 		if (results.hasErrors()) {
 			logger.error("Validation errors: {}", results.getAllErrors());
-			return "/advertisements/advertisement-update";
+			return "advertisements/advertisement-update";
 		}
 
 		advertisementService.updateAdvertisement(advertisement, categoryId);

@@ -115,7 +115,7 @@ public class ChatController {
 		model.addAttribute("groupJson", groupJson);
 		logger.info("User and group information added to model for groupId: {}", groupId);
 		//model.addAttribute("userGroupsJson", userGroupsJson);
-		return "/chat/chat";
+		return "chat/chat";
 	}
 
 //	public void broadcastLeaveEvent(Long userId, Long groupId) {

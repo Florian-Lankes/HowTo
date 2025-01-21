@@ -148,7 +148,7 @@ public class TutorialController {
 		
 		model.addAttribute( "avgScore", calculateAvgRating(tutorial));
 		model.addAttribute("tutorial", tutorial);
-		return "/tutorials/tutorial-ratings";
+		return "tutorials/tutorial-ratings";
 		
 	}
 	
@@ -241,7 +241,7 @@ public class TutorialController {
 			logger.error("Validation errors: {}", results.getAllErrors());
 			List<Category> categories = categoryService.getAllCategorys();
 			model.addAttribute("categories",categories);
-    		return "/tutorials/tutorial-create";
+    		return "tutorials/tutorial-create";
         }
 		tutorialService.saveTutorial(tutorial, getCurrentUserId(), categoryId);
 		Channel c = channelService.getChannelById(getCurrentUserId());
@@ -297,7 +297,7 @@ public class TutorialController {
     	List<Category> categories = categoryService.getAllCategorys();
 		model.addAttribute("categories",categories);
 		logger.info("Tutorial retrieved and added to model for update with tutorialId: {}", tutorialId);
-		return "/tutorials/tutorial-update";
+		return "tutorials/tutorial-update";
 	}
     
     //update tutorial
@@ -309,7 +309,7 @@ public class TutorialController {
     	logger.info("Entering updateTutorial method with tutorialId: {}", tutorial.getTutorialId());
 		if (results.hasErrors()){
 			logger.error("Validation errors: {}", results.getAllErrors());
-			return "/tutorials/tutorial-update";
+			return "tutorials/tutorial-update";
 		}
 		
 		tutorialService.updateTutorial(tutorial, categoryId);

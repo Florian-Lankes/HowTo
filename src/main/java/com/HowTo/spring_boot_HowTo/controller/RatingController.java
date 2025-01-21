@@ -75,7 +75,7 @@ public class RatingController {
 		Rating rating = ratingService.getRatingById(ratingId);
 		model.addAttribute("rating",rating);
 		logger.info("Rating retrieved and added to model with ratingId: {}", ratingId);
-		return "/ratings/rating";
+		return "ratings/rating";
 	}
 	
 	//shows the create page for a rating
@@ -86,7 +86,7 @@ public class RatingController {
 		model.addAttribute("rating", rating);
 		model.addAttribute("tutorialId", tutorialId);
 		logger.info("Rating form created and added to model for tutorialId: {}", tutorialId);
-		return "/ratings/rating-create";
+		return "ratings/rating-create";
 	}	
 	//creates the rating made on previous site
 	@PostMapping("/tutorial/{tutorialId}")
@@ -107,7 +107,7 @@ public class RatingController {
 		Rating rating = ratingService.getRatingById(ratingId);
 		model.addAttribute("rating", rating);
 		logger.info("Rating retrieved and added to model with ratingId: {}", ratingId);
-		return "/ratings/rating-update";
+		return "ratings/rating-update";
 	}	
 	// updates rating done on previous site
 	@PostMapping("/update")

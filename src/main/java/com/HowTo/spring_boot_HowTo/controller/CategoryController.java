@@ -96,7 +96,7 @@ public class CategoryController {
 		Category category = categoryService.getCategoryById(categoryId);
 		model.addAttribute("category", category);
 		logger.info("Category retrieved and added to model with categoryId: {}", categoryId);
-		return "/categories/category-update";
+		return "categories/category-update";
 	}
 	// updates category
 	@PostMapping("/update")
@@ -105,7 +105,7 @@ public class CategoryController {
 		logger.info("Entering updateCategory method with categoryId: {}", category.getCategoryId());
 		if (results.hasErrors()) {
 			logger.error("Validation errors: {}", results.getAllErrors());
-			return "/categories/category-update";
+			return "categories/category-update";
 		}
 
 		categoryService.updateCategory(category);

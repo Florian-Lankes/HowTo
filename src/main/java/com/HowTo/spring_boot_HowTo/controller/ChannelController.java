@@ -99,7 +99,7 @@ public class ChannelController {
 		model.addAttribute("tutorials", tutorials);
 				
 		logger.info("Channel and tutorials retrieved and added to model");
-		return "/channels/channel";
+		return "channels/channel";
 	}
 	
 	//shows your channel page, where you upload and edit tutorials
@@ -112,7 +112,7 @@ public class ChannelController {
 	    	model.addAttribute("channel", channel);
 			model.addAttribute("tutorials", tutorials);
 			logger.info("Channel and tutorials retrieved and added to model");
-			return "/channels/mychannel";
+			return "channels/mychannel";
 		}
     	else {
     		logger.warn("No channel found for current user, redirecting to /user/my");
@@ -146,7 +146,7 @@ public class ChannelController {
     	if (result.hasErrors()) {
     		logger.error("Validation errors: {}", result.getAllErrors());
     		logger.info("User with id " + getCurrentUserId() + " failed to create channel");
-            return "/channels/channel-create";
+            return "channels/channel-create";
         }
     	
     	if(walletService.getWalletById(getCurrentUserId()) == null) {
@@ -193,7 +193,7 @@ public class ChannelController {
 			logger.error("Exception occurred while retrieving channels: {}", e.getMessage());
 			model.addAttribute("message", e.getMessage());
 		}
-		return "/channels/channel-list";
+		return "channels/channel-list";
 	}
     
     //delete a channel if he is admin or owner
@@ -239,7 +239,7 @@ public class ChannelController {
     	model.addAttribute("channel", channel);
 		request.getSession().setAttribute("channelSession", channel);
 		logger.info("Channel retrieved and added to model with channelId: {}", channelId);
-		return "/channels/channel-update";
+		return "channels/channel-update";
 	}
     
     //update channel
@@ -252,7 +252,7 @@ public class ChannelController {
     	logger.info("Entering updateChannel method with channel: {}", channel);		
 		if (results.hasErrors()){
 			logger.error("Validation errors: {}", results.getAllErrors());
-			return "/channels/channel-update";
+			return "channels/channel-update";
 		}
        
 		Channel u =channelService.updateChannel(channel);
@@ -308,7 +308,7 @@ public class ChannelController {
    		
    		logger.info("Channel retrieved and added to model with channelId: {}", channelId); 
    		logger.debug("get subscriberlist={}", channelId);
-   		return "/channels/subscriber-list";
+   		return "channels/subscriber-list";
    	}
     
     //shows all channels you subscribed
@@ -320,7 +320,7 @@ public class ChannelController {
 		model.addAttribute("channels", channels );
 		logger.info("Subscribed channels retrieved and added to model for userId: {}", getCurrentUserId()); 
 		logger.debug("Subscribed channels: {}", channels);
-		return "/subscribedChannel";
+		return "subscribedChannel";
 	}
 	
 	//shows all tutorials from the channel you subscribed

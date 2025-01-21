@@ -150,7 +150,7 @@ public class UserController {
 			logger.error("Error showing user list: ", e);
 			model.addAttribute("message", e.getMessage());
 		}
-		return "/users/user-all";
+		return "users/user-all";
 	}
 	
 	//admin deletes user
@@ -172,7 +172,7 @@ public class UserController {
 		model.addAttribute("user", user);
 		request.getSession().setAttribute("userSession", user);
 		logger.info("Fetched user for update: {}", id);
-		return "/users/user-update";
+		return "users/user-update";
 	}
 	
 	//admin updates user
@@ -181,7 +181,7 @@ public class UserController {
 			RedirectAttributes redirectAttributes) {
 		if (results.hasErrors()) {
 			logger.warn("Validation errors while updating user: {}", results.getAllErrors());
-			return "/users/user-update";
+			return "users/user-update";
 		}
 		userService.updateUser(user);
 		redirectAttributes.addFlashAttribute("updated", "user updated!");
@@ -200,7 +200,7 @@ public class UserController {
 		request.getSession().setAttribute("userSession", userForm);
 		model.addAttribute("user", userForm);
 		logger.info("User add form shown successfully");
-		return "/users/user-add";
+		return "users/user-add";
 	}
 	
 	@PostMapping("/user/admin/add")
@@ -209,7 +209,7 @@ public class UserController {
 		logger.info("Adding new user");
 		if (result.hasErrors()) {
 			logger.warn("Validation errors while adding new user: {}", result.getAllErrors());
-			return "/users/user-add";
+			return "users/user-add";
 		}
 
 		userService.saveUser(user);
@@ -506,7 +506,7 @@ public class UserController {
 		// Change channelname and discription
 		// Enable 2fa
 		logger.info("User profile shown successfully for user: {}", current_user.getUserId());
-		return "/users/profile";
+		return "users/profile";
 	}
 
 }

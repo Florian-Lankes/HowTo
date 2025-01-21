@@ -81,7 +81,7 @@ public class GroupController {
 		request.getSession().setAttribute("groupSession", groupForm);
 		model.addAttribute("group", groupForm);	
 		logger.info("Group form created and added to model");
-		return "/groups/group-create";
+		return "groups/group-create";
 	}
 	
 	//creates new Group and initializes chat
@@ -94,7 +94,7 @@ public class GroupController {
     	if (result.hasErrors()) {
     		logger.error("Validation errors: {}", result.getAllErrors()); 
     		logger.info("User with id {} failed to create group", getCurrentUserId());
-            return "/groups/group-create";
+            return "groups/group-create";
         }	
     	Group r= groupService.saveGroup(group, getCurrentUserId());
         redirectAttributes.addFlashAttribute("created", "Group created!");
@@ -152,7 +152,7 @@ public class GroupController {
 		model.addAttribute("ownedGroups", ownedGroups);
 		model.addAttribute("joinedGroups", joinedGroups);
 		logger.info("Owned and joined groups retrieved for userId: {}", getCurrentUserId());
-		return "/groups/group-list";
+		return "groups/group-list";
 	}
     
     //delete group
@@ -187,7 +187,7 @@ public class GroupController {
    	 	}
        	model.addAttribute("group", group);
        	logger.info("Group retrieved and added to model with groupId: {}", id);
-   		return "/groups/group-update";
+   		return "groups/group-update";
    	}
        
       //update group
@@ -200,11 +200,11 @@ public class GroupController {
 	   if(group.getGroupOwner().getUserId() != getCurrentUserId()) {
 		   logger.warn("User with id {} is not owner of group with id {}, update failed", getCurrentUserId(), group.getGroupId());
   	 		redirectAttributes.addFlashAttribute("failed", "not owner!!");
-  	 		return "/groups/group-all";
+  	 		return "groups/group-all";
   	 	}	
        else if (results.hasErrors()){
     	   logger.error("Validation errors: {}", results.getAllErrors());
-   			return "/groups/group-update";
+   			return "groups/group-update";
    		}
           
    		groupService.updateGroup(group);

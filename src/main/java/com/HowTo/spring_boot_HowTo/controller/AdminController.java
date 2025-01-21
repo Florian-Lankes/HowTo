@@ -13,14 +13,14 @@ public class AdminController {
 	public String HowToAdminView(Model model) {
 		
 		
-		return "/admin/admin";
+		return "admin/admin";
 	}
 	
 	@GetMapping("/admin/reports")
 	public String HowToReportsView(Model model) {
 		
 		
-		return "/admin/reports";
+		return "admin/reports";
 	}
 	
 }
