@@ -8,13 +8,13 @@
 <body>
 	<section class="layout-content mt-2" layout:fragment="mybody">
 		<div class="container d-flex flex-wrap ">
-			<div class="me-2 btn btn-primary">
+			<div class="me-2 mb-2 btn btn-primary">
 				<a th:href="@{/home}" class="text-white text-decoration-none">
 					<span th:text="Alle"></span>
 				</a>
 			</div>
-			<div class="me-2 btn btn-secondary" th:each="element : ${category}">
-				<a th:href="@{/category/view/{id}(id=${element.categoryId})}" class="text-white text-decoration-none">
+			<div class="me-2 mb-2 btn btn-secondary" th:if="${!element.tutorials.isEmpty()}" th:each="element : ${category}">
+				<a  th:href="@{/category/view/{id}(id=${element.categoryId})}" class="text-white text-decoration-none">
 					<span th:text="${element.categoryName}"></span>
 				</a>
 			</div>

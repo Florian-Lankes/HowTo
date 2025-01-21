@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.HowTo.spring_boot_HowTo.config.MyUserDetails;
+import com.HowTo.spring_boot_HowTo.model.Rating;
 import com.HowTo.spring_boot_HowTo.model.Report;
 import com.HowTo.spring_boot_HowTo.model.Tutorial;
 import com.HowTo.spring_boot_HowTo.model.User;
@@ -24,6 +25,7 @@ import com.HowTo.spring_boot_HowTo.service.ReportServiceI;
 import com.HowTo.spring_boot_HowTo.service.TutorialServiceI;
 import com.HowTo.spring_boot_HowTo.service.UserServiceI;
 
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 
 @Controller
@@ -49,8 +51,8 @@ public class ReportController {
 				|| authentication.getPrincipal() instanceof String) {
 			throw new IllegalStateException("User is not authenticated");
 		}
-		MyUserDetails userDetails = (MyUserDetails) authentication.getPrincipal();
-		return userDetails.getId();
+		User userDetails = (User) authentication.getPrincipal();
+		return userDetails.getUserId();
 	}
 	//shows all reports for admin
 	@GetMapping("/all")
@@ -63,13 +65,14 @@ public class ReportController {
 	}
 	// deletes the selected report
 	@GetMapping("/delete/{id}")
-	public String deleteReport(@PathVariable("id") Long reportId, RedirectAttributes redirectAttributes) {
+	public String deleteReport(@PathVariable("id") Long reportId, RedirectAttributes redirectAttributes, HttpServletRequest request) {
 		logger.info("Entering deleteReport method with reportId: {}", reportId);
 		Report report = reportService.getReportById(reportId);
 		reportService.delete(report);
+		String referer = request.getHeader("Referer");
 		redirectAttributes.addFlashAttribute("deleted", "Report deleted!");
 		logger.info("Report deleted successfully with reportId: {}", reportId);
-		return "redirect:/report/all";
+		return "redirect:"+ referer;
 	}
 	//Reporting is split between channel report and tutorial report
 	
@@ -120,5 +123,17 @@ public class ReportController {
 		logger.info("Tutorial report saved successfully for tutorialId: {}", tutorialId);
 		return "redirect:/tutorial/view/" + tutorialId;
 	}
-
+	
+	
+	// returns all the ratings the user created
+			@GetMapping("/myreports")
+			public String showMyReports(Model model) {
+				logger.info("Entering showMyReports method");
+				User u = userService.getUserById(getCurrentUserId());	
+				List<Report> myreports  = u.getReports();
+				model.addAttribute("reports", myreports);
+				logger.info("All my reports retrieved and added to model");
+				return "reports/myreport-list";
+			}
+	
 }
