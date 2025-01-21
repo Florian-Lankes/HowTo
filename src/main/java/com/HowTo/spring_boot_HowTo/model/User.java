@@ -15,7 +15,6 @@ import jakarta.persistence.Id;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
-import lombok.Data;
 import jakarta.persistence.JoinColumn;
 
 import java.io.Serializable;
@@ -31,7 +30,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 @Entity
-@Data 
 @AllArgsConstructor 
 public class User implements Serializable {
 
@@ -88,41 +86,41 @@ public class User implements Serializable {
 	private List<Role> roles = new ArrayList<Role>();
 
 	@JsonIgnore
-	@ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER) // user is in groups
+	@ManyToMany(cascade = CascadeType.ALL) // user is in groups
 	private List<Group> joinedgroups = new ArrayList<Group>();
 
 	@JsonManagedReference(value = "user-group")
-	@OneToMany(mappedBy = "groupOwner", cascade = CascadeType.REMOVE, fetch = FetchType.EAGER) // user can be the owner of many groups
+	@OneToMany(mappedBy = "groupOwner", cascade = CascadeType.REMOVE) // user can be the owner of many groups
 	private List<Group> ownedgroups = new ArrayList<Group>();
 
 	@JsonManagedReference(value = "user-comment")
-	@OneToMany(mappedBy = "commentOwner", cascade = CascadeType.REMOVE, fetch = FetchType.EAGER) // user can be the owner of many comments
+	@OneToMany(mappedBy = "commentOwner", cascade = CascadeType.REMOVE) // user can be the owner of many comments
 	private List<Comment> ownedComments = new ArrayList<Comment>();
 	// private boolean isAdmin;
 
 	@JsonManagedReference(value = "user-history")
-	@OneToMany(mappedBy = "historyOwner", cascade = CascadeType.REMOVE, fetch = FetchType.EAGER)
+	@OneToMany(mappedBy = "historyOwner", cascade = CascadeType.REMOVE)
 	private List<History> history = new ArrayList<History>();
 	// private boolean isCreator;
 
 	@JsonManagedReference(value = "user-report")
-	@OneToMany(mappedBy = "reportUser", cascade = CascadeType.REMOVE, fetch = FetchType.EAGER)
+	@OneToMany(mappedBy = "reportUser", cascade = CascadeType.REMOVE)
 	private List<Report> reports = new ArrayList<Report>();
 
 	@JsonManagedReference(value = "user-watchlater")
-	@OneToMany(mappedBy = "watchLaterOwner", cascade = CascadeType.REMOVE, fetch = FetchType.EAGER)
+	@OneToMany(mappedBy = "watchLaterOwner", cascade = CascadeType.REMOVE)
 	private List<WatchLater> watchLater = new ArrayList<WatchLater>();
 	
 	@JsonManagedReference(value="rating-user")
-	@OneToMany(mappedBy = "ratingUser", cascade = CascadeType.REMOVE, fetch = FetchType.EAGER)
+	@OneToMany(mappedBy = "ratingUser", cascade = CascadeType.REMOVE)
 	private List<Rating> ratings = new ArrayList<Rating>();
 
-	@OneToMany(mappedBy = "messageOwner", fetch = FetchType.EAGER) // user can be the owner of many comments
+	@OneToMany(mappedBy = "messageOwner") // user can be the owner of many comments
 	@JsonManagedReference(value = "user-messages")
 	private List<Message> ownedMessagesUser = new ArrayList<Message>();
 	
 	@JsonIgnore
-	@ManyToMany(fetch = FetchType.EAGER)
+	@ManyToMany()
 	private List<Channel> subscribedChannels = new ArrayList<Channel>();
 
 	public Long getUserId() {
