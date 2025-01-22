@@ -141,6 +141,12 @@ public class TutorialController {
 		return avgScoreString;
 	}
 	
+	@GetMapping("/audit/{id}")
+	public String viewAuditInfo(@PathVariable("id") Long id, Model model) {
+		model.addAttribute("tutorial", tutorialService.getTutorialById(id));
+		return "tutorials/tutorial-audit";
+	}
+	
 	@GetMapping("/ratings/{id}")
 	public String getRatingsFromTutorial(@PathVariable("id") Long tutorialId, Model model) {
 		Tutorial tutorial = tutorialService.getTutorialById(tutorialId); 

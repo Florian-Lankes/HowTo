@@ -80,6 +80,12 @@ public class RatingController {
 		return "ratings/rating";
 	}
 	
+	@GetMapping("/audit/{id}")
+	public String viewAuditInfo(@PathVariable("id") Long ratingId, Model model) {
+		model.addAttribute("rating", ratingService.getRatingById(ratingId));
+		return "ratings/rating-audit";
+	}
+	
 	//shows the create page for a rating
 	@GetMapping("/tutorial/{tutorialId}")
 	public String ratingTutorialView(@PathVariable("tutorialId") long tutorialId, Model model) {
