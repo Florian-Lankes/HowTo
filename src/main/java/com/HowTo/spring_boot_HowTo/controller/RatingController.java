@@ -56,7 +56,7 @@ public class RatingController {
 		List<Rating> AllRatings = ratingService.getAllRatings();
 		model.addAttribute("ratings", AllRatings);
 		logger.info("All ratings retrieved and added to model");
-		return "ratings/rating-list";
+		return "ratings/rating-all";
 	}
 	// deletes a rating
 	@GetMapping("/delete/{id}")
