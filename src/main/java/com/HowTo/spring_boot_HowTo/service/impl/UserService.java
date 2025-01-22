@@ -120,15 +120,6 @@ public class UserService implements UserServiceI {
 			  throw new UserAlreadyExistException("There is an account with that username: "
 		              + user.getUsername());
 		  }
-//		user.setEmail(email);
-//		user.setUsername(name);
-//		user.setEnabled(true);
-//		user.setPassword(name);
-//		user.setBirthDate(LocalDate.of(2020, 1, 20));
-//		user.setPassword(passwordEncoder.encode(user.getPassword()));
-//		user.setRoles(Collections.singletonList(roleRepository.findByDescription("USER")));
-//		userRepository.save(user);
-//		return user;
 	}
 	
 	
@@ -148,7 +139,7 @@ public class UserService implements UserServiceI {
       u.setVerificationToken(myToken);
       tokenRepository.save(myToken);
   }
-	
+	//saves User
     @Override
     public void saveRegisteredUser(User user) {
         userRepository.save(user);
@@ -161,17 +152,18 @@ public class UserService implements UserServiceI {
 		return opUser.isPresent()? opUser.get(): null;
 	}
 	
+	//gets the User via the Token
 	 @Override
 	    public User getUserByToken(String verificationToken) {
 	        User user = tokenRepository.findByToken(verificationToken).getUser();
 	        return user;
 	    }
 	 
+	//updates the User
 	@Override
 	public User updateUser(User user) {
 		// TODO Auto-generated method stub
 		User u = userRepository.findById(user.getUserId()).get();
-		//u.setPassword(passwordEncoder.encode(user.getPassword())); double hashes the password if not changed
 		u.setUsername(user.getUsername());
 		u.setBirthDate(user.getBirthDate());
 		u.setEmail(user.getEmail());
@@ -188,6 +180,7 @@ public class UserService implements UserServiceI {
 		return local;
 	}
 
+	//deletes the user
 	@Override
 	public void delete(User user) {
 		// TODO Auto-generated method stub
@@ -200,31 +193,36 @@ public class UserService implements UserServiceI {
 		userRepository.delete(user);
 	}
 
+	//find user by Name
 	@Override
 	public List<User> findUserByName(String name) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 	
+	//check if the user is Admin
 	public boolean checkAdmin(User user) {
 		// TODO Auto-generated method stub
 		return user.getRoles().contains(roleRepository.findByDescription("ADMIN"));
 	}
 
-
+	//check if the Email already exists
 	private boolean emailExists(String email) {
 		return !userRepository.findUserByEmail(email).isEmpty();
 	}
 	
+	//check if the username already exists
 	private boolean usernameExists(String username) {
 		return !userRepository.findUserByUsername(username).isEmpty();
 	}
 	
+	//generates QR code for 2FA
 	@Override
     public String generateQRUrl(User user) throws UnsupportedEncodingException {
         return QR_PREFIX + URLEncoder.encode(String.format("otpauth://totp/%s:%s?secret=%s&issuer=%s", APP_NAME, user.getEmail(), user.getSecret(), APP_NAME), "UTF-8");
     }
 	
+	//gets user by email
 	@Override
 	public Optional<User> getUserByEmail(String email) {
 		Optional<User> u = userRepository.findUserByEmail(email);

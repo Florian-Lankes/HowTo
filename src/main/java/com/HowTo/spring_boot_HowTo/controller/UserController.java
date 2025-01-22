@@ -244,28 +244,23 @@ public class UserController {
 	@GetMapping("/registrationConfirm")
 	public String confirmRegistration(WebRequest request, Model model, @RequestParam("token") String token) {
 
-		// Locale locale = request.getLocale();
 		logger.info("Confirming registration with token: {}", token);
 		VerificationToken verificationToken = userService.getVerificationToken(token);
 		if (verificationToken == null) {
-//	        String message = messages.getMessage("auth.message.invalidToken", null, locale);
-//	        model.addAttribute("message", message);
 			logger.warn("Invalid registration token: {}", token);
-			return "redirect:/badUser"; // ?lang=" + locale.getLanguage();
+			return "redirect:/badUser";
 		}
 
 		User user = verificationToken.getUser();
 		Calendar cal = Calendar.getInstance();
 		if ((verificationToken.getExpiryDate().getTime() - cal.getTime().getTime()) <= 0) {
-//	        String messageValue = messages.getMessage("auth.message.expired", null, locale);
-//	        model.addAttribute("message", messageValue);
 			logger.warn("Expired registration token: {}", token);
-			return "redirect:/badUser"; // ?lang=" + locale.getLanguage();
+			return "redirect:/badUser";
 		}
 		user.setEnabled(true);
 		userService.saveRegisteredUser(user);
 		logger.info("User registration confirmed: {}", user.getUserId());
-		return "redirect:/login"; // + request.getLocale().getLanguage();
+		return "redirect:/login";
 	}
 	
 	//registers the user and sends him mail for verification
@@ -351,23 +346,18 @@ public class UserController {
 	@GetMapping("/confirmPassword")
 
 	public String confirmpassword(WebRequest request, Model model, @RequestParam("token") String token) {
-		// Locale locale = request.getLocale();
 		logger.info("Confirming password with token: {}", token);
 		VerificationToken verificationToken = userService.getVerificationToken(token);
 		if (verificationToken == null) {
-//	        String message = messages.getMessage("auth.message.invalidToken", null, locale);
-//	        model.addAttribute("message", message);
 			logger.warn("Invalid password confirmation token: {}", token);
-			return "redirect:/badUser"; // ?lang=" + locale.getLanguage();
+			return "redirect:/badUser"; 
 		}
 
 		User user = verificationToken.getUser();
 		Calendar cal = Calendar.getInstance();
 		if ((verificationToken.getExpiryDate().getTime() - cal.getTime().getTime()) <= 0) {
-//	        String messageValue = messages.getMessage("auth.message.expired", null, locale);
-//	        model.addAttribute("message", messageValue);
 			logger.warn("Expired password confirmation token: {}", token);
-			return "redirect:/badUser"; // ?lang=" + locale.getLanguage();
+			return "redirect:/badUser";
 		}
 
 		model.addAttribute("user", user);
@@ -434,7 +424,6 @@ public class UserController {
 		Iterable<ClientRegistration> clientRegistrations = null;
 		ResolvableType type = ResolvableType.forInstance(clientRegistrationRepository).as(Iterable.class);
 		if (type != ResolvableType.NONE && ClientRegistration.class.isAssignableFrom(type.resolveGenerics()[0])) {
-			// TODO log 
 			clientRegistrations = (Iterable<ClientRegistration>) clientRegistrationRepository;
 		}
 
@@ -491,7 +480,7 @@ public class UserController {
 		return "redirect:/home";
 	}
 
-	
+	//logs the user out and deletes session
 	@GetMapping("/logout")
 	public String logout() {
 		logger.info("Logging out user");
@@ -510,9 +499,6 @@ public class UserController {
 		
 		Wallet wallet = walletService.getWalletById(getCurrentUserId());
 		model.addAttribute("wallet", wallet);
-		// Change password
-		// Change channelname and discription
-		// Enable 2fa
 		logger.info("User profile shown successfully for user: {}", current_user.getUserId());
 		return "users/profile";
 	}
