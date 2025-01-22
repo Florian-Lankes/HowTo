@@ -35,6 +35,7 @@ public class UserService implements UserServiceI {
 	RoleRepositoryI roleRepository;
 	@Autowired
     VerificationTokenRepository tokenRepository;
+	@Autowired
 	CommentRepositoryI commentRepository;
 	@Autowired
 	GroupRepositoryI groupRepository;
@@ -187,9 +188,6 @@ public class UserService implements UserServiceI {
 		// TODO Delete groups
 		List<Group> allGroups = user.getOwnedGroups();
 		allGroups.forEach(group -> groupRepository.delete(group));
-		// TODO Delete Comments
-		List<Comment> allComments = user.getOwnedComments();
-		allComments.forEach(comment -> commentRepository.delete(comment));
 		userRepository.delete(user);
 	}
 
