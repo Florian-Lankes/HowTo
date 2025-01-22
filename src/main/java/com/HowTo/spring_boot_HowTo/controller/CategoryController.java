@@ -46,6 +46,12 @@ public class CategoryController {
 		logger.debug("All categories excluding current: {}", allCategoriesNotSearched);
 		return "categories/category";
 	}
+	
+	@GetMapping("/audit/{id}")
+	public String viewAuditInfo(@PathVariable("id") Long id, Model model) {
+		model.addAttribute("category", categoryService.getCategoryById(id));
+		return "categories/category-audit";
+	}
 
 	//Returns category-list for Admin
 	@GetMapping("/all")

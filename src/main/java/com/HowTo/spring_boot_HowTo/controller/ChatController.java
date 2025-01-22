@@ -41,8 +41,6 @@ public class ChatController {
 	private final SimpMessageSendingOperations messageTemplate;
 	private static final Logger logger = LogManager.getLogger(GroupController.class);
 	
-
-	@Autowired
 	public ChatController(UserServiceI userService, GroupServiceI groupService, MessageServiceI messageService,
 			ObjectMapper objectMapper, SimpMessageSendingOperations messageTemplate) {
 		super();

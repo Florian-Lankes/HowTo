@@ -1,6 +1,5 @@
 package com.HowTo.spring_boot_HowTo.model;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.HowTo.spring_boot_HowTo.service.GroupServiceI;
@@ -16,7 +15,6 @@ public class MessageDTOMapper {
 	private static UserServiceI userService;
 	private static GroupServiceI groupService;
 	
-	@Autowired
 	public MessageDTOMapper(MessageServiceI messageService, UserServiceI userService, GroupServiceI groupService) {
 		MessageDTOMapper.messageService = messageService;
 		MessageDTOMapper.userService = userService;
