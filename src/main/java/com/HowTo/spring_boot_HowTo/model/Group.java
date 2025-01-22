@@ -35,11 +35,11 @@ public class Group implements Serializable{
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long groupId;
 	
-	@NotBlank(message = "Name is mandatory")
+	@NotBlank(message = "Name ist notwendig")
 	@Size(min = 5, max = 50, message = "{jakarta.validation.constraints.Size}")
 	private String name;
 
-	@NotBlank(message = "Description is mandatory")
+	@NotBlank(message = "Beschreibung ist notwendig")
 	@Size(min = 5, max = 500, message = "{jakarta.validation.constraints.Size}")
 	private String description;
 	

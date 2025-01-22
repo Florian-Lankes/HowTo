@@ -7,6 +7,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -14,8 +15,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.HowTo.spring_boot_HowTo.model.Comment;
+import com.HowTo.spring_boot_HowTo.model.Tutorial;
 import com.HowTo.spring_boot_HowTo.model.User;
 import com.HowTo.spring_boot_HowTo.service.CommentServiceI;
+import com.HowTo.spring_boot_HowTo.service.UserServiceI;
 
 import jakarta.validation.Valid;
 
@@ -24,12 +27,14 @@ import jakarta.validation.Valid;
 public class CommentController {
 
 	private CommentServiceI commentService;
+	private UserServiceI userService;
 	private static final Logger logger = LogManager.getLogger(GroupController.class);
 	
 	
-	public CommentController(CommentServiceI commentService) {
+	public CommentController(CommentServiceI commentService, UserServiceI userService) {
 		super();
 		this.commentService = commentService;
+		this.userService = userService;
 	}
 	
 	private Long getCurrentUserId() {
@@ -51,12 +56,66 @@ public class CommentController {
 			logger.debug("Comment content: {}", comment.getContent());
 			//request.getSession().setAttribute("commentSession", commentForm);
 			if (results.hasErrors()) {
-	    		return "redirect:/";
+				logger.debug("Comment Creation Error");
+	    		return "redirect:/tutorial/view/" + tutorialId;
 	        }
-			
 			commentService.saveComment(comment, getCurrentUserId(), tutorialId);
 			redirectAttributes.addFlashAttribute("created", "Comment created!");
 			logger.info("Comment created successfully for tutorialId: {}", tutorialId);
 			return "redirect:/tutorial/view/" + tutorialId;
 		}
+		
+//		// shows the update page for a rating
+//		@GetMapping("/update/{id}")
+//		public String updateComment(@PathVariable("id") long commentId, Model model) {
+//			logger.info("Entering updateComment method with commentId: {}", commentId);
+//			Comment comment = commentService.getCommentById(commentId);
+//			model.addAttribute("comment", comment);
+//			logger.info("Comment retrieved and added to model with commentId: {}", commentId);
+//			return "comments/comment-update";
+//		}
+		// updates rating done on previous site
+		@PostMapping("/update")
+		public String updateComment(@Valid @ModelAttribute Comment comment,
+				BindingResult result) {
+			logger.info("Entering updateComment method with commentId: {}", comment.getCommentId());
+			if(result.hasErrors()) {
+				logger.error("Validation errors: {}", result.getAllErrors());
+				return "comments/comment-update";
+			}
+			commentService.updateComment(comment);
+			Tutorial tutorialOfComment = comment.getCommentTutorial();
+			logger.info("Comment updated successfully with commentId: {}", comment.getCommentId());
+			return "redirect:/tutorial/view/" +  tutorialOfComment.getTutorialId();
+		}
+		
+		
+	    //delete comment
+	    @GetMapping("/delete/{id}")
+	    public String deleteComment(@PathVariable("id") long id, Model model, RedirectAttributes redirectAttributes) {
+	    	logger.info("Entering deleteComment method with commentId: {}", id);
+	        Comment comment = commentService.getCommentById(id);  
+	        Tutorial tutorialOfComment = comment.getCommentTutorial();
+	        if(comment.getCommentOwner().getUserId() != getCurrentUserId() && !userService.checkAdmin(userService.getUserById(getCurrentUserId()))) {
+	        	//if owner deletion failed
+	        	logger.warn("User with id {} is not owner of comment with id {}, deletion failed", getCurrentUserId(), id);
+	   	 		redirectAttributes.addFlashAttribute("failed", "not owner!!");
+	   	 		return "redirect:/tutorial/view/" +  tutorialOfComment.getTutorialId();
+	   	 	}
+	        commentService.delete(comment);
+	        redirectAttributes.addFlashAttribute("deleted", "Comment deleted!");
+	        logger.info("User with id {} deleted c with id {}", getCurrentUserId(), id);
+	        return "redirect:/tutorial/view/" +  tutorialOfComment.getTutorialId();
+	    }
+		
 }
+
+
+
+
+
+
+
+
+
+

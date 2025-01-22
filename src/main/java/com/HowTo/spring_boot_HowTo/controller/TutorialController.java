@@ -83,6 +83,9 @@ public class TutorialController {
 	public String getTutorialView(@PathVariable("id") Long id, Model model) {
 		logger.info("Entering getTutorialView method with tutorialId: {}", id);
 		Tutorial tutorial = tutorialService.getTutorialById(id); 
+		if (!tutorial.getAttachedComments().isEmpty()) {
+			System.out.println(tutorial.getAttachedComments().get(0).getCommentId());
+		}
 		
 		//For comment Form in Tutorial
 		Comment commentForm = new Comment();
@@ -111,7 +114,7 @@ public class TutorialController {
 			logger.warn("No category available.");
 		}
 		
-		
+		model.addAttribute("currentUserId", getCurrentUserId());
 		model.addAttribute( "avgScore", calculateAvgRating(tutorial));
 		model.addAttribute("tutorial", tutorial );
 		model.addAttribute("comment", commentForm);

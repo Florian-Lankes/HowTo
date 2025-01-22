@@ -21,7 +21,7 @@ public class Comment {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long commentId;
 	
-	@NotBlank(message = "Comment can not be empty")
+	@NotBlank(message = "Kommentar ist notwendig")
 	@Size(min = 1, max = 500, message = "{jakarta.validation.constraints.Size}")
 	private String content;
 	

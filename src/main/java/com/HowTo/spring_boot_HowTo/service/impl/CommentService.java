@@ -66,8 +66,18 @@ public class CommentService implements CommentServiceI{
 
 	@Override
 	public Comment updateComment(Comment comment) {
-		Comment local = commentRepository.save(comment);
-		return local;
+		Optional<Comment> opComment = commentRepository.findById(comment.getCommentId());
+		if(opComment.isPresent()) {
+			Comment old = opComment.get();
+			comment.setCreationDate(old.getCreationDate());
+			comment.setCommentOwner(old.getCommentOwner());
+			comment.setCommentTutorial(old.getCommentTutorial());
+			Comment local = commentRepository.save(comment);
+			return local;
+		}else {
+			Comment local = new Comment();
+			return local;
+		}
 	}
 
 	@Override

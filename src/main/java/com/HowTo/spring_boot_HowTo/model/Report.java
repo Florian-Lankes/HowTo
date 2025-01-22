@@ -9,6 +9,8 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 
 @Entity
 public class Report implements Serializable {
@@ -26,6 +28,8 @@ public class Report implements Serializable {
 	@ManyToOne
 	private Tutorial reportTutorial;
 	
+	@NotBlank(message = "Grund ist notwendig")
+	@Size(min = 5, max = 100, message = "{jakarta.validation.constraints.Size}")
 	private String reportText;
 
 	public Long getReportId() {

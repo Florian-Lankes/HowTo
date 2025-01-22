@@ -82,6 +82,9 @@ public class ChannelController {
     		logger.info("User is not subscribed to the channel");
     	}
     	List<Tutorial> tutorials = channel.getTutorials();
+    	Wallet wallet = walletService.getWalletById(getCurrentUserId());
+		model.addAttribute("wallet", wallet);
+		model.addAttribute("CurrentUserId", getCurrentUserId());
     	model.addAttribute("channel", channel);
 		model.addAttribute("tutorials", tutorials);
 				
