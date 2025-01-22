@@ -271,7 +271,7 @@ public class TutorialController {
 	
 	//deletes tutorial
 	@GetMapping("/delete/{id}")
-    public String deleteTutorial(@PathVariable("id") Long tutorialId, Model model, RedirectAttributes redirectAttributes) {
+    public String deleteTutorial(@PathVariable("id") Long tutorialId, Model model, RedirectAttributes redirectAttributes, HttpServletRequest request) {
 		logger.info("Entering deleteTutorial method with tutorialId: {}", tutorialId);
 		Tutorial tutorial = tutorialService.getTutorialById(tutorialId);     
         if(tutorial != null &&tutorial.getVideoUrl() != null && !tutorial.getVideoUrl().isEmpty()) {
@@ -285,10 +285,11 @@ public class TutorialController {
     		cloudinaryService.deleteVideoUrl(tutorialId);
     		logger.info("Tutorial video deleted with publicId: {}", publicId);
     	}
+        String referer = request.getHeader("Referer");
         tutorialService.delete(tutorial);
         redirectAttributes.addFlashAttribute("deleted", "Tutorial deleted!");
         logger.info("Tutorial deleted successfully with tutorialId: {}", tutorialId);
-        return "redirect:/tutorial/all";
+        return "redirect:" + referer;
     }
 	
 	//update tutorial form
@@ -301,6 +302,7 @@ public class TutorialController {
     	model.addAttribute("tutorial", tutorial);
     	List<Category> categories = categoryService.getAllCategorys();
 		model.addAttribute("categories",categories);
+		model.addAttribute("admin", false);
 		logger.info("Tutorial retrieved and added to model for update with tutorialId: {}", tutorialId);
 		return "tutorials/tutorial-update";
 	}
@@ -308,7 +310,7 @@ public class TutorialController {
     //update tutorial
     @PostMapping("/update")
 	public String updateTutorial(@Valid @ModelAttribute Tutorial tutorial, BindingResult results,
-			@RequestParam("categorySelection") Long categoryId,
+			@RequestParam("categorySelection") Long categoryId, @RequestParam("admin") boolean admin,
 			Model model, 
 			RedirectAttributes redirectAttributes) {
     	logger.info("Entering updateTutorial method with tutorialId: {}", tutorial.getTutorialId());
@@ -322,8 +324,27 @@ public class TutorialController {
 		tutorialService.updateTutorial(tutorial, categoryId);
         redirectAttributes.addFlashAttribute("updated", "tutorial updated!");
         logger.info("Tutorial updated successfully with tutorialId: {}", tutorial.getTutorialId());
-		return "redirect:/tutorial/all";
+        if(admin) {
+			return "redirect:/tutorial/all";
+		}
+		return "redirect:/channel/mychannel";
+		
 	}
+    
+  //update tutorial form
+  	@GetMapping("/admin/update/{id}")
+  	public String showAdminUpdateTutorialForm(@PathVariable("id") Long tutorialId, 
+  			Model model,
+  			HttpServletRequest request) {
+  		logger.info("Entering showUpdateTutorialForm method with tutorialId: {}", tutorialId);
+  	 	Tutorial tutorial = tutorialService.getTutorialById(tutorialId); 
+      	model.addAttribute("tutorial", tutorial);
+      	List<Category> categories = categoryService.getAllCategorys();
+  		model.addAttribute("categories",categories);
+  		model.addAttribute("admin", true);
+  		logger.info("Tutorial retrieved and added to model for update with tutorialId: {}", tutorialId);
+  		return "tutorials/tutorial-update";
+  	}
     
    //new video max 99MB. if it had a video, deletes the old one and uploads the new one on cloudinary
     @PostMapping("/uploadvideo/{id}")
