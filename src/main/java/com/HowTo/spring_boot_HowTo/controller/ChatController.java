@@ -103,26 +103,15 @@ public class ChatController {
 			throws JsonProcessingException {
 		logger.info("Entering showUserRegisterForm method with groupId: {}", groupId);
 		User user = userService.getUserById(getCurrentUserId());
-		//List<Group> userGroups = user.getJoinedGroups();
 		Group group = groupService.getGroupById(groupId);
 		String userJson = objectMapper.writeValueAsString(user);
 		String groupJson = objectMapper.writeValueAsString(group);
-		//String userGroupsJson = objectMapper.writeValueAsString(userGroups);
 		model.addAttribute("userJson", userJson);
 		model.addAttribute("groupJson", groupJson);
 		logger.info("User and group information added to model for groupId: {}", groupId);
-		//model.addAttribute("userGroupsJson", userGroupsJson);
 		return "chat/chat";
 	}
 
-//	public void broadcastLeaveEvent(Long userId, Long groupId) {
-//		MessageDTO leaveMessage = new MessageDTO();
-//		//Construct new MessageDTO for leave message
-//		leaveMessage.setMessageType(MessageType.LEAVE);
-//		leaveMessage.setUsername(username);
-//		leaveMessage.setMessageGroupId(groupId);
-//		// ...
-//		messagingTemplate.convertAndSend("/topic/group/" + groupId, leaveMessage);
-//	}
+
 
 }
