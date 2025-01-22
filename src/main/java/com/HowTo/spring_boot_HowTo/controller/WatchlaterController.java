@@ -56,20 +56,15 @@ public class WatchlaterController {
 	// saves selected tutorial to watchlater
 	@GetMapping("/save/{tutorialid}")
 	public String saveWatchLater(@PathVariable("tutorialid") long tutorialId) {
-		Long userId = getCurrentUserId(); 
-		logger.info("Saving tutorial ID: {} to Watch Later list for user ID: {}", tutorialId, userId);
 		if(watchLaterService.getAllWatchLaters().contains(watchLaterService.getWatchLaterById(tutorialId))) {
-			logger.warn("Tutorial ID: {} already in Watch Later list for user ID: {}", tutorialId, userId);
 			return ("redirect:/tutorial/view/"+ tutorialId);
-		}
-		
+		}		
 		WatchLater watchLater = new WatchLater();
 		watchLater.setWatchLaterId((long) -1);
 		watchLaterService.saveWatchLater(watchLater, getCurrentUserId(),tutorialId);
-		logger.info("Tutorial ID: {} saved to Watch Later list for user ID: {}", tutorialId, userId);
-		return ("redirect:/tutorial/view/"+ tutorialId);
-		
+		return ("redirect:/tutorial/view/"+ tutorialId);		
 	}
+	
 	// deletes tutorial from watchlater list
 	@GetMapping("/delete/{id}")
     public String deleteWatchLater(@PathVariable("id") long id, Model model, RedirectAttributes redirectAttributes) {
