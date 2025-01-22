@@ -25,6 +25,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.HowTo.spring_boot_HowTo.model.User;
 import com.HowTo.spring_boot_HowTo.model.UserDTO;
+import com.HowTo.spring_boot_HowTo.service.ChannelServiceI;
 import com.HowTo.spring_boot_HowTo.service.UserServiceI;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -41,10 +42,12 @@ import jakarta.validation.Valid;
 public class UserRestController {
 	
 	private UserServiceI userService;
+	private ChannelServiceI channelService;
 
-	public UserRestController(UserServiceI userService) {
+	public UserRestController(UserServiceI userService, ChannelServiceI channelService) {
 		super();
 		this.userService = userService;
+		this.channelService = channelService;
 	}
 	
 	@Operation(summary = "Create a user")
@@ -189,6 +192,9 @@ public class UserRestController {
 	@DeleteMapping("/{id}")
 	public ResponseEntity<?> deleteUser(@Parameter(description = "id of user to be deleted") @PathVariable("id") Long userId) {
 		User user = userService.getUserById(userId);
+		if(channelService.getChannelById(userId) != null) {
+			channelService.delete(channelService.getChannelById(userId));
+		}
 		if (user == null) {
 			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 		}
