@@ -217,18 +217,6 @@ public class GroupController {
    		
    	}
        
-//       @GetMapping("/detail/{id}")
-//      	public String showDetailGroup(@PathVariable("id") Long id, 
-//      			Model model,
-//      			HttpServletRequest request,
-//      			RedirectAttributes redirectAttributes) {
-//      	 	Group group = groupService.getGroupById(id); 
-//          	model.addAttribute("group", group);
-//      		request.getSession().setAttribute("groupSession", group);
-//      		
-//      		System.out.println("detail of group id="+ id);
-//      		return "/groups/group-detail";
-//      	}
        
     //join a group
        @GetMapping("/join/{id}")

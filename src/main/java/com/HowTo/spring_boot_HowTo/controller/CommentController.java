@@ -65,15 +65,6 @@ public class CommentController {
 			return "redirect:/tutorial/view/" + tutorialId;
 		}
 		
-//		// shows the update page for a rating
-//		@GetMapping("/update/{id}")
-//		public String updateComment(@PathVariable("id") long commentId, Model model) {
-//			logger.info("Entering updateComment method with commentId: {}", commentId);
-//			Comment comment = commentService.getCommentById(commentId);
-//			model.addAttribute("comment", comment);
-//			logger.info("Comment retrieved and added to model with commentId: {}", commentId);
-//			return "comments/comment-update";
-//		}
 		// updates rating done on previous site
 		@PostMapping("/update")
 		public String updateComment(@Valid @ModelAttribute Comment comment,
