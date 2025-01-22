@@ -3,7 +3,6 @@ package com.HowTo.spring_boot_HowTo.model;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.HowTo.spring_boot_HowTo.model.Message;
 import com.HowTo.spring_boot_HowTo.service.GroupServiceI;
 import com.HowTo.spring_boot_HowTo.service.MessageServiceI;
 import com.HowTo.spring_boot_HowTo.service.UserServiceI;

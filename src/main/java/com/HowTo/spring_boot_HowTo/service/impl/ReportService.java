@@ -6,13 +6,12 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.HowTo.spring_boot_HowTo.model.Report;
 import com.HowTo.spring_boot_HowTo.model.Tutorial;
 import com.HowTo.spring_boot_HowTo.model.User;
-import com.HowTo.spring_boot_HowTo.model.History;
-import com.HowTo.spring_boot_HowTo.model.Report;
+import com.HowTo.spring_boot_HowTo.repository.ReportRepositoryI;
 import com.HowTo.spring_boot_HowTo.repository.TutorialRepositoryI;
 import com.HowTo.spring_boot_HowTo.repository.UserRepositoryI;
-import com.HowTo.spring_boot_HowTo.repository.ReportRepositoryI;
 import com.HowTo.spring_boot_HowTo.service.ReportServiceI;
 
 @Service

@@ -3,12 +3,10 @@ package com.HowTo.spring_boot_HowTo.service.impl;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.time.LocalDate;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-import org.jboss.aerogear.security.otp.api.Base32;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -20,11 +18,11 @@ import com.HowTo.spring_boot_HowTo.model.Comment;
 import com.HowTo.spring_boot_HowTo.model.Group;
 import com.HowTo.spring_boot_HowTo.model.User;
 import com.HowTo.spring_boot_HowTo.model.VerificationToken;
-import com.HowTo.spring_boot_HowTo.repository.UserRepositoryI;
-import com.HowTo.spring_boot_HowTo.repository.VerificationTokenRepository;
 import com.HowTo.spring_boot_HowTo.repository.CommentRepositoryI;
 import com.HowTo.spring_boot_HowTo.repository.GroupRepositoryI;
 import com.HowTo.spring_boot_HowTo.repository.RoleRepositoryI;
+import com.HowTo.spring_boot_HowTo.repository.UserRepositoryI;
+import com.HowTo.spring_boot_HowTo.repository.VerificationTokenRepository;
 import com.HowTo.spring_boot_HowTo.service.UserServiceI;
 import com.HowTo.spring_boot_HowTo.validator.UserAlreadyExistException;
 
