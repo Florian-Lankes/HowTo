@@ -82,7 +82,7 @@ public class RatingController {
 	
 	@GetMapping("/audit/{id}")
 	public String viewAuditInfo(@PathVariable("id") Long ratingId, Model model) {
-		model.addAttribute("tutorial", ratingService.getRatingById(ratingId));
+		model.addAttribute("rating", ratingService.getRatingById(ratingId));
 		return "ratings/rating-audit";
 	}
 	
