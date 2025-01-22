@@ -1,18 +1,14 @@
 package com.HowTo.spring_boot_HowTo.changepassword.listener;
 
-import java.util.UUID;
-
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.MessageSource;
-import org.springframework.stereotype.Component;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.stereotype.Component;
 
 import com.HowTo.spring_boot_HowTo.changepassword.OnChangePasswordEvent;
 import com.HowTo.spring_boot_HowTo.model.User;
-
 import com.HowTo.spring_boot_HowTo.service.UserServiceI;
 
 @Component

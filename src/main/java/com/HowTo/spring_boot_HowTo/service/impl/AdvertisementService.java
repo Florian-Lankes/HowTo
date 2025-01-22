@@ -8,7 +8,6 @@ import org.springframework.stereotype.Service;
 
 import com.HowTo.spring_boot_HowTo.model.Advertisement;
 import com.HowTo.spring_boot_HowTo.model.Category;
-import com.HowTo.spring_boot_HowTo.model.Tutorial;
 import com.HowTo.spring_boot_HowTo.repository.AdvertisementRepositoryI;
 import com.HowTo.spring_boot_HowTo.repository.CategoryRepositoryI;
 import com.HowTo.spring_boot_HowTo.service.AdvertisementServiceI;

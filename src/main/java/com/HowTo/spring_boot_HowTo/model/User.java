@@ -30,7 +30,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 @Entity
-@AllArgsConstructor 
+@AllArgsConstructor
 public class User implements Serializable {
 
 

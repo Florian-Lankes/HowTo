@@ -1,9 +1,8 @@
 package com.HowTo.spring_boot_HowTo.controller;
 
 
-import java.time.LocalDate;
-import java.io.File;
 import java.sql.Timestamp;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -27,7 +26,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
-
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.HowTo.spring_boot_HowTo.model.Advertisement;
@@ -35,13 +33,11 @@ import com.HowTo.spring_boot_HowTo.model.Category;
 import com.HowTo.spring_boot_HowTo.model.Channel;
 import com.HowTo.spring_boot_HowTo.model.Comment;
 import com.HowTo.spring_boot_HowTo.model.Rating;
-import com.HowTo.spring_boot_HowTo.config.MyUserDetails;
-
 import com.HowTo.spring_boot_HowTo.model.Tutorial;
 import com.HowTo.spring_boot_HowTo.model.User;
-import com.HowTo.spring_boot_HowTo.service.CloudinaryServiceI;
 import com.HowTo.spring_boot_HowTo.service.CategoryServiceI;
 import com.HowTo.spring_boot_HowTo.service.ChannelServiceI;
+import com.HowTo.spring_boot_HowTo.service.CloudinaryServiceI;
 import com.HowTo.spring_boot_HowTo.service.TutorialServiceI;
 import com.HowTo.spring_boot_HowTo.subscribemsg.OnInformSubscriberEvent;
 
@@ -87,6 +83,9 @@ public class TutorialController {
 	public String getTutorialView(@PathVariable("id") Long id, Model model) {
 		logger.info("Entering getTutorialView method with tutorialId: {}", id);
 		Tutorial tutorial = tutorialService.getTutorialById(id); 
+		if (!tutorial.getAttachedComments().isEmpty()) {
+			System.out.println(tutorial.getAttachedComments().get(0).getCommentId());
+		}
 		
 		//For comment Form in Tutorial
 		Comment commentForm = new Comment();
@@ -115,7 +114,7 @@ public class TutorialController {
 			logger.warn("No category available.");
 		}
 		
-		
+		model.addAttribute("currentUserId", getCurrentUserId());
 		model.addAttribute( "avgScore", calculateAvgRating(tutorial));
 		model.addAttribute("tutorial", tutorial );
 		model.addAttribute("comment", commentForm);

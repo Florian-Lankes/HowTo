@@ -1,6 +1,5 @@
 package com.HowTo.spring_boot_HowTo.controller;
 
-import java.time.LocalDate;
 import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
@@ -16,8 +15,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.HowTo.spring_boot_HowTo.model.Category;
-import com.HowTo.spring_boot_HowTo.model.Comment;
-import com.HowTo.spring_boot_HowTo.model.Tutorial;
 import com.HowTo.spring_boot_HowTo.service.CategoryServiceI;
 
 import jakarta.validation.Valid;
@@ -48,6 +45,12 @@ public class CategoryController {
 		logger.info("Category retrieved and added to model with categoryId: {}", id); 
 		logger.debug("All categories excluding current: {}", allCategoriesNotSearched);
 		return "categories/category";
+	}
+	
+	@GetMapping("/audit/{id}")
+	public String viewAuditInfo(@PathVariable("id") Long id, Model model) {
+		model.addAttribute("category", categoryService.getCategoryById(id));
+		return "categories/category-audit";
 	}
 
 	//Returns category-list for Admin

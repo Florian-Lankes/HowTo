@@ -1,7 +1,5 @@
 package com.HowTo.spring_boot_HowTo.controller;
 
-import java.util.ArrayList;
-
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
