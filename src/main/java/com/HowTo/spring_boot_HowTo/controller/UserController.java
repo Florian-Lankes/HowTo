@@ -437,7 +437,7 @@ public class UserController {
 	
 	//login only for google and github
 	@GetMapping("/loginSuccess")
-	public String getLoginInfo(HttpServletRequest request, Model model, OAuth2AuthenticationToken authentication2) {
+	public String getLoginInfo(HttpServletRequest request, Model model, OAuth2AuthenticationToken authentication2, RedirectAttributes redirectAttributes) {
 		logger.info("Fetching login info for OAuth2 authentication");
 		OAuth2AuthorizedClient client = authorizedClientService
 				.loadAuthorizedClient(authentication2.getAuthorizedClientRegistrationId(), authentication2.getName());
@@ -461,6 +461,12 @@ public class UserController {
 			} else {
 				userName = userAttributes.get("name").toString();
 			}
+
+			if(userAttributes.get("email") == null) {
+				redirectAttributes.addFlashAttribute("deleted", "Email muss öffentlich sein");
+				return "redirect:/login";
+			}
+			
 			User u = userService.saveO2authUser(userAttributes.get("email").toString(), userName);
 			UsernamePasswordAuthenticationToken authRequest = new UsernamePasswordAuthenticationToken(u.getUsername(),
 					u.getUsername());

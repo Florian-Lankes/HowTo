@@ -24,7 +24,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         }
         //set email if email is private
         if(email == null) {
-			email = "placeholdermail" + name + "@how2.com";
+			email = "placeholdermail";
         }
         userService.saveO2authUser(email, name);
         return oAuth2User;

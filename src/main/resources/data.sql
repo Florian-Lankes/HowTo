@@ -41,6 +41,11 @@ INSERT INTO userrole(iduser, idrole) VALUES (10,2);
 INSERT INTO userrole(iduser, idrole) VALUES (3,3);
  
 INSERT INTO wallet (user_id, amount, wallet_Plan) VALUES (1, 500, 1);
+INSERT INTO wallet (user_id, amount, wallet_Plan) VALUES (6, 500, 1);
+INSERT INTO wallet (user_id, amount, wallet_Plan) VALUES (7, 500, 1);
+INSERT INTO wallet (user_id, amount, wallet_Plan) VALUES (8, 500, 1);
+INSERT INTO wallet (user_id, amount, wallet_Plan) VALUES (9, 500, 1);
+INSERT INTO wallet (user_id, amount, wallet_Plan) VALUES (10, 500, 1);
 
 INSERT INTO roleauthority(idrole, idauthority) VALUES (1,1);
 INSERT INTO roleauthority(idrole, idauthority) VALUES (1,2);

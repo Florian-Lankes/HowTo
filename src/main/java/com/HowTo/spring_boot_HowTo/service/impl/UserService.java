@@ -105,6 +105,9 @@ public class UserService implements UserServiceI {
 			              + user.getUsername());
 			  }
 	        }
+		  if (email == "placeholdermail") {
+			  return user;
+		  }
 		  if (!emailExists(user.getEmail())) {
 				user.setEmail(email);
 				user.setUsername(name);
