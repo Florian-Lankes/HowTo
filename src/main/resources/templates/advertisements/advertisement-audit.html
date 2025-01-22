@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html layout:decorate="~{layout}">
+
+<head>
+	<meta charset="UTF-8" />
+</head>
+
+<body>
+	<section class="layout-content mt-2" layout:fragment="mybody">
+		
+		<div class="container">
+			<a class="btn btn-warning my-3" href="/advertisement/all">   Zurück</a>
+			<h3>Audit Informationen</h3>
+		</div>
+		<table class="table table-striped table-bordered">
+			<thead class="table-dark">
+				<tr>
+					<th> Erstellt von </th>
+					<th> Erstellt am </th>
+					<th> Letzte Operation </th>
+					<th> Letztes Mal verändert am </th>
+					<th> Letztes Mal verändert von </th>
+				</tr>
+			</thead>
+
+			<tbody>
+				<tr>
+					<td th:text="${advertisement.createdBy}"></td>
+					<td th:text="${advertisement.createdAt}"></td>
+					<td th:text="${advertisement.lastOperation}"></td>
+					<td th:text="${advertisement.lastChanged}"></td>					
+					<td th:text="${advertisement.lastChangedBy}"></td>
+				</tr>
+			</tbody>
+		</table>
+
+	</section>
+</body>
+
+</html>

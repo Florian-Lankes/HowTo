@@ -53,6 +53,12 @@ public class AdvertisementController {
 		return "advertisements/advertisement";
 	}
 	
+	@GetMapping("/audit/{id}")
+	public String viewAuditInfo(@PathVariable("id") Long id, Model model) {
+		model.addAttribute("advertisement", advertisementService.getAdvertisementById(id));
+		return "advertisements/advertisement-audit";
+	}
+	
 	//returns all ads site
 	@GetMapping("/all")
 	public String showAllAdvertisements(Model model) {
