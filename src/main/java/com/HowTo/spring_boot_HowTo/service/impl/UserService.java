@@ -190,7 +190,10 @@ public class UserService implements UserServiceI {
 		// TODO Auto-generated method stub
 		// TODO Delete groups
 		List<Group> allGroups = user.getOwnedGroups();
-		allGroups.forEach(group -> groupRepository.delete(group));
+		for (Group g : allGroups) {
+			List<User> joinedUser = g.getUsers();
+			joinedUser.forEach(u -> u.removeJoinedGroup(g));
+		}
 		userRepository.delete(user);
 	}
 
