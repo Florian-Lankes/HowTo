@@ -80,6 +80,11 @@ public class ChannelService implements ChannelServiceI{
 		User user = userRepository.findById(channel.getChannelId()).get();
 		List<Role> liste = user.getRoles();
 		liste.remove(roleRepository.findByDescription("CREATOR"));
+		List<User> users = channel.getSubscribedFromUserList();
+		for(User u : users) {
+			u.removeSubscription(channel);
+			userRepository.save(u);
+		}		
 		user.setRoles(liste);
 		userRepository.save(user);
 		channelRepository.delete(channel);

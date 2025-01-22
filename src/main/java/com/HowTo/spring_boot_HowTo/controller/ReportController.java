@@ -121,17 +121,4 @@ public class ReportController {
 		logger.info("Tutorial report saved successfully for tutorialId: {}", tutorialId);
 		return "redirect:/tutorial/view/" + tutorialId;
 	}
-	
-	
-	// returns all the ratings the user created
-			@GetMapping("/myreports")
-			public String showMyReports(Model model) {
-				logger.info("Entering showMyReports method");
-				User u = userService.getUserById(getCurrentUserId());	
-				List<Report> myreports  = u.getReports();
-				model.addAttribute("reports", myreports);
-				logger.info("All my reports retrieved and added to model");
-				return "reports/myreport-list";
-			}
-	
 }

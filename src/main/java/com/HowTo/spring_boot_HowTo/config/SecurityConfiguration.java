@@ -93,6 +93,7 @@ public class SecurityConfiguration {
 			.requestMatchers("/user/forgottenpasswordchanged").permitAll()
 			.requestMatchers("/v3/api-docs").permitAll()
 			.requestMatchers("/swagger-ui/index.html").permitAll()
+			.requestMatchers("/swagger").permitAll()
 			//set all Pages that are accessible with User authorization
 			.requestMatchers("/home").hasAuthority("VIEW")
 			.requestMatchers("/tutorial/all").hasAuthority("VIEW")
