@@ -5,6 +5,6 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication    
 public class SpringBootHowTo   {  
 	public static void main(String[] args)  {    
-		SpringApplication.run(SpringBootHowTo.class, args);    
+		SpringApplication.run(SpringBootHowTo.class, args);    //runs the main
 	}   
 }
